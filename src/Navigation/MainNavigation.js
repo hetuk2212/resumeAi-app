@@ -11,6 +11,7 @@ import Profile from '../Screens/Profile';
 import PersonalDetails from '../Screens/ResumeSections/PersonalDetails';
 import Education from '../Screens/ResumeSections/Education';
 import ChooseResume from '../Screens/ChooseResume';
+import MainResume from '../Screens/MainResume';
 
 const Stack = createStackNavigator();
 
@@ -60,6 +61,15 @@ const StackNavigation = () => {
         }}
         />
         <Stack.Screen name="Choose Resume" component={ChooseResume}
+        options={{
+          headerShown:true,
+          headerStyle: {
+            backgroundColor: '#0096FF',
+          },
+          headerTintColor: '#FFFFFF',
+        }}
+        />
+        <Stack.Screen name="MainResume" component={MainResume}
         options={{
           headerShown:true,
           headerStyle: {

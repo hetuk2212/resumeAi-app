@@ -108,6 +108,11 @@ fontSize:18
     fontSize: 16,
     color: '#444',
   },
+  loader:{
+    flex:1,
+    alignItems:"center",
+    justifyContent:"center",
+  }
 });
 
 export default styles;

@@ -119,6 +119,61 @@ const styles = StyleSheet.create({
     height: 20,
     tintColor: '#ffffff',
   },
+  loaderBox: {
+    width: 25,
+    height: 25,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 50,
+  },
+  loaderCircle: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 50,
+  },
+  loaderText: {
+    width: 120,
+    height: 20,
+    backgroundColor: '#e0e0e0',
+    marginTop: 10,
+    borderRadius: 5,
+  },
+  loaderTextSmall: {
+    width: 180,
+    height: 15,
+    backgroundColor: '#e0e0e0',
+    marginTop: 6,
+    borderRadius: 5,
+  },
+  loaderButton: {
+    width: '45%',
+    height: 35,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 30,
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    right: 10,
+    top: 35,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 999,
+  },
+  dropdownItem: {
+    paddingVertical: 8,
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: 'red',
+  },
+  
 });
 
 export default styles;

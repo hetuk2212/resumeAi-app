@@ -6,6 +6,7 @@ const CustomTextInput = ({
   placeholder, 
   value, 
   onChangeText, 
+  errorMessage,
   secureTextEntry = false, 
   keyboardType = 'default' 
 }) => {
@@ -21,6 +22,7 @@ const CustomTextInput = ({
         keyboardType={keyboardType}
         placeholderTextColor="#888"
       />
+       {errorMessage && <Text style={{ color: 'red', fontSize: 12 }}>{errorMessage}</Text>}
     </View>
   );
 };
@@ -42,6 +44,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 16,
+    color:"#000000",
     backgroundColor: '#fff',
   },
 });

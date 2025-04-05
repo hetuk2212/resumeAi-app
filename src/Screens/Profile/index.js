@@ -13,6 +13,7 @@ import React, {useState} from 'react';
 import styles from './style';
 import {Images} from '../../Assets/Images';
 import {useNavigation} from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const sectionImages = {
   projects: Images.SectionProjects,
@@ -53,6 +54,8 @@ const Profile = () => {
   ];
 
   const navigation = useNavigation();
+
+ 
 
   const addNewSection = () => {
     if (newSectionTitle.trim()) {
@@ -115,7 +118,14 @@ const Profile = () => {
   const renderSection = (title, items, showAddButton = false) => (
     <View style={styles.sectionContainer}>
       <Text style={styles.sectionHeader}>{title}</Text>
-      {[...items, showAddButton && {id: 'add-more-section', name: 'Add More Section', image: Images.SectionAdd}]
+      {[
+        ...items,
+        showAddButton && {
+          id: 'add-more-section',
+          name: 'Add More Section',
+          image: Images.SectionAdd,
+        },
+      ]
         .filter(Boolean)
         .map(item => (
           <TouchableOpacity
@@ -138,7 +148,8 @@ const Profile = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingBottom:50}}>
+        <ScrollView
+          contentContainerStyle={{paddingHorizontal: 10, paddingBottom: 50}}>
           {!showOptions && (
             <>
               {renderSection('Sections', sections)}
@@ -178,13 +189,21 @@ const Profile = () => {
                 onChangeText={setNewSectionTitle}
               />
               <Button title="Add Section" onPress={addNewSection} />
-              <Button title="Cancel" color="red" onPress={() => setShowOptions(false)} />
+              <Button
+                title="Cancel"
+                color="red"
+                onPress={() => setShowOptions(false)}
+              />
               {moreSections
                 .filter(section => section.isUserAdded)
                 .map(section => (
                   <View key={section.id} style={styles.deleteSectionRow}>
                     <Text style={styles.sectionTitle}>{section.name}</Text>
-                    <Button title="Delete" color="red" onPress={() => deleteSection(section.id)} />
+                    <Button
+                      title="Delete"
+                      color="red"
+                      onPress={() => deleteSection(section.id)}
+                    />
                   </View>
                 ))}
             </View>

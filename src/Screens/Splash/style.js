@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
       width: 300,
       height: 300,
     },
+    
   });
 
 export default styles
