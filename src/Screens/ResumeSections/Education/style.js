@@ -3,36 +3,126 @@ import {StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
   safeView: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#ffffff',
   },
   container: {
-    padding: 15,
+    flex: 1,
+    padding: 16,
   },
-  formBox: {
-    marginTop: 25,
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  educationIcon: {
-    width: 25,
-    height: 25,
-  },
-
-  titleView: {
-    padding: 10,
+  createNew: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#0096FF',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#ffffff',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1a1a1a',
   },
-  formDetails: {
-    padding: 10,
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0096FF10',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#0096FF',
+  },
+  addIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 6,
+    tintColor: '#0096FF',
+    resizeMode: 'contain',
+  },
+  addText: {
+    color: '#0096FF',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  card: {
+    backgroundColor: '#fdfdfd',
+    padding: 16,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e2e2e2',
+    marginBottom: 15,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  detailBox: {
+    marginTop: 8,
+  },
+  label: {
+    fontWeight: '600',
+    color: '#333',
+  },
+  labelText: {
+    fontSize: 13,
+    color: '#555',
+    marginBottom: 4,
+  },
+  course: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#222',
+  },
+  university: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#444',
+    marginBottom: 4,
+  },
+  text: {
+    fontSize: 13,
+    color: '#666',
+  },
+  iconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconImage: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 50,
+    color: '#aaa',
+    fontSize: 14,
+  },
+  shimmerCard: {
+    backgroundColor: '#ffffff',
+    padding: 16,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e2e2e2',
+    marginBottom: 15,
+  },
+  shimmerHeaderTitle: {
+    width: 120,
+    height: 16,
+    borderRadius: 4,
+    backgroundColor: '#e0e0e0',
+  },
+  shimmerIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    backgroundColor: '#e0e0e0',
+  },
+  shimmerDetailLine: {
+    height: 14,
+    borderRadius: 4,
+    marginBottom: 8,
+    backgroundColor: '#e0e0e0',
   },
 });
 

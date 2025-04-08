@@ -2,27 +2,42 @@ import {
   View,
   Text,
   SafeAreaView,
-  Image,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
+  Image,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './style';
-import TabSwitcher from '../../../Components/TabSwitcher';
-import CustomTextInput from '../../../Components/TextInput';
-import {Images} from '../../../Assets/Images';
-import ActionButtons from '../../../Components/ActionButtons';
-import {useNavigation} from '@react-navigation/native';
-import {addEducation} from '../../../../lib/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import {deleteEducation, getEducation} from '../../../../lib/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
+import {Images} from '../../../Assets/Images';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
+const ShimmerEffect = ({style}) => {
+  const opacity = useSharedValue(0.3);
+
+  useEffect(() => {
+    opacity.value = withRepeat(withTiming(1, {duration: 1000}), -1, true);
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  return <Animated.View style={[style, animatedStyle]} />;
+};
 
 const Education = () => {
-  const [activeTab, setActiveTab] = useState('Education');
-  const [educationForms, setEducationForms] = useState([]);
   const [resumeId, setResumeId] = useState(null);
-  const [loading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [education, setEducation] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
@@ -32,7 +47,6 @@ const Education = () => {
         const id = await AsyncStorage.getItem('profileId');
         if (id !== null) {
           setResumeId(id);
-          console.log('Resume ID:', id);
         } else {
           console.log('No resume ID found');
         }
@@ -44,195 +58,149 @@ const Education = () => {
     getResumeId();
   }, []);
 
-  // Add new education form
-  const handleAdd = () => {
-    const newForm = {
-      id: Date.now(),
-      course: '',
-      school: '',
-      grade: '',
-      startYear: '',
-      endYear: '',
-    };
-    setEducationForms(prevForms => {
-      const updatedForms = [...prevForms, newForm];
-      return updatedForms;
-    });
-  };
+  useEffect(() => {
+    if (resumeId) {
+      getAllEducation();
+    }
+  }, [resumeId]);
 
-  // Handle input changes
-  const handleInputChange = (id, field, value) => {
-    setEducationForms(prevForms => {
-      const updatedForms = prevForms.map(form =>
-        form.id === id ? {...form, [field]: value} : form,
-      );
-      return updatedForms;
-    });
-  };
-
-  // Delete a form
-  const handleDelete = id => {
-    setEducationForms(prevForms => {
-      const updatedForms = prevForms.filter(form => form.id !== id);
-      return updatedForms;
-    });
-  };
-
-  // Handle Save (log form values)
-  // const handleSave = () => {
-  //   console.log(
-  //     'Submitted Education Data:',
-  //     JSON.stringify(educationForms, null, 2),
-  //   );
-  //   navigation.navigate('Choose Resume');
-  // };
-
-  // Add education api
-
-  const handleSave = async () => {
-    setIsLoading(true);
-    setErrors({});
-
-    const formattedEducation = educationForms.map(form => ({
-      course: form.course || "",
-      university: form.school || "",
-      grade: form.grade || "",
-      startYear: form.startYear ? parseInt(form.startYear, 10) : "",
-      endYear: form.endYear ? parseInt(form.endYear, 10) : "",
-    }));
-
-    const body = {education: formattedEducation};
-
-    console.log(body);
-    
-
+  const getAllEducation = async () => {
+    setLoading(true);
+    setRefreshing(true);
     try {
-      const response = await addEducation({ resumeId, body });
-      console.log('Response from API:', response);
+      const response = await getEducation(resumeId);
+      if (response.status === 200 && response.data?.education) {
+        setEducation(response.data.education);
+      } else {
+        console.log(response?.data?.message || 'Unexpected response.');
+      }
+    } catch (error) {
+      console.error(
+        'Error fetching education:',
+        error?.response?.data?.message || 'Something went wrong',
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
-      if (response.status === 201) {
-        navigation.navigate('Profile');
+  const handleEdit = item => {
+    navigation.navigate('Update Education', {educationData: item});
+  };
 
+  const handleDelete = async educationId => {
+    try {
+      const response = await deleteEducation({resumeId, educationId});
+
+      if (response.status === 200) {
         Toast.show({
           type: 'success',
-          text1: response.data.message || 'Education saved!',
-          text2: 'Your education details have been saved successfully.',
+          text1: 'Education deleted successfully!',
+          text2: response?.data?.message || 'The entry has been removed.',
           position: 'bottom',
         });
+        getAllEducation();
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Unexpected Error',
-          text2: 'Something went wrong, please try again.',
+          text1: 'Deletion failed!',
+          text2: response?.data?.message || 'Please try again later.',
+          position: 'bottom',
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          const match = err.path.match(/education\[(\d+)\]\.(\w+)/);
-          if (match) {
-            const [, index, field] = match;
-            errorObj[`${index}_${field}`] = err.msg;
-          }
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
-    } finally {
-      setIsLoading(false);
+      console.error('Error deleting education:', error);
     }
   };
+
+  const renderLoader = () => (
+    <View>
+      {[1, 2, 3].map((_, index) => (
+        <View key={index} style={styles.shimmerCard}>
+          <View style={styles.cardHeader}>
+            <ShimmerEffect style={styles.shimmerHeaderTitle} />
+            <View style={styles.iconRow}>
+              <ShimmerEffect style={[styles.shimmerIcon, {marginRight: 15}]} />
+              <ShimmerEffect style={styles.shimmerIcon} />
+            </View>
+          </View>
+
+          <View style={styles.detailBox}>
+            <ShimmerEffect style={[styles.shimmerDetailLine, {width: '70%'}]} />
+            <ShimmerEffect style={[styles.shimmerDetailLine, {width: '60%'}]} />
+            <ShimmerEffect
+              style={[
+                styles.shimmerDetailLine,
+                {width: '50%', marginBottom: 0},
+              ]}
+            />
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+
+  const renderEducationItem = ({item}) => (
+    <View style={styles.card}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.course}>{item.course}</Text>
+        <View style={styles.iconRow}>
+          <TouchableOpacity onPress={() => handleEdit(item)}>
+            <Image source={Images.edit} style={styles.iconImage} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => handleDelete(item._id)}
+            style={{marginLeft: 15}}>
+            <Image
+              source={Images.delete}
+              style={[styles.iconImage, {tintColor: 'red'}]}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Details with labels */}
+      <View style={styles.detailBox}>
+        <Text style={styles.labelText}>
+          <Text style={styles.label}>Universitys: </Text>
+          {item.university}
+        </Text>
+        <Text style={styles.labelText}>
+          <Text style={styles.label}>Grade: </Text>
+          {item.grade}
+        </Text>
+        <Text style={styles.labelText}>
+          <Text style={styles.label}>Durations: </Text>
+          {item.startYear} - {item.endYear}
+        </Text>
+      </View>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <TabSwitcher
-          tabs={[
-            {key: 'Education', label: 'Education'},
-            {key: 'Example', label: 'Example'},
-          ]}
-          onTabChange={tabKey => setActiveTab(tabKey)}
-        />
-
-        {activeTab === 'Education' && (
-          <ScrollView
-            contentContainerStyle={{paddingBottom: 100}}
-            showsVerticalScrollIndicator={false}>
-            {educationForms.map((form, index) => (
-              <View key={form.id} style={styles.formBox}>
-                <View style={styles.titleView}>
-                  <Text style={styles.title}>Education {index + 1}</Text>
-                  <TouchableOpacity onPress={() => handleDelete(form.id)}>
-                    <Image
-                      source={Images.delete}
-                      style={styles.educationIcon}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.formDetails}>
-                  <CustomTextInput
-                    label="Course / Degree"
-                    value={form.course}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'course', text)
-                    }
-                    errorMessage={errors[`${index}_course`]}
-                  />
-
-                  <CustomTextInput
-                    label="School / University"
-                    value={form.school}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'school', text)
-                    }
-                    errorMessage={errors[`${index}_university`]} // ✅ backend sends "university"
-                  />
-
-                  <CustomTextInput
-                    label="Grade / Score"
-                    value={form.grade}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'grade', text)
-                    }
-                    errorMessage={errors[`${index}_grade`]}
-                  />
-
-                  <CustomTextInput
-                    label="Start Year"
-                    value={form.startYear}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'startYear', text)
-                    }
-                    errorMessage={errors[`${index}_startYear`]}
-                  />
-
-                  <CustomTextInput
-                    label="End Year"
-                    value={form.endYear}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'endYear', text)
-                    }
-                    errorMessage={errors[`${index}_endYear`]}
-                  />
-                </View>
-              </View>
-            ))}
-            <ActionButtons
-              onAdd={handleAdd}
-              onSave={handleSave}
-              addIcon={Images.add}
-              saveIcon={Images.check}
-            />
-          </ScrollView>
+        <View style={styles.createNew}>
+          <Text style={styles.title}>Education</Text>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => navigation.navigate('Add Education')}>
+            <Image source={Images.add} style={styles.addIcon} />
+            <Text style={styles.addText}>Add New</Text>
+          </TouchableOpacity>
+        </View>
+        {loading ? (
+          renderLoader()
+        ) : (
+          <FlatList
+            data={education}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderEducationItem}
+            showsVerticalScrollIndicator={false}
+            refreshing={refreshing}
+            onRefresh={getAllEducation}
+          />
         )}
       </View>
     </SafeAreaView>

@@ -111,7 +111,7 @@ const ChooseProfile = () => {
   };
   const handleCreateNew = async () => {
     try {
-      await AsyncStorage.removeItem('profileId');
+      // await AsyncStorage.removeItem('profileId');
       navigation.navigate('Profile');
     } catch (error) {
       console.log('Error removing profileId:', error);

@@ -9,11 +9,12 @@ import {
   Button,
   Switch,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './style';
 import {Images} from '../../Assets/Images';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const sectionImages = {
   projects: Images.SectionProjects,
@@ -26,6 +27,7 @@ const sectionImages = {
 };
 
 const Profile = () => {
+  const [resumeId, setResumeId] = useState(null);
   const [moreSections, setMoreSections] = useState([]);
   const [optionalSections, setOptionalSections] = useState({
     projects: true,
@@ -42,7 +44,11 @@ const Profile = () => {
 
   const sections = [
     {id: 1, name: 'Personal Details', image: Images.SectionProfile},
-    {id: 2, name: 'Education', image: Images.SectionEducation},
+    {
+      id: 2,
+      name: !resumeId ? 'Add Education' : 'Education',
+      image: Images.SectionEducation,
+    },
     {id: 3, name: 'Experience', image: Images.SectionExperience},
     {id: 4, name: 'Skills', image: Images.SectionSkills},
     {id: 5, name: 'Objective', image: Images.SectionObjective},
@@ -54,8 +60,22 @@ const Profile = () => {
   ];
 
   const navigation = useNavigation();
+  useEffect(() => {
+    const getResumeId = async () => {
+      try {
+        const id = await AsyncStorage.getItem('profileId');
+        if (id !== null) {
+          setResumeId(id);
+        } else {
+          console.log('No resume ID found');
+        }
+      } catch (error) {
+        console.log('Error fetching resume ID:', error);
+      }
+    };
 
- 
+    getResumeId();
+  }, []);
 
   const addNewSection = () => {
     if (newSectionTitle.trim()) {
@@ -115,6 +135,21 @@ const Profile = () => {
     });
   };
 
+  const handleNavigation = item => {
+    if (!resumeId && item.name !== 'Personal Details') {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing Personal Details',
+        text2:
+          'Please fill in Personal Details before accessing other sections.',
+        position: 'bottom',
+      });
+      return;
+    }
+
+    navigation.navigate(item.name);
+  };
+
   const renderSection = (title, items, showAddButton = false) => (
     <View style={styles.sectionContainer}>
       <Text style={styles.sectionHeader}>{title}</Text>
@@ -135,7 +170,7 @@ const Profile = () => {
               if (item.id === 'add-more-section') {
                 setShowOptions(true);
               } else {
-                navigation.navigate(item.name);
+                handleNavigation(item);
               }
             }}>
             <Image source={item.image} style={styles.sectionBtnImg} />
