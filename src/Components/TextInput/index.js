@@ -8,7 +8,8 @@ const CustomTextInput = ({
   onChangeText, 
   errorMessage,
   secureTextEntry = false, 
-  keyboardType = 'default' 
+  keyboardType = 'default',
+  editable = true, 
 }) => {
   return (
     <View style={styles.container}>
@@ -19,6 +20,7 @@ const CustomTextInput = ({
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
+        editable={editable}
         keyboardType={keyboardType}
         placeholderTextColor="#888"
       />
