@@ -111,7 +111,15 @@ const ChooseProfile = () => {
   };
   const handleCreateNew = async () => {
     try {
-      // await AsyncStorage.removeItem('profileId');
+      await AsyncStorage.removeItem('profileId');
+      navigation.navigate('Profile');
+    } catch (error) {
+      console.log('Error removing profileId:', error);
+    }
+  };
+  const handleEdit = async (profileId) => {
+    try {
+      await AsyncStorage.setItem('profileId', profileId);
       navigation.navigate('Profile');
     } catch (error) {
       console.log('Error removing profileId:', error);
@@ -180,7 +188,7 @@ const ChooseProfile = () => {
       <View style={styles.profileBtnView}>
         <TouchableOpacity
           style={styles.profileBtn}
-          onPress={() => navigation.navigate('Profile', {profileId: item._id})}>
+          onPress={() => handleEdit(item._id)}>
           <Image source={Images.edit} style={styles.ProfileIconImg} />
           <Text style={styles.profileBtnText}>Edit</Text>
         </TouchableOpacity>
