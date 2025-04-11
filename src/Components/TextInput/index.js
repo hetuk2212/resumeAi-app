@@ -9,13 +9,18 @@ const CustomTextInput = ({
   errorMessage,
   secureTextEntry = false, 
   keyboardType = 'default',
-  editable = true, 
+  editable = true,
+  multiline = false,
+  numberOfLines = 4, 
 }) => {
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          multiline && styles.multilineInput,
+        ]}
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
@@ -48,6 +53,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color:"#000000",
     backgroundColor: '#fff',
+  },
+  multilineInput: {
+    height: 100,
+    textAlignVertical: 'top',
+    paddingTop: 10,
   },
 });
 

@@ -17,6 +17,8 @@ import UpdateEducation from '../Screens/ResumeSections/Education/UpdateEducation
 import Experience from '../Screens/ResumeSections/Experience';
 import AddExperience from '../Screens/ResumeSections/Experience/AddExperience';
 import UpdateExperience from '../Screens/ResumeSections/Experience/UpdateExperience';
+import Projects from '../Screens/ResumeSections/Projects';
+import AddProjects from '../Screens/ResumeSections/Projects/AddProjects';
 
 const Stack = createStackNavigator();
 
@@ -120,6 +122,24 @@ const StackNavigation = () => {
         }}
         />
         <Stack.Screen name="Update Experience" component={UpdateExperience}
+        options={{
+          headerShown:true,
+          headerStyle: {
+            backgroundColor: '#0096FF',
+          },
+          headerTintColor: '#FFFFFF',
+        }}
+        />
+        <Stack.Screen name="Projects" component={Projects}
+        options={{
+          headerShown:true,
+          headerStyle: {
+            backgroundColor: '#0096FF',
+          },
+          headerTintColor: '#FFFFFF',
+        }}
+        />
+        <Stack.Screen name="Add Projects" component={AddProjects}
         options={{
           headerShown:true,
           headerStyle: {
