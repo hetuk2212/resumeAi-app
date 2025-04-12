@@ -112,6 +112,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
   },
+  loader:{
+    flex:1,
+    alignItems:"center",
+    justifyContent:"center",
+  }
 });
 
 export default styles;

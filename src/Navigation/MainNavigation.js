@@ -19,6 +19,10 @@ import AddExperience from '../Screens/ResumeSections/Experience/AddExperience';
 import UpdateExperience from '../Screens/ResumeSections/Experience/UpdateExperience';
 import Projects from '../Screens/ResumeSections/Projects';
 import AddProjects from '../Screens/ResumeSections/Projects/AddProjects';
+import Objective from '../Screens/ResumeSections/Objective';
+import UpdateProjects from '../Screens/ResumeSections/Projects/UpdateProject';
+import Interests from '../Screens/ResumeSections/Interests';
+import AddInterests from '../Screens/ResumeSections/Interests/AddInterests';
 
 const Stack = createStackNavigator();
 
@@ -140,6 +144,42 @@ const StackNavigation = () => {
         }}
         />
         <Stack.Screen name="Add Projects" component={AddProjects}
+        options={{
+          headerShown:true,
+          headerStyle: {
+            backgroundColor: '#0096FF',
+          },
+          headerTintColor: '#FFFFFF',
+        }}
+        />
+        <Stack.Screen name="Objective" component={Objective}
+        options={{
+          headerShown:true,
+          headerStyle: {
+            backgroundColor: '#0096FF',
+          },
+          headerTintColor: '#FFFFFF',
+        }}
+        />
+        <Stack.Screen name="Update Projects" component={UpdateProjects}
+        options={{
+          headerShown:true,
+          headerStyle: {
+            backgroundColor: '#0096FF',
+          },
+          headerTintColor: '#FFFFFF',
+        }}
+        />
+        <Stack.Screen name="Interests" component={Interests}
+        options={{
+          headerShown:true,
+          headerStyle: {
+            backgroundColor: '#0096FF',
+          },
+          headerTintColor: '#FFFFFF',
+        }}
+        />
+        <Stack.Screen name="Add Interests" component={AddInterests}
         options={{
           headerShown:true,
           headerStyle: {

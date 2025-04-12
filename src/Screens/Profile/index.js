@@ -8,6 +8,7 @@ import {
   TextInput,
   Button,
   Switch,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './style';
@@ -15,6 +16,7 @@ import {Images} from '../../Assets/Images';
 import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getSpecificProfile} from '../../../lib/api';
 
 const sectionImages = {
   projects: Images.SectionProjects,
@@ -41,6 +43,8 @@ const Profile = () => {
 
   const [newSectionTitle, setNewSectionTitle] = useState('');
   const [showOptions, setShowOptions] = useState(false);
+  const [profileInfo, setProfileInfo] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const sections = [
     {id: 1, name: 'Personal Details', image: Images.SectionProfile},
@@ -180,79 +184,114 @@ const Profile = () => {
     </View>
   );
 
+  useEffect(() => {
+    if (resumeId) {
+      getResumeInfo();
+    }
+  }, [resumeId]);
+
+  const getResumeInfo = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getSpecificProfile(resumeId);
+
+      if (response.status === 200) {
+        const profile = response.data.profile;
+        setProfileInfo(profile);
+        setOptionalSections(prev => ({
+          ...prev,
+          interests:
+            Array.isArray(profile.interests) && profile.interests.length > 0,
+          achievements:
+            Array.isArray(profile.achievements) &&
+            profile.achievements.length > 0,
+          languages:
+            Array.isArray(profile.languages) && profile.languages.length > 0,
+        }));
+      }
+    } catch (error) {
+      console.log('Failed to fetch resume info:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <SafeAreaView style={styles.safeView}>
-      <View style={styles.container}>
-        <ScrollView
-          contentContainerStyle={{paddingHorizontal: 10, paddingBottom: 50}}>
-          {!showOptions && (
-            <>
-              {renderSection('Sections', sections)}
-              {renderSection(
-                'Optional Sections',
-                Object.entries(optionalSections)
-                  .filter(([_, isActive]) => isActive)
-                  .map(([key]) => ({
-                    id: `${key}-${Date.now()}`,
-                    name: key.charAt(0).toUpperCase() + key.slice(1),
-                    image: sectionImages[key] || Images.SectionInfo, // Use correct image
-                  })),
-                true,
-              )}
-              {renderSection('Manage Section', manageSections)}
-            </>
-          )}
-          {showOptions && (
-            <View style={styles.optionsContainer}>
-              <Text style={styles.sectionHeader}>Optional Sections</Text>
-              {Object.entries(optionalSections).map(([key, value]) => (
-                <View key={key} style={styles.optionalSectionRow}>
-                  <Text style={styles.sectionTitle}>
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </Text>
-                  <Switch
-                    value={value}
-                    onValueChange={() => toggleOptionalSection(key)}
-                  />
-                </View>
-              ))}
-              <Text style={styles.modalTitle}>Add New Section</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter section title"
-                value={newSectionTitle}
-                onChangeText={setNewSectionTitle}
-              />
-              <Button title="Add Section" onPress={addNewSection} />
-              <Button
-                title="Cancel"
-                color="red"
-                onPress={() => setShowOptions(false)}
-              />
-              {moreSections
-                .filter(section => section.isUserAdded)
-                .map(section => (
-                  <View key={section.id} style={styles.deleteSectionRow}>
-                    <Text style={styles.sectionTitle}>{section.name}</Text>
-                    <Button
-                      title="Delete"
-                      color="red"
-                      onPress={() => deleteSection(section.id)}
+      {isLoading ? (
+        <ActivityIndicator size="large" color="blue" style={styles.loader} />
+      ) : (
+        <View style={styles.container}>
+          <ScrollView
+            contentContainerStyle={{paddingHorizontal: 10, paddingBottom: 50}}>
+            {!showOptions && (
+              <>
+                {renderSection('Sections', sections)}
+                {renderSection(
+                  'Optional Sections',
+                  Object.entries(optionalSections)
+                    .filter(([_, isActive]) => isActive)
+                    .map(([key]) => ({
+                      id: `${key}-${Date.now()}`,
+                      name: key.charAt(0).toUpperCase() + key.slice(1),
+                      image: sectionImages[key] || Images.SectionInfo, // Use correct image
+                    })),
+                  true,
+                )}
+                {renderSection('Manage Section', manageSections)}
+              </>
+            )}
+            {showOptions && (
+              <View style={styles.optionsContainer}>
+                <Text style={styles.sectionHeader}>Optional Sections</Text>
+                {Object.entries(optionalSections).map(([key, value]) => (
+                  <View key={key} style={styles.optionalSectionRow}>
+                    <Text style={styles.sectionTitle}>
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </Text>
+                    <Switch
+                      value={value}
+                      onValueChange={() => toggleOptionalSection(key)}
                     />
                   </View>
                 ))}
-            </View>
-          )}
-        </ScrollView>
-        <TouchableOpacity
-          style={styles.viewBtn}
-          onPress={() => {
-            navigation.navigate('Choose Resume');
-          }}>
-          <Image source={Images.eye} style={styles.viewIcon} />
-          <Text style={styles.viewText}>View CV</Text>
-        </TouchableOpacity>
-      </View>
+                <Text style={styles.modalTitle}>Add New Section</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter section title"
+                  value={newSectionTitle}
+                  onChangeText={setNewSectionTitle}
+                />
+                <Button title="Add Section" onPress={addNewSection} />
+                <Button
+                  title="Cancel"
+                  color="red"
+                  onPress={() => setShowOptions(false)}
+                />
+                {moreSections
+                  .filter(section => section.isUserAdded)
+                  .map(section => (
+                    <View key={section.id} style={styles.deleteSectionRow}>
+                      <Text style={styles.sectionTitle}>{section.name}</Text>
+                      <Button
+                        title="Delete"
+                        color="red"
+                        onPress={() => deleteSection(section.id)}
+                      />
+                    </View>
+                  ))}
+              </View>
+            )}
+          </ScrollView>
+          <TouchableOpacity
+            style={styles.viewBtn}
+            onPress={() => {
+              navigation.navigate('Choose Resume');
+            }}>
+            <Image source={Images.eye} style={styles.viewIcon} />
+            <Text style={styles.viewText}>View CV</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

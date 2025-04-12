@@ -9,7 +9,7 @@ import {
   import React, {useEffect, useState} from 'react';
   import styles from './style';
   import Toast from 'react-native-toast-message';
-  import { deleteProjects, getProjects} from '../../../../lib/api';
+  import {deleteInterest, getInterests} from '../../../../lib/api';
   import AsyncStorage from '@react-native-async-storage/async-storage';
   import {useNavigation} from '@react-navigation/native';
   import {Images} from '../../../Assets/Images';
@@ -33,9 +33,9 @@ import {
     return <Animated.View style={[style, animatedStyle]} />;
   };
   
-  const Projects = () => {
+  const Interests = () => {
     const [resumeId, setResumeId] = useState(null);
-    const [projects, setProjects] = useState([]);
+    const [interests, setInterests] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
   
@@ -60,23 +60,23 @@ import {
   
     useEffect(() => {
       if (resumeId) {
-        getAllProjects();
+        getAllInterests();
       }
     }, [resumeId]);
   
-    const getAllProjects = async () => {
+    const getAllInterests = async () => {
       setLoading(true);
       setRefreshing(true);
       try {
-        const response = await getProjects(resumeId);
-        if (response.status === 200 && response.data?.projects) {
-          setProjects(response.data.projects);
+        const response = await getInterests(resumeId);
+        if (response.status === 200 && response.data?.interests) {
+          setInterests(response.data.interests);
         } else {
           console.log(response?.data?.message || 'Unexpected response.');
         }
       } catch (error) {
         console.error(
-          'Error fetching projects:',
+          'Error fetching interests:',
           error?.response?.data?.message || 'Something went wrong',
         );
       } finally {
@@ -86,21 +86,21 @@ import {
     };
   
     const handleEdit = item => {
-      navigation.navigate('Update Projects', {projectData: item});
+      navigation.navigate('Update Interests', {projectData: item});
     };
   
-    const handleDelete = async projectsId => {
+    const handleDelete = async interestId => {
       try {
-        const response = await deleteProjects({resumeId, projectsId});
+        const response = await deleteInterest({resumeId, interestId});
   
         if (response.status === 200) {
           Toast.show({
             type: 'success',
-            text1: 'Projects deleted successfully!',
+            text1: 'Interests deleted successfully!',
             text2: response?.data?.message || 'The entry has been removed.',
             position: 'bottom',
           });
-          getAllProjects();
+          getAllInterests();
         } else {
           Toast.show({
             type: 'error',
@@ -110,7 +110,7 @@ import {
           });
         }
       } catch (error) {
-        console.error('Error deleting projects:', error);
+        console.error('Error deleting interests:', error);
       }
     };
   
@@ -141,10 +141,10 @@ import {
       </View>
     );
   
-    const renderProjectsItem = ({ item }) => (
+    const renderInterestsItem = ({ item }) => (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.course}>{item.title}</Text>
+          <Text style={styles.course}>{item.interest}</Text>
           <View style={styles.iconRow}>
             <TouchableOpacity onPress={() => handleEdit(item)}>
               <Image source={Images.edit} style={styles.iconImage} />
@@ -159,14 +159,6 @@ import {
             </TouchableOpacity>
           </View>
         </View>
-    
-        {/* Project Description */}
-        <View style={styles.detailBox}>
-          <Text style={styles.labelText}>
-            <Text style={styles.label}>Description: </Text>
-            {item.description}
-          </Text>
-        </View>
       </View>
     );
     
@@ -175,10 +167,10 @@ import {
       <SafeAreaView style={styles.safeView}>
         <View style={styles.container}>
           <View style={styles.createNew}>
-            <Text style={styles.title}>Projects</Text>
+            <Text style={styles.title}>Interests</Text>
             <TouchableOpacity
               style={styles.addButton}
-              onPress={() => navigation.navigate('Add Projects')}>
+              onPress={() => navigation.navigate('Add Interests')}>
               <Image source={Images.add} style={styles.addIcon} />
               <Text style={styles.addText}>Add New</Text>
             </TouchableOpacity>
@@ -187,12 +179,12 @@ import {
             renderLoader()
           ) : (
             <FlatList
-              data={projects}
+              data={interests}
               keyExtractor={(item, index) => index.toString()}
-              renderItem={renderProjectsItem}
+              renderItem={renderInterestsItem}
               showsVerticalScrollIndicator={false}
               refreshing={refreshing}
-              onRefresh={getAllProjects}
+              onRefresh={getAllInterests}
             />
           )}
         </View>
@@ -200,5 +192,5 @@ import {
     );
   };
   
-  export default Projects;
+  export default Interests;
   
