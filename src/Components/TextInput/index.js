@@ -12,6 +12,7 @@ const CustomTextInput = ({
   editable = true,
   multiline = false,
   numberOfLines = 4, 
+  inputStyle = {}, 
 }) => {
   return (
     <View style={styles.container}>
@@ -20,6 +21,7 @@ const CustomTextInput = ({
         style={[
           styles.input,
           multiline && styles.multilineInput,
+          inputStyle
         ]}
         placeholder={placeholder}
         value={value}
@@ -28,6 +30,9 @@ const CustomTextInput = ({
         editable={editable}
         keyboardType={keyboardType}
         placeholderTextColor="#888"
+        multiline={multiline} // ✅ Important for multiline
+        numberOfLines={numberOfLines} // ✅ Apply this too
+        textAlignVertical={multiline ? 'top' : 'center'} // ✅ Ensures top-aligned for multiline
       />
        {errorMessage && <Text style={{ color: 'red', fontSize: 12 }}>{errorMessage}</Text>}
     </View>

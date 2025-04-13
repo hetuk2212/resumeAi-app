@@ -20,7 +20,7 @@ import {getSpecificProfile} from '../../../lib/api';
 
 const sectionImages = {
   projects: Images.SectionProjects,
-  'cover letter': Images.SectionLetter,
+  'cover Latter': Images.SectionLetter,
   'additional information': Images.SectionInfo,
   interests: Images.SectionInterests,
   achievements: Images.SectionAchievements,
@@ -33,7 +33,7 @@ const Profile = () => {
   const [moreSections, setMoreSections] = useState([]);
   const [optionalSections, setOptionalSections] = useState({
     projects: true,
-    'cover letter': true,
+    'Cover Latter': true,
     'additional information': true,
     interests: false,
     achievements: false,
@@ -125,6 +125,7 @@ const Profile = () => {
 
       return updatedSections;
     });
+    setShowOptions(false);
   };
 
   const deleteSection = sectionId => {
@@ -205,6 +206,9 @@ const Profile = () => {
           achievements:
             Array.isArray(profile.achievements) &&
             profile.achievements.length > 0,
+          activities:
+            Array.isArray(profile.activities) &&
+            profile.activities.length > 0,
           languages:
             Array.isArray(profile.languages) && profile.languages.length > 0,
         }));

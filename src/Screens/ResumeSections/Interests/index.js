@@ -86,7 +86,7 @@ import {
     };
   
     const handleEdit = item => {
-      navigation.navigate('Update Interests', {projectData: item});
+      navigation.navigate('Update Interest', {interestData: item});
     };
   
     const handleDelete = async interestId => {
