@@ -37,6 +37,7 @@ import Languages from '../Screens/ResumeSections/Languages';
 import AddLanguages from '../Screens/ResumeSections/Languages/AddLanguages';
 import UpdateLanguage from '../Screens/ResumeSections/Languages/UpdateLanguage';
 import CoverLatter from '../Screens/ResumeSections/CoverLatter';
+import ResumePreview from '../Screens/ResumePreview';
 
 const Stack = createStackNavigator();
 
@@ -55,7 +56,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -66,7 +67,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -77,7 +78,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -88,7 +89,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -99,7 +100,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -110,7 +111,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -121,7 +122,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -132,7 +133,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -143,7 +144,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -154,7 +155,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -165,7 +166,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -176,7 +177,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -187,7 +188,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -198,7 +199,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -209,7 +210,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -220,7 +221,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -231,7 +232,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -242,7 +243,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -253,7 +254,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -264,7 +265,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -275,7 +276,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -286,7 +287,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -297,7 +298,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -308,7 +309,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -319,7 +320,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -330,7 +331,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -341,7 +342,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -352,7 +353,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -363,7 +364,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -374,7 +375,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -385,7 +386,18 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#0096FF',
+              backgroundColor: '#1F2937',
+            },
+            headerTintColor: '#FFFFFF',
+          }}
+        />
+        <Stack.Screen
+          name="Resume Preview"
+          component={ResumePreview}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#1F2937',
             },
             headerTintColor: '#FFFFFF',
           }}

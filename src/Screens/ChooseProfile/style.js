@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     gap: 5,
     padding: 8,
     borderRadius: 30,
-    backgroundColor: '#0096FF',
+    backgroundColor: '#1F2937',
   },
   profileBtnText: {
     color: '#ffffff',
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     borderRadius: 30,
-    shadowColor: '#0096FF',
+    shadowColor: '#1F2937',
     shadowOffset: {width: 0, height: 5},
     shadowOpacity: 0.3,
     shadowRadius: 10,

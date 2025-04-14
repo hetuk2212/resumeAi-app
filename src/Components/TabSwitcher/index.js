@@ -45,10 +45,10 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 4,
-    borderColor: '#0096FF',
+    borderColor: '#1F2937',
   },
   activeTabText: {
-    color: '#0096FF',
+    color: '#1F2937',
     fontWeight: 'bold',
   },
 });

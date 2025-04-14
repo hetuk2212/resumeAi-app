@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   resumeBtnImg: {
     width: 60,
     height: 60,
+    tintColor:"#1F2937"
   },
   resumeBtnText: {
     fontSize: 16,

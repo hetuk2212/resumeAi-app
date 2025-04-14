@@ -207,8 +207,7 @@ const Profile = () => {
             Array.isArray(profile.achievements) &&
             profile.achievements.length > 0,
           activities:
-            Array.isArray(profile.activities) &&
-            profile.activities.length > 0,
+            Array.isArray(profile.activities) && profile.activities.length > 0,
           languages:
             Array.isArray(profile.languages) && profile.languages.length > 0,
         }));
@@ -289,7 +288,7 @@ const Profile = () => {
           <TouchableOpacity
             style={styles.viewBtn}
             onPress={() => {
-              navigation.navigate('Choose Resume');
+              navigation.navigate('Choose Resume', {resumeData: profileInfo});
             }}>
             <Image source={Images.eye} style={styles.viewIcon} />
             <Text style={styles.viewText}>View CV</Text>

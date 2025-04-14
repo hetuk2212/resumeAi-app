@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#0096FF',
+    backgroundColor: '#1F2937',
   },
   title: {
     fontSize: 18,

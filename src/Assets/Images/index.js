@@ -42,4 +42,5 @@ SectionInterests: require('../Images/section/sectionInterests.png'),
 SectionAchievements: require('../Images/section/sectionAchievements.png'),     
 SectionActivities: require('../Images/section/sectionActivities.png'),     
 SectionLanguages: require('../Images/section/sectionLanguages.png'),     
+simple1: require('../Images/resume/simple1.jpg'),     
 }

@@ -21,13 +21,13 @@ const BottomTabNavigation = () => {
   return (
     <>
       {/* Status bar that stays consistent */}
-      <StatusBar translucent backgroundColor="#0096FF" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="#1F2937" barStyle="light-content" />
 
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#0096FF' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#1F2937' }}>
         <Tab.Navigator
           screenOptions={{
             headerStyle: { 
-              backgroundColor: '#0096FF', 
+              backgroundColor: '#213555', 
             },
             headerTintColor: '#fff',
             headerTitleAlign: 'center',

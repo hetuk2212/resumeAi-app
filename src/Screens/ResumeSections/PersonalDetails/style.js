@@ -27,10 +27,10 @@ const styles = StyleSheet.create({
 
   activeTab: {
     borderBottomWidth: 4,
-    borderColor: '#0096FF',
+    borderColor: '#1F2937',
   },
   activeTabText: {
-    color: '#0096FF',
+    color: '#1F2937',
   },
   label: {
     fontSize: 16,
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     borderRadius: 30,
-    shadowColor: '#0096FF',
+    shadowColor: '#1F2937',
     shadowOffset: {width: 0, height: 5},
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   titleBox:{
-backgroundColor:"#0096FF",
+backgroundColor:"#1F2937",
 padding:10,
   },
   title:{
