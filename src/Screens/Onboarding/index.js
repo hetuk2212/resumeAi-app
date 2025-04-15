@@ -1,44 +1,75 @@
+import {
+  View,
+  Text,
+  StatusBar,
+} from 'react-native';
 import React from 'react';
-import {View, Text, Dimensions, Image, TouchableOpacity} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import Swiper from 'react-native-swiper';
-import {Images} from '../../Assets/Images';
-import {useNavigation} from '@react-navigation/native';
 import styles from './style';
+import LinearGradient from 'react-native-linear-gradient';
+import {useNavigation} from '@react-navigation/native';
+import SubmitBtn from '../../Components/SubmitBtn/Index';
+import ImageSliders from '../../Components/Slider/ImageSlider';
+import { Images } from '../../Assets/Images';
 
-const Onboarding = () => {
+const OnBoarding = () => {
   const navigation = useNavigation();
+  const [activeSlide, setActiveSlide] = React.useState(0);
+
   const slides = [
-    {image: Images.boarding1, text: 'Create a Professional Resume in Minutes!'},
+    {
+      image: Images.boarding1,
+      title: 'Smarter Resumes Better Jobs',
+      description: 'Our intelligent CV builder is designed to you stand out in today \'s competitive job market.',
+    },
     {
       image: Images.boarding2,
-      text: 'AI-Powered Resume Builder for Your Dream Job!',
+      title: 'Your Story, Your Style, Your CV',
+      description: 'Showcase your talent with a CV that\'s as unique as you are.',
     },
-    {image: Images.boarding3, text: 'Stand Out with a Stunning Resume!'},
+    {
+      image: Images.boarding3,
+      title: 'Design Your CV, Define Your Future',
+      description: 'Create professional, job-winning CVs in minutes with our easy-to-use builder.',
+    },
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Swiper
-        autoplay
-        loop
-        dotColor="#C4C4C4"
-        activeDotColor="#0194B5"
-        style={styles.swiper}>
-        {slides.map((slide, index) => (
-          <View key={index} style={styles.slide}>
-            <Image source={slide.image} style={styles.image} />
-            <Text style={styles.slogan}>{slide.text}</Text>
-          </View>
-        ))}
-      </Swiper>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>Get Started</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent={true}
+      />
+
+      <View style={styles.contentView}>
+        <View style={styles.sliderView}>
+          <ImageSliders
+            slides={slides}
+            onSlideChange={(index) => setActiveSlide(index)}
+          />
+          <LinearGradient
+            colors={['transparent', 'white']}
+            style={styles.gradientView}
+          />
+        </View>
+        <View style={styles.mainTitle}>
+          <Text style={styles.mainTitleText}>
+            {slides[activeSlide].title}
+          </Text>
+        </View>
+        <View style={styles.textView}>
+          <Text style={styles.textTitle}>
+            {slides[activeSlide].description}
+          </Text>
+          <SubmitBtn
+            buttonText="Get Started"
+            onPress={() => navigation.navigate('Login')}
+          />
+        </View>
+      </View>
+    </View>
   );
 };
 
-export default Onboarding;
+
+export default OnBoarding;

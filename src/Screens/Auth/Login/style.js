@@ -1,4 +1,5 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
+import Color from '../../../Theme/Color';
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -10,6 +11,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
+  },
+  mainTitle: {
+    color:Color.black,
+    fontSize: 40,
+    fontWeight: 'bold',
+    marginBottom:50
   },
   title: {
     fontSize: 28,
@@ -57,7 +64,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },

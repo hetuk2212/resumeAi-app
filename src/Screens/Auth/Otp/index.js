@@ -1,16 +1,22 @@
-import React, {useState, useRef} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useRef, useState} from 'react';
 import {
-  View,
+  ActivityIndicator,
+  Alert,
+  StatusBar,
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
-  Alert,
-  ActivityIndicator,
+  View,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+
 import {verifyOtp} from '../../../../lib/api';
+import {Images} from '../../../Assets/Images';
+import AuthTitle from '../../../Components/AuthTitle/Index';
+import SubmitBtn from '../../../Components/SubmitBtn/Index';
+
 import styles from './style';
 
 const Otp = () => {
@@ -69,7 +75,10 @@ const Otp = () => {
       });
 
       setTimeout(() => {
-        navigation.navigate('MainApp'); // Navigate after success
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'MainApp'}],
+        });
       }, 1000);
     } catch (error) {
       console.log('OTP Verification Failed:', error);
@@ -88,29 +97,44 @@ const Otp = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <Text style={styles.title}>Enter OTP</Text>
-        <Text style={styles.subtitle}>We've sent an OTP to {phone}</Text>
+        <AuthTitle
+          backImg={Images.BackIcon}
+          authTitle="OTP  Verification"
+          onPress={() => navigation.goBack()}
+        />
 
-        <View style={styles.otpContainer}>
-          {otp.map((digit, index) => (
-            <TextInput
-              key={index}
-              ref={ref => (inputRefs.current[index] = ref)}
-              style={styles.otpInput}
-              keyboardType="numeric"
-              maxLength={1}
-              value={digit}
-              onChangeText={value => handleOtpChange(index, value)}
-              onKeyPress={({nativeEvent}) =>
-                handleKeyPress(index, nativeEvent.key)
-              }
-            />
-          ))}
-        </View>
+        <View style={styles.formView}>
+          <Text style={styles.subtitle}>
+            We have sent a verification code to {phone}
+          </Text>
 
-        <TouchableOpacity
+          <View style={styles.otpContainer}>
+            {otp.map((digit, index) => (
+              <TextInput
+                key={index}
+                ref={ref => (inputRefs.current[index] = ref)}
+                style={styles.otpInput}
+                keyboardType="numeric"
+                maxLength={1}
+                value={digit}
+                onChangeText={value => handleOtpChange(index, value)}
+                onKeyPress={({nativeEvent}) =>
+                  handleKeyPress(index, nativeEvent.key)
+                }
+              />
+            ))}
+          </View>
+
+          <View style={styles.resendView}>
+            <Text>Didn't get the OTP ? </Text>
+            <TouchableOpacity>
+              <Text style={styles.resendOtp}>Resend OTP</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* <TouchableOpacity
           style={[styles.button, isLoading && styles.disabledButton]}
           onPress={handleVerifyOtp}
           disabled={isLoading}>
@@ -119,11 +143,14 @@ const Otp = () => {
           ) : (
             <Text style={styles.buttonText}>Verify OTP</Text>
           )}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity>
-          <Text style={styles.resendOtp}>Resend OTP</Text>
-        </TouchableOpacity>
+          <SubmitBtn
+            buttonText="Verify OTP"
+            onPress={handleVerifyOtp}
+            loading={isLoading}
+          />
+        </View>
       </View>
 
       <Toast />

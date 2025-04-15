@@ -1,45 +1,76 @@
-import {Dimensions, StyleSheet} from 'react-native';
-const {width, height} = Dimensions.get('window');
+import {StyleSheet} from 'react-native';
+import Color from '../../Theme/Color';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    width: '100%',
+    height:"100%"
+  },
+  boardingImage: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'red',
+  },
+  sliderView: {
+    height: '65%',
+    position: 'relative',
+  },
+  textView: {
+    backgroundColor: Color.white,
+    height: '35%',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 15,
   },
-  swiper: {
-    height: height * 0.5, // 60% of screen height
-  },
-  slide: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    width: width * 0.9,
-    height: height * 0.4, // 40% of screen height
-    resizeMode: 'contain',
-  },
-  slogan: {
-    fontSize: height * 0.025, // Responsive font size
-    fontWeight: 'bold',
+  textTitle: {
+    color: Color.greyText,
+    fontSize: 14,
+    fontWeight: '500',
+    width: '100%',
     textAlign: 'center',
-    marginTop: height * 0.02,
-    color: '#0194B5',
+    marginTop: 60,
+    marginBottom: 35,
   },
-  button: {
-    marginBottom: height * 0.05,
-    backgroundColor: '#1F2937',
-    paddingVertical: height * 0.015,
-    paddingHorizontal: width * 0.1,
-    borderRadius: 25,
+  loginText:{
+    marginTop:25,
+    color:Color.bottomText
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: height * 0.02,
+  blurView: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: '50%',
+  },  
+  gradientView: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: '50%',
+  },
+  mainTitle: {
+    position: 'absolute',
+    top: '65%', 
+    left: '50%', 
+    transform: [
+      { translateX: '-50%' },
+      { translateY: '-50%' }, 
+    ],
+    width: '80%', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  mainTitleText: {
+    fontSize: 28,
     fontWeight: 'bold',
+    textAlign: 'center',  
+    color: Color.primary,        
+    lineHeight: 32,
   },
+  signInText:{
+    fontSize:14,
+    fontWeight:"500",
+    color:Color.black
+  }
 });
-
 export default styles;

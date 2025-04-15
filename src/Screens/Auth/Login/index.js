@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -7,11 +7,12 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import PhoneInput from 'react-native-phone-number-input';
 import Toast from 'react-native-toast-message';
 import styles from './style';
 import {sendOtp} from '../../../../lib/api';
+import SubmitBtn from '../../../Components/SubmitBtn/Index';
 
 const {width} = Dimensions.get('window');
 
@@ -20,6 +21,13 @@ const Login = () => {
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const phoneInputRef = useRef(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Reset loading state when screen is focused
+      setIsLoading(false);
+    }, [])
+  );
 
   const handleContinue = async () => {
     if (isLoading) return;
@@ -65,6 +73,7 @@ const Login = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <Text style={styles.mainTitle}>Log In</Text>
         <Text style={styles.title}>Welcome to ResuMe.ai</Text>
         <Text style={styles.subtitle}>
           Build your professional resume easily
@@ -81,6 +90,10 @@ const Login = () => {
             containerStyle={[styles.phoneInputContainer, {width: width * 0.9}]}
             textContainerStyle={styles.phoneTextContainer}
             textInputStyle={styles.phoneTextInput}
+            textInputProps={{
+              placeholder: 'Enter Phone Number',
+              placeholderTextColor: '#999',
+            }}
             withDarkTheme
             withShadow
             autoFocus
@@ -93,7 +106,7 @@ const Login = () => {
           />
         </View>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.button, isLoading && styles.disabledButton]}
           onPress={handleContinue}
           disabled={isLoading}
@@ -104,7 +117,12 @@ const Login = () => {
           ) : (
             <Text style={styles.buttonText}>Continue</Text>
           )}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <SubmitBtn
+          buttonText="Continue"
+          onPress={handleContinue}
+          loading={isLoading}
+        />
       </View>
 
       <Toast />
