@@ -227,7 +227,7 @@ const ChooseProfile = () => {
             handleCreateNew();
           }}>
           <LinearGradient
-            colors={['#33abff', '#4db6ff', '#1aa1ff']}
+            colors={['#5F7591', '#A0ADC1', '#7F91A9']}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
             style={styles.gradientBtn}>

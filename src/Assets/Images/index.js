@@ -40,5 +40,6 @@ SectionAchievements: require('../Images/section/sectionAchievements.png'),
 SectionActivities: require('../Images/section/sectionActivities.png'),     
 SectionLanguages: require('../Images/section/sectionLanguages.png'),     
 simple1: require('../Images/resume/simple1.jpg'),     
-BackIcon: require('../Images/Icons/back.png'),     
+BackIcon: require('../Images/Icons/back.png'),
+HomeBox: require('../Images/Icons/homeBox.png'),
 }

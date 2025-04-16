@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import Color from '../../Theme/Color';
 
 const styles = StyleSheet.create({
   safeView: {
@@ -26,7 +27,7 @@ const styles = StyleSheet.create({
     width: 25,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#4db6ff',
+    backgroundColor: Color.primary,
     borderRadius: 50,
   },
   profileCountText: {
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     gap: 5,
     padding: 8,
     borderRadius: 30,
-    backgroundColor: '#1F2937',
+    backgroundColor: Color.primary,
   },
   profileBtnText: {
     color: '#ffffff',

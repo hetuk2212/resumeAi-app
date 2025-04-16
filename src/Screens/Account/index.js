@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,22 +6,44 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  StatusBar,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { logout } from '../../../lib/api';
+import {useNavigation} from '@react-navigation/native';
+import {logout} from '../../../lib/api';
 import Toast from 'react-native-toast-message';
-import { Images } from '../../Assets/Images';
+import {Images} from '../../Assets/Images';
 import styles from './style';
+import Color from '../../Theme/Color';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Account = () => {
   const navigation = useNavigation();
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('userData');
+        if (userData) {
+          const parsedData = JSON.parse(userData);
+          console.log('parsedData', parsedData.user.phone);
+          
+          setUserName(parsedData.user.username || parsedData.user.phone || 'User');
+        }
+      } catch (error) {
+        console.log('Error fetching user data:', error);
+      }
+    };
+
+    getUserData();
+  }, []);
 
   const handleLogout = async () => {
     Alert.alert(
       'Logout',
       'Are you sure you want to log out?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        {text: 'Cancel', style: 'cancel'},
         {
           text: 'Logout',
           onPress: async () => {
@@ -39,7 +61,7 @@ const Account = () => {
               setTimeout(() => {
                 navigation.reset({
                   index: 0,
-                  routes: [{ name: 'Login' }],
+                  routes: [{name: 'Login'}],
                 });
               }, 1000);
             } catch (error) {
@@ -53,70 +75,71 @@ const Account = () => {
           },
         },
       ],
-      { cancelable: true }
+      {cancelable: true},
     );
   };
 
   return (
     <SafeAreaView style={styles.safeContainer}>
+      <StatusBar
+        translucent
+        backgroundColor={Color.primary}
+        barStyle="light-content"
+      />
       <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image source={Images.back} style={styles.icon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
-            <Image source={Images.edit} style={styles.icon} />
-          </TouchableOpacity>
-        </View>
-
         {/* Profile Section */}
         <View style={styles.profileSection}>
           <Image source={Images.profileAccount} style={styles.profileImage} />
-          <Text style={styles.userName}>John Doe</Text>
-          <Text style={styles.userEmail}>johndoe@example.com</Text>
+          <View style={styles.profileInfo}>
+            <Text style={styles.userName}>Profiles</Text>
+            <Text style={styles.userEmail}>{userName}</Text>
+          </View>
         </View>
 
         {/* Account Options */}
         <View style={styles.buttonContainer}>
-          <Text style={styles.buttonTitle}>My Account</Text>
-          <TouchableOpacity
-            style={styles.option}
-            onPress={() => navigation.navigate('AccountDetails')}>
-            <Image source={Images.profile} style={styles.icon} />
-            <Text style={styles.optionText}>View Account Details</Text>
-          </TouchableOpacity>
+          <Text style={styles.buttonTitle}>Account Settings</Text>
+          <View style={styles.optionContainer}>
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => navigation.navigate('AccountDetails')}>
+              <Image source={Images.profile} style={styles.icon} />
+              <Text style={styles.optionText}>View Account Details</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.option}
-            onPress={() => navigation.navigate('Settings')}>
-            <Image source={Images.policy} style={styles.icon} />
-            <Text style={styles.optionText}>Privacy Policy</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => navigation.navigate('Settings')}>
+              <Image source={Images.policy} style={styles.icon} />
+              <Text style={styles.optionText}>Privacy Policy</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.option}
-            onPress={() => navigation.navigate('Settings')}>
-            <Image source={Images.settings} style={styles.icon} />
-            <Text style={styles.optionText}>Account Settings</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => navigation.navigate('Settings')}>
+              <Image source={Images.settings} style={styles.icon} />
+              <Text style={styles.optionText}>Account Settings</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* More Options */}
         <View style={styles.buttonContainer}>
-          <Text style={styles.buttonTitle}>More</Text>
+          <Text style={styles.buttonTitle}>More Settings</Text>
 
-          <TouchableOpacity style={styles.option}>
-            <Image source={Images.support} style={styles.icon} />
-            <Text style={styles.optionText}>Support & Help</Text>
-          </TouchableOpacity>
+          <View style={styles.optionContainer}>
+            <TouchableOpacity style={styles.option}>
+              <Image source={Images.support} style={styles.icon} />
+              <Text style={styles.optionText}>Support & Help</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
+            <TouchableOpacity
             style={[styles.option, styles.logout]}
-            onPress={handleLogout}>
-            <Image source={Images.logout} style={styles.icon} />
-            <Text style={[styles.optionText, { color: 'red' }]}>Logout</Text>
-          </TouchableOpacity>
+              onPress={handleLogout}>
+              <Image source={Images.logout} style={styles.icon} />
+              <Text style={[styles.optionText, {color: 'red'}]}>Logout</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 

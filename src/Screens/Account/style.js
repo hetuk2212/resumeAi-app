@@ -20,30 +20,35 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   profileSection: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 15,
+    borderWidth: 1.5,
+    padding: 10,
+    borderRadius: 10,
     marginBottom: 30,
+    borderColor: 'gray',
   },
   profileImage: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 50,
-    marginBottom: 10,
   },
   userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 16,
+    color: '#666',
   },
   userEmail: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 20,
+    color: '#333',
+    fontWeight: 'bold',
   },
   buttonContainer: {
     marginBottom: 10,
   },
   buttonTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '400',
   },
   option: {
     flexDirection: 'row',
@@ -66,6 +71,13 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
+  optionContainer:{
+    borderWidth:1.5,
+    borderColor:"gray",
+    padding:10,
+    borderRadius:10,
+    marginTop:10
+  }
 });
 
 export default styles;

@@ -38,6 +38,7 @@ import AddLanguages from '../Screens/ResumeSections/Languages/AddLanguages';
 import UpdateLanguage from '../Screens/ResumeSections/Languages/UpdateLanguage';
 import CoverLatter from '../Screens/ResumeSections/CoverLatter';
 import ResumePreview from '../Screens/ResumePreview';
+import Color from '../Theme/Color';
 
 const Stack = createStackNavigator();
 
@@ -56,7 +57,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary
             },
             headerTintColor: '#FFFFFF',
           }}

@@ -18,6 +18,7 @@ import AuthTitle from '../../../Components/AuthTitle/Index';
 import SubmitBtn from '../../../Components/SubmitBtn/Index';
 
 import styles from './style';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Otp = () => {
   const navigation = useNavigation();
@@ -44,7 +45,7 @@ const Otp = () => {
   };
 
   const handleVerifyOtp = async () => {
-    if (isLoading) return; // Prevent multiple requests
+    if (isLoading) return;
 
     const otpCode = otp.join('');
     if (otpCode.length !== 4) {
@@ -66,6 +67,10 @@ const Otp = () => {
       const response = await verifyOtp(payload);
 
       console.log('OTP Verification Success:', response);
+
+      const userData = response;
+
+      AsyncStorage.setItem('userData', JSON.stringify(userData));
 
       Toast.show({
         type: 'success',
