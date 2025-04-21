@@ -270,60 +270,60 @@ body {
     </div>
 
     <div class="details">
-        <div class="section">
+        ${
+          data.experience.length > 0
+            ? `<div class="section">
             <div class="section__title">Experience</div>
             <div class="section__list">
+            ${data.experience
+              .map(
+                item => `
                 <div class="section__list-item">
-                    <div class="left">
-                        <div class="name">KlowdBox</div>
-                        <div class="addr">San Fr, CA</div>
-                        <div class="duration">Jan 2011 - Feb 2015</div>
-                    </div>
-                    <div class="right">
-                        <div class="name">Front-End Developer</div>
-                        <div class="desc">Developed web applications using HTML, CSS, and JavaScript.</div>
-                    </div>
+                  <div class="left">
+                      <div class="name">${item.company}</div>
+                      <div class="addr">${item.location || 'N/A'}</div>
+                      <div class="duration">${new Date(
+                        item.startDate,
+                      ).toLocaleDateString()} - ${new Date(
+                  item.endDate,
+                ).toLocaleDateString()}</div>
+                  </div>
+                  <div class="right">
+                      <div class="name">${item.position}</div>
+                      <div class="desc">${item.description}</div>
+                  </div>
                 </div>
-                <div class="section__list-item">
-                    <div class="left">
-                        <div class="name">Akount</div>
-                        <div class="addr">San Monica, CA</div>
-                        <div class="duration">Jan 2011 - Feb 2015</div>
-                    </div>
-                    <div class="right">
-                        <div class="name">Front-End Developer</div>
-                        <div class="desc">Built interactive user interfaces and optimized website performance.</div>
-                    </div>
-                </div>
+              `,
+              )
+              .join('')}            
             </div>
-        </div>
+        </div>`
+            : ''
+        }
         
         <!-- Education Section -->
         <div class="section">
             <div class="section__title">Education</div>
             <div class="section__list">
+                ${data.education
+                  .map(
+                    edu => `
                 <div class="section__list-item">
                     <div class="left">
-                        <div class="name">Sample Institute of Technology</div>
-                        <div class="addr">San Fr, CA</div>
-                        <div class="duration">Jan 2011 - Feb 2015</div>
+                        <div class="name">${edu.university}</div>
+                        <div class="addr">${edu.location || 'N/A'}</div>
+                        <div class="duration">${edu.startYear} - ${
+                      edu.endYear
+                    }</div>
                     </div>
                     <div class="right">
                         <div class="name">Bachelor of Science in Computer Science</div>
                         <div class="desc">Graduated with honors, specializing in front-end development.</div>
                     </div>
                 </div>
-                <div class="section__list-item">
-                    <div class="left">
-                        <div class="name">Akount</div>
-                        <div class="addr">San Monica, CA</div>
-                        <div class="duration">Jan 2011 - Feb 2015</div>
-                    </div>
-                    <div class="right">
-                        <div class="name">Fr Developer</div>
-                        <div class="desc">Learned full-stack development and honed problem-solving skills.</div>
-                    </div>
-                </div>
+              `,
+                  )
+                  .join('')}            
             </div>
         </div>
 
@@ -331,14 +331,16 @@ body {
         <div class="section">
             <div class="section__title">Projects</div>
             <div class="section__list">
+            ${data.projects
+              .map(
+                item => `
                 <div class="section__list-item">
-                    <div class="name">DSP</div>
-                    <div class="text">Developed a responsive front-end web application for managing data streams. <a href="https://example.com">View project</a></div>
-                </div>
-                <div class="section__list-item">
-                    <div class="name">E-Commerce Website</div>
-                    <div class="text">Created a full-stack e-commerce platform with React and Node.js.</div>
-                </div>
+                    <div class="name">${item.title}</div>
+                    <div class="text">${item.description} <a href="https://example.com">View project</a></div>
+                  </div>
+            `,
+              )
+              .join('')} 
             </div>
         </div>
 
@@ -346,23 +348,45 @@ body {
         <div class="section">
             <div class="section__title">Skills</div>
             <div class="skills">
-                <div class="skills__item">
+            ${data.skills
+              .map(skill => {
+                const totalStars = 5;
+                const checked = skill.rating;
+                const unchecked = totalStars - checked;
+
+                const checkedBoxes = Array(checked)
+                  .fill('')
+                  .map(
+                    (_, index) => `
+                    <input id="${skill.skillName}-checked-${index}" type="checkbox" checked/>
+                    <label for="${skill.skillName}-checked-${index}"></label>
+                  `,
+                  )
+                  .join('');
+
+                const uncheckedBoxes = Array(unchecked)
+                  .fill('')
+                  .map(
+                    (_, index) => `
+                    <input id="${skill.skillName}-unchecked-${index}" type="checkbox"/>
+                    <label for="${skill.skillName}-unchecked-${index}"></label>
+                  `,
+                  )
+                  .join('');
+
+                return `
+                  <div class="skills__item">
                     <div class="left">
-                        <div class="name">JavaScript</div>
+                      <div class="name">${skill.skillName}</div>
                     </div>
                     <div class="right">
-                        <input id="ck1" type="checkbox" checked/>
-                        <label for="ck1"></label>
-                        <input id="ck2" type="checkbox" checked/>
-                        <label for="ck2"></label>
-                        <input id="ck3" type="checkbox"/>
-                        <label for="ck3"></label>
-                        <input id="ck4" type="checkbox"/>
-                        <label for="ck4"></label>
-                        <input id="ck5" type="checkbox"/>
-                        <label for="ck5"></label>
+                      ${checkedBoxes + uncheckedBoxes}
                     </div>
-                </div>
+                  </div>
+                `;
+              })
+              .join('')}
+            
             </div>
         </div>
 
@@ -370,7 +394,12 @@ body {
         <div class="section">
             <div class="section__title">Interests</div>
             <div class="section__list">
-                <div class="section__list-item">Football, programming.</div>
+            ${data.interests
+              .map(
+                interest =>
+                  `<div class="section__list-item">${interest.interest}</div>`,
+              )
+              .join('')}
             </div>
         </div>
     </div>

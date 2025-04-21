@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     top: 10,
   },
   profileImg: {
-    width: 100,
-    height: 100,
+    width: 70,
+    height: 70,
     borderRadius: 50,
   },
   profileName: {
@@ -50,10 +50,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#000000',
   },
-  profileDateView: {
+  profileInfoView:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-center',
     width: '100%',
-    height: 20,
-    marginTop: 10,
+    gap: 15,
+    marginLeft: 50,
+  },
+  profileInfoDetails:{
+    flexDirection: 'column',
+    alignItems: 'start',
+    justifyContent: 'space-center',
+    width: '100%',
+  },
+  profileDateView: {
+  
   },
   profileBtnView: {
     flexDirection: 'row',
@@ -77,10 +89,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: '500',
   },
-  profileDate: {
-    position: 'absolute',
-    right: 5,
-  },
+ 
   createBtnView: {
     position: 'absolute',
     bottom: 30,

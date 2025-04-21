@@ -38,7 +38,7 @@ const Skills = () => {
   const [skills, setSkills] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  console.log(skills);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -143,26 +143,51 @@ const Skills = () => {
     </View>
   );
 
-  const renderSkillsItem = ({item}) => (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.course}>{item.skillName}</Text>
-        <View style={styles.iconRow}>
-          <TouchableOpacity onPress={() => handleEdit(item)}>
-            <Image source={Images.edit} style={styles.iconImage} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleDelete(item._id)}
-            style={{marginLeft: 15}}>
-            <Image
-              source={Images.delete}
-              style={[styles.iconImage, {tintColor: 'red'}]}
-            />
-          </TouchableOpacity>
+  const renderSkillsItem = ({item}) => {
+    const renderStars = (rating = 0) => {
+      return [...Array(5)].map((_, index) => (
+        <Text
+          key={index}
+          style={{
+            color: index < rating ? '#facc15' : '#e5e7eb',
+            fontSize: 14,
+            marginRight: 2,
+          }}>
+          ★
+        </Text>
+      ));
+    };
+  
+    return (
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.course}>{item.skillName}</Text>
+          <View style={styles.iconRow}>
+            <TouchableOpacity onPress={() => handleEdit(item)}>
+              <Image source={Images.edit} style={styles.iconImage} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleDelete(item._id)}
+              style={{marginLeft: 15}}>
+              <Image
+                source={Images.delete}
+                style={[styles.iconImage, {tintColor: 'red'}]}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
+  
+        {/* Show rating */}
+        {item.rating > 0 && (
+          <View style={styles.ratingDisplay}>
+            <View style={styles.starsRow}>{renderStars(item.rating)}</View>
+            <Text style={styles.ratingText}>{item.rating}/5</Text>
+          </View>
+        )}
       </View>
-    </View>
-  );
+    );
+  };
+  
 
   return (
     <SafeAreaView style={styles.safeView}>

@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import Color from '../../../../Theme/Color';
 
 const styles = StyleSheet.create({
   safeView: {
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#1F2937',
+    backgroundColor: Color.primary,
   },
   title: {
     fontSize: 18,

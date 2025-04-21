@@ -9,6 +9,7 @@ import {
   Button,
   Switch,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './style';
@@ -17,6 +18,7 @@ import {useNavigation} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getSpecificProfile} from '../../../lib/api';
+import Color from '../../Theme/Color';
 
 const sectionImages = {
   projects: Images.SectionProjects,
@@ -158,6 +160,7 @@ const Profile = () => {
   const renderSection = (title, items, showAddButton = false) => (
     <View style={styles.sectionContainer}>
       <Text style={styles.sectionHeader}>{title}</Text>
+      <View style={styles.sectionBtnContainer}>
       {[
         ...items,
         showAddButton && {
@@ -182,6 +185,7 @@ const Profile = () => {
             <Text style={styles.sectionTitle}>{item.name}</Text>
           </TouchableOpacity>
         ))}
+      </View>
     </View>
   );
 
@@ -220,6 +224,11 @@ const Profile = () => {
   };
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        translucent
+        backgroundColor={Color.primary}
+        barStyle="light-content"
+      />
       {isLoading ? (
         <ActivityIndicator size="large" color="blue" style={styles.loader} />
       ) : (

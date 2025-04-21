@@ -1,4 +1,5 @@
 import {StyleSheet, Platform} from 'react-native';
+import Color from '../../Theme/Color';
 
 const styles = StyleSheet.create({
   safeView: {
@@ -10,11 +11,14 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   sectionBtn: {
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    flexDirection: 'row',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    flexDirection: 'column',
     alignItems: 'center',
-    gap: 12,
+    justifyContent: 'center',
+    gap: 8,
+    width: "30%",
+    aspectRatio: 1,
     backgroundColor: '#FFFFFF',
     marginBottom: 12,
     borderRadius: 12,
@@ -30,14 +34,23 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  sectionBtnContainer:{
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 12,
+    gap: 12,
+  },
   sectionBtnImg: {
     width: 28,
     height: 28,
+    tintColor: Color.primary
   },
   sectionTitle: {
     fontWeight: '600',
-    fontSize: 17,
+    fontSize: 14,
     color: '#333',
+    textAlign: 'center',
   },
   sectionContainer: {
     marginBottom: 22,

@@ -1,6 +1,6 @@
-import {View, Text, SafeAreaView} from 'react-native';
+import {View, Text, SafeAreaView, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles from '../style';
+import styles from './style';
 import CustomTextInput from '../../../../Components/TextInput';
 import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
@@ -15,6 +15,7 @@ const UpdateSkill = () => {
 
   const [form, setForm] = useState({
     skill: skillData?.skillName || '',
+    rating: skillData?.rating || 0,
   });
 
   const [resumeId, setResumeId] = useState(null);
@@ -59,6 +60,7 @@ const UpdateSkill = () => {
         skillId: skillData._id,
         data: {
           skillName: form.skill,
+          rating: form.rating,
         },
       });
 
@@ -114,6 +116,24 @@ const UpdateSkill = () => {
             onChangeText={text => handleInputChange('skill', text)}
             errorMessage={errors.skill}
           />
+          <View style={styles.ratingContainer}>
+  <Text style={styles.ratingLabel}>Rating:</Text>
+  <View style={styles.ratingRow}>
+    {[1, 2, 3, 4, 5].map(level => (
+      <TouchableOpacity
+        key={level}
+        style={[
+          styles.ratingCircle,
+          form.rating === level && styles.ratingCircleActive,
+        ]}
+        onPress={() => handleInputChange('rating', level)}
+      >
+        <Text style={styles.ratingText}>{level}</Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+</View>
+
           <ActionButtons
             onSave={handleSave}
             saveIcon={Images.check}

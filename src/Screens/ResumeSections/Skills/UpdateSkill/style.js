@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import Color from '../../../../Theme/Color';
 
 const styles = StyleSheet.create({
   safeView: {
@@ -29,11 +30,41 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '500',
-    color: '#ffffff',
+    color: Color.black,
   },
   formDetails: {
     padding: 10,
   },
+  ratingContainer: {
+    marginVertical: 20,
+  },
+  ratingLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 8,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  ratingCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ratingCircleActive: {
+    backgroundColor: '#4caf50',
+    borderColor: '#4caf50',
+  },
+  ratingText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  
 });
 
 export default styles;

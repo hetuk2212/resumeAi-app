@@ -68,7 +68,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -79,7 +79,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -90,7 +90,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -101,7 +101,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -112,7 +112,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -123,7 +123,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -134,7 +134,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -145,7 +145,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -156,7 +156,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -167,7 +167,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -178,7 +178,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -189,7 +189,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -200,7 +200,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -211,7 +211,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -222,7 +222,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -233,7 +233,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -244,7 +244,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -255,7 +255,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -266,7 +266,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -277,7 +277,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -288,7 +288,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -299,7 +299,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -310,7 +310,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -321,7 +321,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -332,7 +332,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -343,7 +343,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -354,7 +354,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -365,7 +365,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -376,7 +376,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -387,7 +387,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}
@@ -398,7 +398,7 @@ const StackNavigation = () => {
           options={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: '#1F2937',
+              backgroundColor: Color.primary,
             },
             headerTintColor: '#FFFFFF',
           }}

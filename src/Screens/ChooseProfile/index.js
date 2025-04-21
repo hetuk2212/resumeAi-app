@@ -173,7 +173,9 @@ const ChooseProfile = () => {
           </TouchableOpacity>
         </View>
       )}
+      <View style={styles.profileInfoView}>
       <Image source={Images.profileAccount} style={styles.profileImg} />
+      <View style={styles.profileInfoDetails}>
       <Text style={styles.profileName}>
         {item.personalInfo?.fullName || 'N/A'}
       </Text>
@@ -184,6 +186,8 @@ const ChooseProfile = () => {
         <Text style={styles.profileDate}>
           {new Date(item.createdAt).toLocaleString()}
         </Text>
+      </View>
+      </View>
       </View>
       <View style={styles.profileBtnView}>
         <TouchableOpacity

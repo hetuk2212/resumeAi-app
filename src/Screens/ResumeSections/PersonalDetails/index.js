@@ -169,6 +169,7 @@ const PersonalDetails = () => {
         setAddress(data?.address || '');
         setEmail(data?.email || '');
         setPhone(data?.phone || '');
+        setProfileImage(data?.profileImage || null);
         setFieldValues(prev => ({
           ...prev,
           'Date of Birth': data?.dateOfBirth || '',
@@ -235,6 +236,7 @@ const PersonalDetails = () => {
       address,
       email,
       phone,
+      profileImage,
       dateOfBirth: fieldValues['Date of Birth'] || '',
       nationality: fieldValues['Nationality'] || '',
       gender: fieldValues['Gender'] || '',
@@ -300,6 +302,7 @@ const PersonalDetails = () => {
       address,
       email,
       phone,
+      profileImage,
       dateOfBirth: fieldValues['Date of Birth'] || '',
       nationality: fieldValues['Nationality'] || '',
       gender: fieldValues['Gender'] || '',
@@ -439,9 +442,7 @@ const PersonalDetails = () => {
                         <View style={styles.profileImgBtnView}>
                           <TouchableOpacity
                             style={styles.profileBtnChange}
-                            onPress={() => {
-                              handleImagePick();
-                            }}>
+                            onPress={handleImagePick}>
                             <LinearGradient
                               colors={['#33abff', '#4db6ff', '#1aa1ff']}
                               start={{x: 0, y: 0}}
@@ -452,9 +453,7 @@ const PersonalDetails = () => {
                           </TouchableOpacity>
                           <TouchableOpacity
                             style={styles.profileBtnRemove}
-                            onPress={() => {
-                              handleRemoveImage();
-                            }}>
+                            onPress={handleRemoveImage}>
                             <LinearGradient
                               colors={['#ff9800', '#ff7300', '#ff5722']}
                               start={{x: 0, y: 0}}

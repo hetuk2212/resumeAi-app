@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import Color from '../../../Theme/Color';
 
 const styles = StyleSheet.create({
   safeView: {
@@ -23,12 +24,11 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1F2937',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#1F2937',
+    borderColor: Color.primary,
   },
   addIcon: {
     width: 20,

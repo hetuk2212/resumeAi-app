@@ -124,6 +124,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     backgroundColor: '#e0e0e0',
   },
+  ratingDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  starsRow: {
+    flexDirection: 'row',
+    marginRight: 8,
+  },
+  ratingText: {
+    fontSize: 12,
+    color: '#555',
+  },  
 });
 
 export default styles;
