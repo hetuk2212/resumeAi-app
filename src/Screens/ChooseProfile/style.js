@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   profileBox: {
-    padding: 15,
+    padding: 20,
     alignItems: 'center',
     backgroundColor: '#ffffff',
     elevation: 5,
@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-center',
     width: '100%',
     gap: 15,
+    paddingVertical: 10,
     marginLeft: 50,
   },
   profileInfoDetails:{

@@ -27,7 +27,14 @@ const Home = () => {
 
     getUserData();
   }, []);
-
+  const handleCreateNewResume = async () => {
+    try {
+      await AsyncStorage.removeItem('profileId');
+      navigation.navigate('Profile');
+    } catch (error) {
+      console.log('Error removing profileId:', error);
+    }
+  };
   return (
     <SafeAreaView style={styles.safeView}>
       <StatusBar
@@ -51,17 +58,20 @@ const Home = () => {
         </View>
 
         <View style={styles.resumeView}>
+          
+          <TouchableOpacity style={styles.resumeBtn} onPress={() => {
+            handleCreateNewResume();
+          }}>
+            <Image source={Images.edit} style={styles.resumeBtnImg} />
+            <Text style={styles.resumeBtnText}>Create New</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.resumeBtn}
             onPress={() => {
               navigation.navigate('Choose Profile');
             }}>
-            <Image source={Images.edit} style={styles.resumeBtnImg} />
-            <Text style={styles.resumeBtnText}>Create</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.resumeBtn}>
-            <Image source={Images.ai} style={styles.resumeBtnImg} />
-            <Text style={styles.resumeBtnText}>Create With AI</Text>
+            <Image source={Images.ViewAll} style={styles.resumeBtnImg} />
+            <Text style={styles.resumeBtnText}>View All Resumes</Text>
           </TouchableOpacity>
         </View>
       </View>

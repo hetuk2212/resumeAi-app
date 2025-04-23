@@ -109,14 +109,14 @@ const ChooseProfile = () => {
       });
     }
   };
-  const handleCreateNew = async () => {
-    try {
-      await AsyncStorage.removeItem('profileId');
-      navigation.navigate('Profile');
-    } catch (error) {
-      console.log('Error removing profileId:', error);
-    }
-  };
+  // const handleCreateNew = async () => {
+  //   try {
+  //     await AsyncStorage.removeItem('profileId');
+  //     navigation.navigate('Profile');
+  //   } catch (error) {
+  //     console.log('Error removing profileId:', error);
+  //   }
+  // };
   const handleEdit = async (profileId) => {
     try {
       await AsyncStorage.setItem('profileId', profileId);
@@ -224,7 +224,7 @@ const ChooseProfile = () => {
           />
         )}
       </View>
-      <View style={styles.createBtnView}>
+      {/* <View style={styles.createBtnView}>
         <TouchableOpacity
           style={styles.createBtn}
           onPress={() => {
@@ -239,7 +239,7 @@ const ChooseProfile = () => {
             <Text style={styles.createText}>Create New Profile</Text>
           </LinearGradient>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

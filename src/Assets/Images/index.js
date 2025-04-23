@@ -42,4 +42,5 @@ SectionLanguages: require('../Images/section/sectionLanguages.png'),
 simple1: require('../Images/resume/simple1.jpg'),     
 BackIcon: require('../Images/Icons/back.png'),
 HomeBox: require('../Images/Icons/homeBox.png'),
+ViewAll: require('../Images/Icons/viewAll.png'),
 }
