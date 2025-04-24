@@ -34,6 +34,35 @@ const styles = StyleSheet.create({
   formDetails: {
     padding: 10,
   },
+  ratingContainer: {
+    marginVertical: 20,
+  },
+  ratingLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 8,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  ratingCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ratingCircleActive: {
+    backgroundColor: '#4caf50',
+    borderColor: '#4caf50',
+  },
+  ratingText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

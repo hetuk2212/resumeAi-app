@@ -48,8 +48,8 @@ import { addLanguages } from '../../../../../lib/api';
     const handleAdd = () => {
       const newForm = {
         id: Date.now(),
-        title: '',
-        description: '',
+        language: '',
+        rating: 0,
       };
       setLanguagesForms(prevForms => {
         const updatedForms = [...prevForms, newForm];
@@ -92,6 +92,7 @@ import { addLanguages } from '../../../../../lib/api';
   
       const formattedLanguages = LanguagesForms.map(form => ({
         language: form.language || '',
+        rating: form.rating || 0,
       }));
   
       const body = {languages: formattedLanguages};
@@ -178,6 +179,23 @@ import { addLanguages } from '../../../../../lib/api';
                       }
                       errorMessage={errors[`${index}_language`]}
                     />
+                    <View style={styles.ratingContainer}>
+  <Text style={styles.ratingLabel}>Rating:</Text>
+  <View style={styles.ratingRow}>
+    {[1, 2, 3, 4, 5].map(level => (
+      <TouchableOpacity
+        key={level}
+        style={[
+          styles.ratingCircle,
+          form.rating === level && styles.ratingCircleActive,
+        ]}
+        onPress={() => handleInputChange(form.id, 'rating', level)}
+      >
+        <Text style={styles.ratingText}>{level}</Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+</View>
                   </View>
                 </View>
               ))}

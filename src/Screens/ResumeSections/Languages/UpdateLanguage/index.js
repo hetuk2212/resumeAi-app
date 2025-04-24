@@ -1,6 +1,6 @@
-import {View, Text, SafeAreaView} from 'react-native';
+import {View, Text, SafeAreaView, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles from '../style';
+import styles from './style';
 import CustomTextInput from '../../../../Components/TextInput';
 import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
@@ -12,9 +12,11 @@ import {updateLanguage} from '../../../../../lib/api';
 const UpdateLanguage = () => {
   const route = useRoute();
   const {languageData} = route.params || '';
+  
 
   const [form, setForm] = useState({
     language: languageData?.language || '',
+    rating: languageData?.rating || 0,
   });
 
   const [resumeId, setResumeId] = useState(null);
@@ -59,6 +61,7 @@ const UpdateLanguage = () => {
         languageId: languageData._id,
         data: {
           language: form.language,
+          rating: form.rating,
         },
       });
 
@@ -114,11 +117,29 @@ const UpdateLanguage = () => {
             onChangeText={text => handleInputChange('language', text)}
             errorMessage={errors.language}
           />
+          <View style={styles.ratingContainer}>
+  <Text style={styles.ratingLabel}>Rating:</Text>
+  <View style={styles.ratingRow}>
+    {[1, 2, 3, 4, 5].map(level => (
+      <TouchableOpacity
+        key={level}
+        style={[
+          styles.ratingCircle,
+          form.rating === level && styles.ratingCircleActive,
+        ]}
+        onPress={() => handleInputChange('rating', level)}
+      >
+        <Text style={styles.ratingText}>{level}</Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+</View>
           <ActionButtons
             onSave={handleSave}
             saveIcon={Images.check}
             loading={loading}
           />
+          
         </View>
       </View>
     </SafeAreaView>

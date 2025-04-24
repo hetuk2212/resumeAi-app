@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1F2937',
+    backgroundColor: '#1F293710',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
@@ -123,6 +123,19 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginBottom: 8,
     backgroundColor: '#e0e0e0',
+  },
+  ratingDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  starsRow: {
+    flexDirection: 'row',
+    marginRight: 8,
+  },
+  ratingText: {
+    fontSize: 12,
+    color: '#555',
   },
 });
 

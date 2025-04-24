@@ -26,6 +26,7 @@ import {
 } from '../../../../lib/api';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const PersonalDetails = () => {
   const [activeTab, setActiveTab] = useState('PersonalDetails');
@@ -34,7 +35,10 @@ const PersonalDetails = () => {
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState({
+    uri: null,
+    data: null
+  });
   const [fieldValues, setFieldValues] = useState({});
   const [loading, setIsLoading] = useState(false);
   const [loadingProfile, setIsLoadingProfile] = useState(false);
@@ -63,19 +67,6 @@ const PersonalDetails = () => {
     {label: 'Occupation', key: 'occupation', isActive: false, value: ''},
     {label: 'Hobbies', key: 'hobbies', isActive: false, value: ''},
   ]);
-
-  // const handleSave = () => {
-  //   const formData = {
-  //     name,
-  //     address,
-  //     email,
-  //     phone,
-  //     profileImage,
-  //     fieldValues,
-  //   };
-
-  //   console.log('Form Data:', formData);
-  // };
 
   const handleToggle = index => {
     const updatedFields = [...fields];
@@ -119,22 +110,32 @@ const PersonalDetails = () => {
     return unsubscribe;
   }, [navigation, activePage]);
 
-  const handleImagePick = () => {
-    ImagePicker.openPicker({
-      width: 300,
-      height: 300,
-      cropping: true,
-      cropperCircleOverlay: true,
-      mediaType: 'photo',
-    })
-      .then(image => {
-        setProfileImage(image.path);
-      })
-      .catch(error => {
-        if (error.code !== 'E_PICKER_CANCELLED') {
-          console.log('Image picker error:', error);
-        }
+  const handleImagePick = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 300,
+        height: 300,
+        cropping: true,
+        cropperCircleOverlay: true,
+        mediaType: 'photo',
+        includeBase64: true,
+        compressImageQuality: 0.8,
       });
+
+      setProfileImage({
+        uri: image.path,
+        data: image.data ? `data:${image.mime};base64,${image.data}` : null
+      });
+    } catch (error) {
+      if (error.code !== 'E_PICKER_CANCELLED') {
+        console.log('Image picker error:', error);
+        Toast.show({
+          type: 'error',
+          text1: 'Image Error',
+          text2: 'Failed to select image',
+        });
+      }
+    }
   };
 
   const handleRemoveImage = () => {
@@ -146,7 +147,7 @@ const PersonalDetails = () => {
         {
           text: 'Remove',
           style: 'destructive',
-          onPress: () => setProfileImage(null),
+          onPress: () => setProfileImage({ uri: null, data: null }),
         },
       ],
     );
@@ -159,17 +160,19 @@ const PersonalDetails = () => {
   const getResumeInfo = async resumeId => {
     setIsLoadingProfile(true);
     try {
-      console.log('Getting Resume Info for ID:', resumeId);
       const response = await getSpecificProfile(resumeId);
 
       if (response.status === 200) {
-        console.log('as', response.data.profile.personalInfo);
         const data = response.data.profile.personalInfo;
         setName(data?.fullName || '');
         setAddress(data?.address || '');
         setEmail(data?.email || '');
         setPhone(data?.phone || '');
-        setProfileImage(data?.profileImage || null);
+        setProfileImage({
+          uri: data?.profileImage || null,
+          data: data?.profileImage || null
+        });
+        
         setFieldValues(prev => ({
           ...prev,
           'Date of Birth': data?.dateOfBirth || '',
@@ -198,14 +201,6 @@ const PersonalDetails = () => {
           };
         });
         setFields(updatedFields);
-
-        const newFieldValues = {};
-        updatedFields.forEach(field => {
-          newFieldValues[field.label] = field.value;
-        });
-        setFieldValues(newFieldValues);
-      } else {
-        console.log(response);
       }
     } catch (error) {
       console.log('Failed to fetch resume info:', error);
@@ -213,14 +208,13 @@ const PersonalDetails = () => {
       setIsLoadingProfile(false);
     }
   };
+
   useEffect(() => {
     const checkAndFetchResumeInfo = async () => {
       const resumeId = await AsyncStorage.getItem('profileId');
       setResumeId(resumeId);
       if (resumeId) {
         getResumeInfo(resumeId);
-      } else {
-        console.log('Resume ID not found in AsyncStorage.');
       }
     };
 
@@ -231,129 +225,104 @@ const PersonalDetails = () => {
     setIsLoading(true);
     setErrors({});
 
-    const formData = {
-      fullName: name,
-      address,
-      email,
-      phone,
-      profileImage,
-      dateOfBirth: fieldValues['Date of Birth'] || '',
-      nationality: fieldValues['Nationality'] || '',
-      gender: fieldValues['Gender'] || '',
-      maritalStatus: fieldValues['Marital Status'] || '',
-      website: fieldValues['Website'] || '',
-      linkedIn: fieldValues['LinkedIn'] || '',
-      facebook: fieldValues['Facebook'] || '',
-      twitter: fieldValues['Twitter'] || '',
-      religion: fieldValues['Religion'] || '',
-      passport: fieldValues['Passport'] || '',
-      drivingLicense: fieldValues['Driving License'] || '',
-      salary: fieldValues['Salary'] || '',
-    };
+    const formData = new FormData();
+    formData.append('fullName', name);
+    formData.append('address', address);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    
+    if (profileImage.data) {
+      formData.append('profileImage', {
+        uri: profileImage.uri,
+        type: 'image/jpeg',
+        name: 'profile.jpg'
+      });
+    }
+
+    // Append other fields
+    Object.entries(fieldValues).forEach(([key, value]) => {
+      if (value) formData.append(key, value);
+    });
 
     try {
       const response = await addPersonalInfo(formData);
-      console.log('Response from API:', response);
-
+      console.log(response);
+      
       if (response.status === 201) {
-        AsyncStorage.setItem('profileId', response.data.profile._id);
+        await AsyncStorage.setItem('profileId', response.data.profile._id);
         navigation.navigate('Profile');
         Toast.show({
           type: 'success',
-          text1: response.data.message || 'Profile saved successfully!',
-          text2: 'Your details have been saved successfully.',
+          text1: 'Profile saved successfully!',
           position: 'bottom',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Unexpected Error',
-          text2: 'Something went wrong, please try again.',
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
       if (error.response?.status === 400 && error.response?.data?.errors) {
         let errorObj = {};
         error.response.data.errors.forEach(err => {
           errorObj[err.path] = err.msg;
         });
-
         setErrors(errorObj);
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
+          text2: 'Something went wrong, try again.',
         });
       }
     } finally {
       setIsLoading(false);
     }
   };
+
   const handleUpdate = async () => {
     setIsLoading(true);
     setErrors({});
     const resumeId = await AsyncStorage.getItem('profileId');
-    const formData = {
-      fullName: name,
-      address,
-      email,
-      phone,
-      profileImage,
-      dateOfBirth: fieldValues['Date of Birth'] || '',
-      nationality: fieldValues['Nationality'] || '',
-      gender: fieldValues['Gender'] || '',
-      maritalStatus: fieldValues['Marital Status'] || '',
-      website: fieldValues['Website'] || '',
-      linkedIn: fieldValues['LinkedIn'] || '',
-      facebook: fieldValues['Facebook'] || '',
-      twitter: fieldValues['Twitter'] || '',
-      religion: fieldValues['Religion'] || '',
-      passport: fieldValues['Passport'] || '',
-      drivingLicense: fieldValues['Driving License'] || '',
-      salary: fieldValues['Salary'] || '',
-    };
-    console.log('Form Data:', formData);
+
+    const formData = new FormData();
+    formData.append('fullName', name);
+    formData.append('address', address);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    
+    if (profileImage.data) {
+      formData.append('profileImage', {
+        uri: profileImage.uri,
+        type: 'image/jpeg',
+        name: 'profile.jpg'
+      });
+    }
+
+    // Append other fields
+    Object.entries(fieldValues).forEach(([key, value]) => {
+      if (value) formData.append(key, value);
+    });
 
     try {
-      const response = await updateProfile({formData, resumeId});
-      console.log('Response from API:', response);
-
+      const response = await updateProfile({ formData, resumeId });
+      
       if (response.status === 200) {
-        AsyncStorage.setItem('profileId', response.data.profile._id);
         navigation.navigate('Profile');
         Toast.show({
           type: 'success',
-          text1: response.data.message || 'Profile saved successfully!',
-          text2: 'Your details have been saved successfully.',
+          text1: 'Profile updated successfully!',
           position: 'bottom',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Unexpected Error',
-          text2: 'Something went wrong, please try again.',
         });
       }
     } catch (error) {
-      console.log('Error response 2:', error.response?.data);
-
       if (error.response?.status === 400 && error.response?.data?.errors) {
         let errorObj = {};
         error.response.data.errors.forEach(err => {
           errorObj[err.path] = err.msg;
         });
-
         setErrors(errorObj);
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
+          text2: 'Failed to update profile',
         });
       }
     } finally {
@@ -432,12 +401,11 @@ const PersonalDetails = () => {
                       <Text style={styles.label}>Photo (optional)</Text>
                       <View style={styles.profileImgView}>
                         <Image
-                          source={
-                            profileImage
-                              ? {uri: profileImage}
-                              : Images.profileAccount
-                          }
+                          source={profileImage.uri ? { uri: profileImage.uri } : Images.profileAccount}
                           style={styles.userProfile}
+                          onError={() => (
+                            <Image source={Images.profileAccount} style={styles.userProfile} />
+                          )}
                         />
                         <View style={styles.profileImgBtnView}>
                           <TouchableOpacity

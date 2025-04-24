@@ -6,16 +6,16 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import styles from './style';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import TabSwitcher from '../../../../Components/TabSwitcher';
 import ActionButtons from '../../../../Components/ActionButtons';
-import { Images } from '../../../../Assets/Images';
+import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
-import { addSkills } from '../../../../../lib/api';
+import {addSkills} from '../../../../../lib/api';
 
 const AddSkills = () => {
   const [activeTab, setActiveTab] = useState('Skills');
@@ -61,7 +61,7 @@ const AddSkills = () => {
   const handleInputChange = (id, field, value) => {
     setSkillsForms(prevForms => {
       const updatedForms = prevForms.map(form =>
-        form.id === id ? { ...form, [field]: value } : form,
+        form.id === id ? {...form, [field]: value} : form,
       );
       return updatedForms;
     });
@@ -95,12 +95,12 @@ const AddSkills = () => {
       rating: form.rating || 0,
     }));
 
-    const body = { skills: formattedSkills };
+    const body = {skills: formattedSkills};
 
     console.log(body);
 
     try {
-      const response = await addSkills({ resumeId, body });
+      const response = await addSkills({resumeId, body});
       console.log('Response from API:', response);
 
       if (response.status === 201) {
@@ -150,15 +150,15 @@ const AddSkills = () => {
       <View style={styles.container}>
         <TabSwitcher
           tabs={[
-            { key: 'Skills', label: 'Skills' },
-            { key: 'Example', label: 'Example' },
+            {key: 'Skills', label: 'Skills'},
+            {key: 'Example', label: 'Example'},
           ]}
           onTabChange={tabKey => setActiveTab(tabKey)}
         />
 
         {activeTab === 'Skills' && (
           <ScrollView
-            contentContainerStyle={{ paddingBottom: 100 }}
+            contentContainerStyle={{paddingBottom: 100}}
             showsVerticalScrollIndicator={false}>
             {skillsForms.map((form, index) => (
               <View key={form.id} style={styles.formBox}>
@@ -180,23 +180,23 @@ const AddSkills = () => {
                     errorMessage={errors[`${index}_skill`]}
                   />
                   <View style={styles.ratingContainer}>
-  <Text style={styles.ratingLabel}>Rating:</Text>
-  <View style={styles.ratingRow}>
-    {[1, 2, 3, 4, 5].map(level => (
-      <TouchableOpacity
-        key={level}
-        style={[
-          styles.ratingCircle,
-          form.rating === level && styles.ratingCircleActive,
-        ]}
-        onPress={() => handleInputChange(form.id, 'rating', level)}
-      >
-        <Text style={styles.ratingText}>{level}</Text>
-      </TouchableOpacity>
-    ))}
-  </View>
-</View>
-
+                    <Text style={styles.ratingLabel}>Rating:</Text>
+                    <View style={styles.ratingRow}>
+                      {[1, 2, 3, 4, 5].map(level => (
+                        <TouchableOpacity
+                          key={level}
+                          style={[
+                            styles.ratingCircle,
+                            form.rating === level && styles.ratingCircleActive,
+                          ]}
+                          onPress={() =>
+                            handleInputChange(form.id, 'rating', level)
+                          }>
+                          <Text style={styles.ratingText}>{level}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
                 </View>
               </View>
             ))}

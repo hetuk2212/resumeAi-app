@@ -143,7 +143,21 @@ const Languages = () => {
     </View>
   );
 
-  const renderLanguagesItem = ({item}) => (
+  const renderLanguagesItem = ({item}) => {
+    const renderStars = (rating = 0) => {
+      return [...Array(5)].map((_, index) => (
+        <Text
+          key={index}
+          style={{
+            color: index < rating ? '#facc15' : '#e5e7eb',
+            fontSize: 14,
+            marginRight: 2,
+          }}>
+          ★
+        </Text>
+      ));
+    };
+    return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <Text style={styles.course}>{item.language}</Text>
@@ -161,8 +175,15 @@ const Languages = () => {
           </TouchableOpacity>
         </View>
       </View>
+      {item.rating > 0 && (
+          <View style={styles.ratingDisplay}>
+            <View style={styles.starsRow}>{renderStars(item.rating)}</View>
+            <Text style={styles.ratingText}>{item.rating}/5</Text>
+          </View>
+        )}
     </View>
   );
+};
 
   return (
     <SafeAreaView style={styles.safeView}>

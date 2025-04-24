@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   ratingText: {
     color: '#fff',
     fontWeight: 'bold',
-  },  
+  },
 });
 
 export default styles;
