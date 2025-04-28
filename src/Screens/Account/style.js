@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import Color from '../../Theme/Color';
 
 const styles = StyleSheet.create({
   safeContainer: {
@@ -70,6 +71,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 24,
     height: 24,
+    tintColor: Color.primary,
   },
   optionContainer:{
     borderWidth:1.5,

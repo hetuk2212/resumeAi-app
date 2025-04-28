@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {logout} from '../../../lib/api';
+import {deleteUser, logout} from '../../../lib/api';
 import Toast from 'react-native-toast-message';
 import {Images} from '../../Assets/Images';
 import styles from './style';
@@ -27,8 +27,10 @@ const Account = () => {
         if (userData) {
           const parsedData = JSON.parse(userData);
           console.log('parsedData', parsedData.user.phone);
-          
-          setUserName(parsedData.user.username || parsedData.user.phone || 'User');
+
+          setUserName(
+            parsedData.user.username || parsedData.user.phone || 'User',
+          );
         }
       } catch (error) {
         console.log('Error fetching user data:', error);
@@ -37,6 +39,50 @@ const Account = () => {
 
     getUserData();
   }, []);
+
+  const handleDeleteUser = () => {
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to permanently delete your account? This action cannot be undone.',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await deleteUser();
+              console.log('response', response);
+  
+              Toast.show({
+                type: 'success',
+                text1: 'Account Deleted',
+                text2: 'Your account has been deleted successfully.',
+                position: 'bottom',
+              });
+  
+              setTimeout(() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{name: 'Login'}],
+                });
+              }, 1000);
+            } catch (error) {
+              console.log('Error deleting user:', error);
+              Toast.show({
+                type: 'error',
+                text1: 'Delete Failed',
+                text2: error.response?.data?.message || 'Something went wrong!',
+                position: 'bottom',
+              });
+            }
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+  
 
   const handleLogout = async () => {
     Alert.alert(
@@ -57,7 +103,6 @@ const Account = () => {
                 position: 'bottom',
               });
 
-              // Navigate to Login screen after a short delay
               setTimeout(() => {
                 navigation.reset({
                   index: 0,
@@ -132,11 +177,20 @@ const Account = () => {
               <Image source={Images.support} style={styles.icon} />
               <Text style={styles.optionText}>Support & Help</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.option, {borderColor: 'red'}]}
+              onPress={handleDeleteUser}>
+              <Image source={Images.delete} style={styles.icon} />
+              <Text style={styles.optionText}>Delete Account</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
-            style={[styles.option, styles.logout]}
+              style={[styles.option, styles.logout]}
               onPress={handleLogout}>
-              <Image source={Images.logout} style={styles.icon} />
+              <Image
+                source={Images.logout}
+                style={[styles.icon, {tintColor: 'red'}]}
+              />
               <Text style={[styles.optionText, {color: 'red'}]}>Logout</Text>
             </TouchableOpacity>
           </View>
