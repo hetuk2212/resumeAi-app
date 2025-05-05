@@ -42,6 +42,16 @@ const Languages = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+
+      navigation.navigate('Profile');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     const getResumeId = async () => {
       try {
         const id = await AsyncStorage.getItem('profileId');
@@ -143,6 +153,17 @@ const Languages = () => {
     </View>
   );
 
+  const renderEmptyComponent = () => (
+    <View style={styles.emptyContainer}>
+      <Image 
+        source={Images.noData}
+        style={styles.emptyImage}
+      />
+      <Text style={styles.emptyText}>No Languages Found</Text>
+      <Text style={styles.emptySubText}>Add your languages details to get started</Text>
+    </View>
+  );
+  
   const renderLanguagesItem = ({item}) => {
     const renderStars = (rating = 0) => {
       return [...Array(5)].map((_, index) => (
@@ -207,6 +228,7 @@ const Languages = () => {
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={getAllLanguages}
+            ListEmptyComponent={renderEmptyComponent}
           />
         )}
       </View>

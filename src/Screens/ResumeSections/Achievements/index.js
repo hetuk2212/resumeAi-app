@@ -42,6 +42,16 @@ const Achievements = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+
+      navigation.navigate('Profile');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     const getResumeId = async () => {
       try {
         const id = await AsyncStorage.getItem('profileId');
@@ -143,6 +153,17 @@ const Achievements = () => {
     </View>
   );
 
+  const renderEmptyComponent = () => (
+    <View style={styles.emptyContainer}>
+      <Image 
+        source={Images.noData}
+        style={styles.emptyImage}
+      />
+      <Text style={styles.emptyText}>No Achievements Found</Text>
+      <Text style={styles.emptySubText}>Add your achievements details to get started</Text>
+    </View>
+  );
+
   const renderAchievementsItem = ({item}) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -189,6 +210,7 @@ const Achievements = () => {
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={getAllAchievements}
+            ListEmptyComponent={renderEmptyComponent}
           />
         )}
       </View>

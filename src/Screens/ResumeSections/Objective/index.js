@@ -103,6 +103,7 @@ const Objective = () => {
             {key: 'Objective', label: 'Objective'},
             {key: 'Example', label: 'Example'},
           ]}
+          value={activeTab}
           onTabChange={tabKey => setActiveTab(tabKey)}
         />
 
@@ -131,6 +132,7 @@ const Objective = () => {
               onSave={handleSave}
               saveIcon={Images.check}
               hideAdd
+              loading={loading}
             />
           </ScrollView>
         )}

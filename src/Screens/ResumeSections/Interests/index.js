@@ -40,6 +40,16 @@ import {
     const [loading, setLoading] = useState(false);
   
     const navigation = useNavigation();
+
+    useEffect(() => {
+      const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+        e.preventDefault();
+  
+        navigation.navigate('Profile');
+      });
+  
+      return unsubscribe;
+    }, [navigation]);
   
     useEffect(() => {
       const getResumeId = async () => {
@@ -140,6 +150,17 @@ import {
         ))}
       </View>
     );
+
+    const renderEmptyComponent = () => (
+      <View style={styles.emptyContainer}>
+        <Image 
+          source={Images.noData}
+          style={styles.emptyImage}
+        />
+        <Text style={styles.emptyText}>No Interests Found</Text>
+        <Text style={styles.emptySubText}>Add your interests details to get started</Text>
+      </View>
+    );
   
     const renderInterestsItem = ({ item }) => (
       <View style={styles.card}>
@@ -185,6 +206,7 @@ import {
               showsVerticalScrollIndicator={false}
               refreshing={refreshing}
               onRefresh={getAllInterests}
+              ListEmptyComponent={renderEmptyComponent}
             />
           )}
         </View>

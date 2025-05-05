@@ -19,7 +19,13 @@ import { addAchievements } from '../../../../../lib/api';
   
   const AddAchievements = () => {
     const [activeTab, setActiveTab] = useState('Achievements');
-    const [achievementsForms, setAchievementsForms] = useState([]);
+    const [achievementsForms, setAchievementsForms] = useState([
+      {
+        id: Date.now(),
+        title: '',
+        description: '',
+      }
+    ]);
     const [resumeId, setResumeId] = useState(null);
     const [loading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -152,13 +158,16 @@ import { addAchievements } from '../../../../../lib/api';
               {key: 'Achievements', label: 'Achievements'},
               {key: 'Example', label: 'Example'},
             ]}
+            value={activeTab}
             onTabChange={tabKey => setActiveTab(tabKey)}
           />
   
           {activeTab === 'Achievements' && (
             <ScrollView
               contentContainerStyle={{paddingBottom: 100}}
-              showsVerticalScrollIndicator={false}>
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="always"
+              >
               {achievementsForms.map((form, index) => (
                 <View key={form.id} style={styles.formBox}>
                   <View style={styles.titleView}>
@@ -186,6 +195,7 @@ import { addAchievements } from '../../../../../lib/api';
                 onSave={handleSave}
                 addIcon={Images.add}
                 saveIcon={Images.check}
+                loading={loading}
               />
             </ScrollView>
           )}

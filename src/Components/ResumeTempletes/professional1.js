@@ -10,10 +10,12 @@ import {
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS from 'react-native-fs';
 import Pdf from 'react-native-pdf';
+import Toast from 'react-native-toast-message';
 
 const professional1 = ({data}) => {
   const [pdfPath, setPdfPath] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
   const fullName = data.personalInfo.fullName;
   const [firstName, lastName] = fullName.split(' ');
   useEffect(() => {
@@ -430,19 +432,49 @@ body {
   const downloadPDF = async () => {
     if (!pdfPath) return;
 
-    const downloadPath =
-      Platform.OS === 'android'
-        ? `/storage/emulated/0/Download/Resume.pdf`
-        : pdfPath;
-
     try {
-      if (Platform.OS === 'android') {
-        await RNFS.copyFile(pdfPath, downloadPath);
+      setDownloading(true);
+
+      // Create downloads directory if it doesn't exist
+      const downloadsDir = Platform.select({
+        android: `${RNFS.ExternalStorageDirectoryPath}/Download`,
+        ios: RNFS.DocumentDirectoryPath,
+      });
+
+      // Check if downloads directory exists, create if not
+      const dirExists = await RNFS.exists(downloadsDir);
+      if (!dirExists) {
+        await RNFS.mkdir(downloadsDir);
       }
-      Alert.alert('PDF Saved', `Saved to: ${downloadPath}`);
+
+      const fileName = `Resume_${fullName.replace(/\s+/g, '_')}.pdf`;
+      const destinationPath = `${downloadsDir}/${fileName}`;
+
+      // Check if file exists and delete if it does
+      const fileExists = await RNFS.exists(destinationPath);
+      if (fileExists) {
+        await RNFS.unlink(destinationPath);
+      }
+
+      // Copy the file to downloads
+      await RNFS.copyFile(pdfPath, destinationPath);
+
+      if (Platform.OS === 'android') {
+        // Scan the file so it appears in Downloads immediately
+        await RNFS.scanFile(destinationPath);
+      }
+
+      Toast.show({
+        type: 'success',
+        text1: 'Resume successfully downloaded!',
+        text2: `Resume saved to Downloads as ${fileName}`,
+        position: 'bottom',
+      });
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to save PDF');
+      console.error('PDF Download Error:', error);
+      showToast('Failed to save PDF to Downloads');
+    } finally {
+      setDownloading(false);
     }
   };
 

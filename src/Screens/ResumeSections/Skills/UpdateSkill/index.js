@@ -53,7 +53,12 @@ const UpdateSkill = () => {
   };
 
   const handleSave = async () => {
+    if (!form.skill.trim()) {
+      setErrors({ skill: 'Skill name is required' });
+      return;
+    }
     setLoading(true);
+
     try {
       const response = await updateSkill({
         resumeId,
@@ -85,11 +90,8 @@ const UpdateSkill = () => {
       console.log('Error response:', error.response?.data);
 
       if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          errorObj[err.path] = err.msg;
-        });
-        setErrors(errorObj);
+        
+        setErrors(response?.data?.errorsrorObj);
       } else {
         Toast.show({
           type: 'error',

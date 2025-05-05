@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import Color from '../../../Theme/Color';
 
 const styles = StyleSheet.create({
   safeView: {
@@ -23,12 +24,11 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1F2937',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#1F2937',
+    borderColor: Color.primary,
   },
   addIcon: {
     width: 20,
@@ -123,6 +123,31 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginBottom: 8,
     backgroundColor: '#e0e0e0',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  emptyImage: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginBottom: 20,
+    tintColor: Color.primary,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    paddingHorizontal: 40,
   },
 });
 

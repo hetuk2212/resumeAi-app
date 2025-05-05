@@ -19,7 +19,11 @@ import { addInterests } from '../../../../../lib/api';
   
   const AddInterests = () => {
     const [activeTab, setActiveTab] = useState('Interests');
-    const [interestsForms, setInterestsForms] = useState([]);
+    const [interestsForms, setInterestsForms] = useState([{
+      id: Date.now(),
+      title: '',
+      description: '',
+    }]);
     const [resumeId, setResumeId] = useState(null);
     const [loading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -124,7 +128,7 @@ import { addInterests } from '../../../../../lib/api';
         if (error.response?.status === 400 && error.response?.data?.errors) {
           let errorObj = {};
           error.response.data.errors.forEach(err => {
-            const match = err.path.match(/Interests\[(\d+)\]\.(\w+)/);
+            const match = err.path.match(/interests\[(\d+)\]\.(\w+)/);
             if (match) {
               const [, index, field] = match;
               errorObj[`${index}_${field}`] = err.msg;
@@ -152,6 +156,7 @@ import { addInterests } from '../../../../../lib/api';
               {key: 'Interests', label: 'Interests'},
               {key: 'Example', label: 'Example'},
             ]}
+            value={activeTab}
             onTabChange={tabKey => setActiveTab(tabKey)}
           />
   
@@ -186,6 +191,7 @@ import { addInterests } from '../../../../../lib/api';
                 onSave={handleSave}
                 addIcon={Images.add}
                 saveIcon={Images.check}
+                loading={loading}
               />
             </ScrollView>
           )}

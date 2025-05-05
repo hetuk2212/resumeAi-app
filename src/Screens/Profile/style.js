@@ -97,10 +97,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 14,
-    backgroundColor: '#1F2937',
+    backgroundColor: Color.primary,
     position: 'absolute',
     width: '100%',
     bottom: 0,
+    gap: 10,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     ...Platform.select({

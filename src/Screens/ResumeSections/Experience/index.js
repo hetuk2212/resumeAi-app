@@ -43,6 +43,16 @@ const Experience = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+
+      navigation.navigate('Profile');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     const getResumeId = async () => {
       try {
         const id = await AsyncStorage.getItem('profileId');
@@ -141,7 +151,16 @@ const Experience = () => {
       ))}
     </View>
   );
-
+  const renderEmptyComponent = () => (
+    <View style={styles.emptyContainer}>
+      <Image 
+        source={Images.noData}
+        style={styles.emptyImage}
+      />
+      <Text style={styles.emptyText}>No Experience Found</Text>
+      <Text style={styles.emptySubText}>Add your experience details to get started</Text>
+    </View>
+  );
   const renderExperienceItem = ({item}) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -209,6 +228,7 @@ const Experience = () => {
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={getAllExperience}
+            ListEmptyComponent={renderEmptyComponent}
           />
         )}
       </View>

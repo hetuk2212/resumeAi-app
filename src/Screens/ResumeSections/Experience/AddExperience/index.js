@@ -19,12 +19,23 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { addExperience } from '../../../../../lib/api';
 const AddExperience = () => {
   const [activeTab, setActiveTab] = useState('Experience');
-  const [experienceForms, setExperienceForms] = useState([]);
+  const [experienceForms, setExperienceForms] = useState([
+    {
+      id: Date.now(),
+      course: '',
+      school: '',
+      grade: '',
+      startYear: '',
+      endYear: '',
+    },
+  ]);
   const [resumeId, setResumeId] = useState(null);
   const [loading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [datePickerVisible, setDatePickerVisible] = useState({}); // { [formId_field]: true }
+  const [datePickerVisible, setDatePickerVisible] = useState({});
   const [selectedDates, setSelectedDates] = useState({});
+
+  
 
   const showDatePicker = (formId, field) => {
     setDatePickerVisible({[`${formId}_${field}`]: true});
@@ -175,6 +186,7 @@ const AddExperience = () => {
             {key: 'Experience', label: 'Experience'},
             {key: 'Example', label: 'Example'},
           ]}
+          value={activeTab}
           onTabChange={tabKey => setActiveTab(tabKey)}
         />
 
@@ -294,6 +306,7 @@ const AddExperience = () => {
               onSave={handleSave}
               addIcon={Images.add}
               saveIcon={Images.check}
+              isLoading={loading}
             />
           </ScrollView>
         )}

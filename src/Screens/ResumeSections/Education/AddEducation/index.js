@@ -19,7 +19,16 @@ import CustomTextInput from '../../../../Components/TextInput';
 
 const AddEducation = () => {
   const [activeTab, setActiveTab] = useState('Education');
-  const [educationForms, setEducationForms] = useState([]);
+  const [educationForms, setEducationForms] = useState([
+    {
+      id: Date.now(),
+      course: '',
+      school: '',
+      grade: '',
+      startYear: '',
+      endYear: '',
+    },
+  ]);
   const [resumeId, setResumeId] = useState(null);
   const [loading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -159,6 +168,7 @@ const AddEducation = () => {
             {key: 'Education', label: 'Education'},
             {key: 'Example', label: 'Example'},
           ]}
+          value={activeTab}
           onTabChange={tabKey => setActiveTab(tabKey)}
         />
 
@@ -227,9 +237,10 @@ const AddEducation = () => {
             ))}
             <ActionButtons
               onAdd={handleAdd}
-              onSave={handleSave}
+              onSave={educationForms.length > 0 ? handleSave : null} 
               addIcon={Images.add}
               saveIcon={Images.check}
+              loading={loading}
             />
           </ScrollView>
         )}

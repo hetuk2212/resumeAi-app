@@ -40,6 +40,16 @@ import {
     const [loading, setLoading] = useState(false);
   
     const navigation = useNavigation();
+
+    useEffect(() => {
+      const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+        e.preventDefault();
+  
+        navigation.navigate('Profile');
+      });
+  
+      return unsubscribe;
+    }, [navigation]);
   
     useEffect(() => {
       const getResumeId = async () => {
@@ -141,6 +151,17 @@ import {
       </View>
     );
   
+    const renderEmptyComponent = () => (
+      <View style={styles.emptyContainer}>
+        <Image 
+          source={Images.noData}
+          style={styles.emptyImage}
+        />
+        <Text style={styles.emptyText}>No Projects Found</Text>
+        <Text style={styles.emptySubText}>Add your projects details to get started</Text>
+      </View>
+    );
+
     const renderProjectsItem = ({ item }) => (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
@@ -193,6 +214,7 @@ import {
               showsVerticalScrollIndicator={false}
               refreshing={refreshing}
               onRefresh={getAllProjects}
+              ListEmptyComponent={renderEmptyComponent}
             />
           )}
         </View>

@@ -42,6 +42,16 @@ const Skills = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+
+      navigation.navigate('Profile');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     const getResumeId = async () => {
       try {
         const id = await AsyncStorage.getItem('profileId');
@@ -143,6 +153,17 @@ const Skills = () => {
     </View>
   );
 
+  const renderEmptyComponent = () => (
+    <View style={styles.emptyContainer}>
+      <Image 
+        source={Images.noData}
+        style={styles.emptyImage}
+      />
+      <Text style={styles.emptyText}>No Skills Found</Text>
+      <Text style={styles.emptySubText}>Add your skills details to get started</Text>
+    </View>
+  );
+
   const renderSkillsItem = ({item}) => {
     const renderStars = (rating = 0) => {
       return [...Array(5)].map((_, index) => (
@@ -157,7 +178,7 @@ const Skills = () => {
         </Text>
       ));
     };
-  
+
     return (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
@@ -176,7 +197,7 @@ const Skills = () => {
             </TouchableOpacity>
           </View>
         </View>
-  
+
         {/* Show rating */}
         {item.rating > 0 && (
           <View style={styles.ratingDisplay}>
@@ -187,7 +208,6 @@ const Skills = () => {
       </View>
     );
   };
-  
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -211,6 +231,7 @@ const Skills = () => {
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={getAllSkills}
+            ListEmptyComponent={renderEmptyComponent}
           />
         )}
       </View>

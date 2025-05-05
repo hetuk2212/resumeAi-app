@@ -42,6 +42,16 @@ const Education = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+
+      navigation.navigate('Profile');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     const getResumeId = async () => {
       try {
         const id = await AsyncStorage.getItem('profileId');
@@ -141,6 +151,17 @@ const Education = () => {
     </View>
   );
 
+  const renderEmptyComponent = () => (
+    <View style={styles.emptyContainer}>
+      <Image 
+        source={Images.noData}
+        style={styles.emptyImage}
+      />
+      <Text style={styles.emptyText}>No Education Found</Text>
+      <Text style={styles.emptySubText}>Add your education details to get started</Text>
+    </View>
+  );
+
   const renderEducationItem = ({item}) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -200,6 +221,7 @@ const Education = () => {
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={getAllEducation}
+            ListEmptyComponent={renderEmptyComponent}
           />
         )}
       </View>

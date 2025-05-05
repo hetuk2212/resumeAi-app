@@ -1,17 +1,18 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, Image, StyleSheet, ActivityIndicator} from 'react-native';
+import { View, TouchableOpacity, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-const ActionButtons = ({onAdd, onSave, addIcon, saveIcon, loading}) => {
+const ActionButtons = ({ onAdd, onSave, addIcon, saveIcon, loading }) => {
   return (
     <View style={styles.confrimBtnView}>
       {onAdd && addIcon && (
-        <TouchableOpacity style={styles.profileBtnChange} onPress={onAdd}>
+        <TouchableOpacity style={styles.profileBtnChange} onPress={onAdd} disabled={loading}>
           <LinearGradient
             colors={['#33abff', '#4db6ff', '#1aa1ff']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={styles.gradientBtn}>
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.gradientBtn, loading && styles.disabledBtn]}
+          >
             <Image source={addIcon} style={styles.btnIcon} />
             <Text style={styles.profileBtnText}>Add</Text>
           </LinearGradient>
@@ -19,16 +20,19 @@ const ActionButtons = ({onAdd, onSave, addIcon, saveIcon, loading}) => {
       )}
 
       {onSave && saveIcon && (
-        <TouchableOpacity style={styles.saveBtn} onPress={onSave} disabled={loading}>
-        {loading ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <>
-            <Image source={saveIcon} style={styles.btnIcon} />
-            <Text style={styles.profileBtnText}>Save</Text>
-          </>
-        )}
-
+        <TouchableOpacity
+          style={[styles.saveBtn, loading && styles.disabledBtn]}
+          onPress={onSave}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <>
+              <Image source={saveIcon} style={styles.btnIcon} />
+              <Text style={styles.profileBtnText}>Save</Text>
+            </>
+          )}
         </TouchableOpacity>
       )}
     </View>
@@ -56,7 +60,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: 'green',
     shadowColor: '#1F2937',
-    shadowOffset: {width: 0, height: 5},
+    shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
   },
@@ -68,13 +72,16 @@ const styles = StyleSheet.create({
     gap: 10,
     borderRadius: 30,
     shadowColor: '#1F2937',
-    shadowOffset: {width: 0, height: 5},
+    shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
   },
   profileBtnText: {
     color: '#ffffff',
     fontWeight: '500',
+  },
+  disabledBtn: {
+    opacity: 0.6,
   },
 });
 

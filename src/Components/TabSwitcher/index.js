@@ -1,23 +1,23 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import Color from '../../Theme/Color';
 
-const TabSwitcher = ({tabs, value, onTabChange}) => {
+const TabSwitcher = ({ tabs, value, onTabChange }) => {
   return (
-    <View style={styles.tabBtnView}>
-      {tabs.map(tab => {
+    <View style={styles.tabsContainer}>
+      {tabs.map((tab) => {
         const isActive = value === tab.key;
         return (
           <TouchableOpacity
             key={tab.key}
-            style={[styles.tabBtn, isActive && styles.activeTab]}
-            onPress={() => onTabChange(tab.key)}>
-            <Text
-              style={[
-                styles.tabBtnText,
-                isActive && styles.activeTabText,
-              ]}>
+            style={[styles.tab, isActive && styles.activeTab]}
+            onPress={() => onTabChange(tab.key)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.tabText, isActive && styles.activeTabText]}>
               {tab.label}
             </Text>
+            {isActive && <View style={styles.activeIndicator} />}
           </TouchableOpacity>
         );
       })}
@@ -26,30 +26,35 @@ const TabSwitcher = ({tabs, value, onTabChange}) => {
 };
 
 const styles = StyleSheet.create({
-  tabBtnView: {
+  tabsContainer: {
     flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    marginBottom: 10,
+  },
+  tab: {
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomWidth: 2,
-    borderColor: 'gray',
+    paddingVertical: 16,
+    position: 'relative',
   },
-  tabBtn: {
-    width: '50%',
-    alignItems: 'center',
-    padding: 10,
-  },
-  tabBtnText: {
-    fontSize: 18,
-    fontWeight: '400',
-    color: '#000',
-  },
-  activeTab: {
-    borderBottomWidth: 4,
-    borderColor: '#1F2937',
+  tabText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#6B7280',
   },
   activeTabText: {
-    color: '#1F2937',
-    fontWeight: 'bold',
+    color: Color.primary,
+    fontWeight: '600',
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: -1,
+    height: 3,
+    width: '80%',
+    backgroundColor: Color.primary,
+    borderTopLeftRadius: 2,
+    borderTopRightRadius: 2,
   },
 });
 

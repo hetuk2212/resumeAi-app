@@ -74,7 +74,7 @@ const Login = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.mainTitle}>Log In</Text>
-        <Text style={styles.title}>Welcome to ResuMe.ai</Text>
+        <Text style={styles.title}>Welcome to Easy Resume</Text>
         <Text style={styles.subtitle}>
           Build your professional resume easily
         </Text>

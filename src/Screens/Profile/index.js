@@ -23,7 +23,7 @@ import Color from '../../Theme/Color';
 const sectionImages = {
   projects: Images.SectionProjects,
   'cover Latter': Images.SectionLetter,
-  'additional information': Images.SectionInfo,
+  // 'additional information': Images.SectionInfo,
   interests: Images.SectionInterests,
   achievements: Images.SectionAchievements,
   activities: Images.SectionActivities,
@@ -36,11 +36,11 @@ const Profile = () => {
   const [optionalSections, setOptionalSections] = useState({
     projects: true,
     'Cover Latter': true,
-    'additional information': true,
+    // 'additional information': true,
     interests: false,
     achievements: false,
     activities: false,
-    languages: false,
+    languages: true,
   });
 
   const [newSectionTitle, setNewSectionTitle] = useState('');
@@ -66,6 +66,15 @@ const Profile = () => {
   ];
 
   const navigation = useNavigation();
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', e => {
+      e.preventDefault();
+
+      navigation.navigate('MainApp');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
   useEffect(() => {
     const getResumeId = async () => {
       try {
@@ -161,30 +170,30 @@ const Profile = () => {
     <View style={styles.sectionContainer}>
       <Text style={styles.sectionHeader}>{title}</Text>
       <View style={styles.sectionBtnContainer}>
-      {[
-        ...items,
-        showAddButton && {
-          id: 'add-more-section',
-          name: 'Add More Section',
-          image: Images.SectionAdd,
-        },
-      ]
-        .filter(Boolean)
-        .map(item => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.sectionBtn}
-            onPress={() => {
-              if (item.id === 'add-more-section') {
-                setShowOptions(true);
-              } else {
-                handleNavigation(item);
-              }
-            }}>
-            <Image source={item.image} style={styles.sectionBtnImg} />
-            <Text style={styles.sectionTitle}>{item.name}</Text>
-          </TouchableOpacity>
-        ))}
+        {[
+          ...items,
+          showAddButton && {
+            id: 'add-more-section',
+            name: 'Add More Section',
+            image: Images.SectionAdd,
+          },
+        ]
+          .filter(Boolean)
+          .map(item => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.sectionBtn}
+              onPress={() => {
+                if (item.id === 'add-more-section') {
+                  setShowOptions(true);
+                } else {
+                  handleNavigation(item);
+                }
+              }}>
+              <Image source={item.image} style={styles.sectionBtnImg} />
+              <Text style={styles.sectionTitle}>{item.name}</Text>
+            </TouchableOpacity>
+          ))}
       </View>
     </View>
   );
@@ -212,14 +221,28 @@ const Profile = () => {
             profile.achievements.length > 0,
           activities:
             Array.isArray(profile.activities) && profile.activities.length > 0,
-          languages:
-            Array.isArray(profile.languages) && profile.languages.length > 0,
+          // languages:
+          //   Array.isArray(profile.languages) && profile.languages.length > 0,
         }));
       }
     } catch (error) {
       console.log('Failed to fetch resume info:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleViewCV = profileInfo => {
+    if (resumeId) {
+      navigation.navigate('Choose Resume', {resumeData: profileInfo});
+    } else {
+      Toast.show({
+        type: 'info',
+        text1: 'Missing Personal Information',
+        text2:
+          'Please fill in your personal details before viewing the resume.',
+          position:"bottom"
+      });
     }
   };
   return (
@@ -297,7 +320,7 @@ const Profile = () => {
           <TouchableOpacity
             style={styles.viewBtn}
             onPress={() => {
-              navigation.navigate('Choose Resume', {resumeData: profileInfo});
+              handleViewCV(profileInfo);
             }}>
             <Image source={Images.eye} style={styles.viewIcon} />
             <Text style={styles.viewText}>View CV</Text>

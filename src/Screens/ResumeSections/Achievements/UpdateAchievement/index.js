@@ -70,7 +70,7 @@ const UpdateAchievement = () => {
           position: 'bottom',
         });
 
-        navigation.navigate('Interests');
+        navigation.navigate('Achievements');
       } else {
         Toast.show({
           type: 'error',

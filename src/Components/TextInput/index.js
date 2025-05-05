@@ -34,7 +34,7 @@ const CustomTextInput = ({
         numberOfLines={numberOfLines} // ✅ Apply this too
         textAlignVertical={multiline ? 'top' : 'center'} // ✅ Ensures top-aligned for multiline
       />
-       {errorMessage && <Text style={{ color: 'red', fontSize: 12 }}>{errorMessage}</Text>}
+       {errorMessage && <Text style={{ color: 'red', fontSize: 12, marginTop:3 }}>{errorMessage}</Text>}
     </View>
   );
 };

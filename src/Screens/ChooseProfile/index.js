@@ -11,7 +11,7 @@ import styles from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import {Images} from '../../Assets/Images';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {deleteResume, getAllProfileInfo} from '../../../lib/api';
+import {deleteResume, getAllProfileInfo, getSpecificProfile} from '../../../lib/api';
 import Toast from 'react-native-toast-message';
 import Animated, {
   useSharedValue,
@@ -41,6 +41,7 @@ const ChooseProfile = () => {
   const [loading, setLoading] = useState(false);
   const [visibleDropdown, setVisibleDropdown] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading,setIsLoading] = useState(false)
 
   useEffect(() => {
     getProfiles();
@@ -81,6 +82,28 @@ const ChooseProfile = () => {
     }
   };
 
+  const getResumeInfo = async (profileId) => {
+    setIsLoading(true);
+    try {
+      const response = await getSpecificProfile(profileId);
+  
+      if (response.status === 200) {
+        const profile = response.data.profile;
+        // Navigate immediately with the response data
+        navigation.navigate('Choose Resume', {resumeData: profile});
+      }
+    } catch (error) {
+      console.log('Failed to fetch resume info:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to load resume',
+        text2: error.response?.message || 'Something went wrong!',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleDelete = async profileId => {
     try {
       const response = await deleteResume(profileId);
@@ -117,7 +140,7 @@ const ChooseProfile = () => {
   //     console.log('Error removing profileId:', error);
   //   }
   // };
-  const handleEdit = async (profileId) => {
+  const handleEdit = async profileId => {
     try {
       await AsyncStorage.setItem('profileId', profileId);
       navigation.navigate('Profile');
@@ -174,20 +197,27 @@ const ChooseProfile = () => {
         </View>
       )}
       <View style={styles.profileInfoView}>
-      <Image source={Images.profileAccount} style={styles.profileImg} />
-      <View style={styles.profileInfoDetails}>
-      <Text style={styles.profileName}>
-        {item.personalInfo?.fullName || 'N/A'}
-      </Text>
-      <Text style={styles.profileEmail}>
-        {item.personalInfo?.email || 'N/A'}
-      </Text>
-      <View style={styles.profileDateView}>
-        <Text style={styles.profileDate}>
-          {new Date(item.createdAt).toLocaleString()}
-        </Text>
-      </View>
-      </View>
+        <Image
+          source={
+            item.personalInfo?.profileImage?.url
+              ? {uri: item.personalInfo.profileImage.url}
+              : Images.profileAccount
+          }
+          style={styles.profileImg}
+        />
+        <View style={styles.profileInfoDetails}>
+          <Text style={styles.profileName}>
+            {item.personalInfo?.fullName || 'N/A'}
+          </Text>
+          <Text style={styles.profileEmail}>
+            {item.personalInfo?.email || 'N/A'}
+          </Text>
+          <View style={styles.profileDateView}>
+            <Text style={styles.profileDate}>
+              {new Date(item.createdAt).toLocaleString()}
+            </Text>
+          </View>
+        </View>
       </View>
       <View style={styles.profileBtnView}>
         <TouchableOpacity
@@ -199,7 +229,7 @@ const ChooseProfile = () => {
         <TouchableOpacity
           style={styles.profileBtn}
           onPress={() => {
-            navigation.navigate('MainResume');
+            getResumeInfo(item._id)
           }}>
           <Image source={Images.view} style={styles.ProfileIconImg} />
           <Text style={styles.profileBtnText}>View CV</Text>

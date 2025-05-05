@@ -19,7 +19,13 @@ import {addSkills} from '../../../../../lib/api';
 
 const AddSkills = () => {
   const [activeTab, setActiveTab] = useState('Skills');
-  const [skillsForms, setSkillsForms] = useState([]);
+  const [skillsForms, setSkillsForms] = useState([
+    {
+      id: Date.now(),
+      skill: '',
+      rating: 0,
+    },
+  ]);
   const [resumeId, setResumeId] = useState(null);
   const [loading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -89,46 +95,46 @@ const AddSkills = () => {
   const handleSave = async () => {
     setIsLoading(true);
     setErrors({});
-
+  
+    // First validate locally before making API call
+    const localErrors = {};
+    skillsForms.forEach((form, index) => {
+      if (!form.skill.trim()) {
+        localErrors[`${index}_skill`] = 'Skill name is required';
+      }
+    });
+  
+    if (Object.keys(localErrors).length > 0) {
+      setErrors(localErrors);
+      setIsLoading(false);
+      return;
+    }
+  
     const formattedSkills = skillsForms.map(form => ({
       skillName: form.skill || '',
       rating: form.rating || 0,
     }));
-
+  
     const body = {skills: formattedSkills};
-
-    console.log(body);
-
+  
     try {
       const response = await addSkills({resumeId, body});
-      console.log('Response from API:', response);
-
+      
       if (response.status === 201) {
         navigation.navigate('Skills');
-
         Toast.show({
           type: 'success',
           text1: response.data.message || 'Skills saved!',
           text2: 'Your Skills details have been saved successfully.',
           position: 'bottom',
         });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Unexpected Error',
-          text2: 'Something went wrong, please try again.',
-        });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
+      if (error.response?.status === 400 && error.response?.data?.invalidEntries) {
         let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          const match = err.path.match(/Skills\[(\d+)\]\.(\w+)/);
-          if (match) {
-            const [, index, field] = match;
-            errorObj[`${index}_${field}`] = err.msg;
+        error.response.data.invalidEntries.forEach((entry, index) => {
+          if (!entry.skillName) {
+            errorObj[`${index}_skill`] = 'Skill name is required';
           }
         });
         setErrors(errorObj);
@@ -136,8 +142,7 @@ const AddSkills = () => {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
+          text2: error.response?.data?.message || 'Something went wrong, try again.',
         });
       }
     } finally {
@@ -153,6 +158,7 @@ const AddSkills = () => {
             {key: 'Skills', label: 'Skills'},
             {key: 'Example', label: 'Example'},
           ]}
+          value={activeTab}
           onTabChange={tabKey => setActiveTab(tabKey)}
         />
 
@@ -205,6 +211,7 @@ const AddSkills = () => {
               onSave={handleSave}
               addIcon={Images.add}
               saveIcon={Images.check}
+              isLoading={loading}
             />
           </ScrollView>
         )}

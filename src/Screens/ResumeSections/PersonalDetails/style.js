@@ -112,7 +112,17 @@ fontSize:18
     flex:1,
     alignItems:"center",
     justifyContent:"center",
-  }
+  },
+  dateInputContainer: {
+    position: 'relative',
+  },
+  dateView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  dateBox: {
+    width: '48%',
+  },
 });
 
 export default styles;

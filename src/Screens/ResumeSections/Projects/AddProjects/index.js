@@ -19,7 +19,9 @@ import {addProjects} from '../../../../../lib/api';
 
 const AddProjects = () => {
   const [activeTab, setActiveTab] = useState('Projects');
-  const [projectsForms, setProjectsForms] = useState([]);
+  const [projectsForms, setProjectsForms] = useState([
+    {id: Date.now(), title: '', description: ''},
+  ]);
   const [resumeId, setResumeId] = useState(null);
   const [loading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -153,6 +155,7 @@ const AddProjects = () => {
             {key: 'Projects', label: 'Projects'},
             {key: 'Example', label: 'Example'},
           ]}
+          value={activeTab}
           onTabChange={tabKey => setActiveTab(tabKey)}
         />
 
@@ -199,6 +202,7 @@ const AddProjects = () => {
               onSave={handleSave}
               addIcon={Images.add}
               saveIcon={Images.check}
+              loading={loading}
             />
           </ScrollView>
         )}

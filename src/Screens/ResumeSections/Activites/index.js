@@ -18,7 +18,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { getActivites } from '../../../../lib/api';
+import { deleteActivity, getActivites } from '../../../../lib/api';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -40,6 +40,16 @@ const Activites = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+
+      navigation.navigate('Profile');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -91,9 +101,9 @@ const Activites = () => {
     navigation.navigate('Update Activity', {activityData: item});
   };
 
-  const handleDelete = async skillId => {
+  const handleDelete = async activityId => {
     try {
-      const response = await deleteSkill({resumeId, skillId});
+      const response = await deleteActivity({resumeId, activityId});
 
       if (response.status === 200) {
         Toast.show({
@@ -143,6 +153,17 @@ const Activites = () => {
     </View>
   );
 
+  const renderEmptyComponent = () => (
+    <View style={styles.emptyContainer}>
+      <Image 
+        source={Images.noData}
+        style={styles.emptyImage}
+      />
+      <Text style={styles.emptyText}>No Activites Found</Text>
+      <Text style={styles.emptySubText}>Add your activites details to get started</Text>
+    </View>
+  );
+
   const renderActivitesItem = ({item}) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -186,6 +207,7 @@ const Activites = () => {
             showsVerticalScrollIndicator={false}
             refreshing={refreshing}
             onRefresh={getAllActivites}
+            ListEmptyComponent={renderEmptyComponent}
           />
         )}
       </View>

@@ -26,6 +26,46 @@ import {
 } from '../../../../lib/api';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
+// Helper function to format date for display (e.g., "22, December, 2002")
+const formatDisplayDate = dateString => {
+  if (!dateString) return '';
+
+  try {
+    // Handle both API format (yyyy-mm-dd) and JS Date objects
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // Return original if invalid date
+
+    const day = date.getDate();
+    const month = date.toLocaleString('default', {month: 'long'});
+    const year = date.getFullYear();
+
+    return `${day}, ${month}, ${year}`;
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return dateString;
+  }
+};
+
+// Helper function to format date for API (yyyy-mm-dd)
+const formatApiDate = date => {
+  if (!date) return '';
+
+  try {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return '';
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  } catch (error) {
+    console.error('Error formatting API date:', error);
+    return '';
+  }
+};
 
 const PersonalDetails = () => {
   const [activeTab, setActiveTab] = useState('PersonalDetails');
@@ -40,9 +80,16 @@ const PersonalDetails = () => {
   const [loadingProfile, setIsLoadingProfile] = useState(false);
   const [resumeId, setResumeId] = useState();
   const [errors, setErrors] = useState({});
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [fields, setFields] = useState([
-    {label: 'Photo (Optional)', key: 'photo', isActive: false, value: ''},
-    {label: 'Date of Birth', key: 'dateOfBirth', isActive: false, value: ''},
+    {
+      label: 'Date of Birth',
+      key: 'dateOfBirth',
+      isActive: false,
+      value: '',
+      isDateField: true,
+    },
     {label: 'Nationality', key: 'nationality', isActive: false, value: ''},
     {label: 'Marital Status', key: 'maritalStatus', isActive: false, value: ''},
     {label: 'Website', key: 'website', isActive: false, value: ''},
@@ -66,6 +113,15 @@ const PersonalDetails = () => {
 
   const navigation = useNavigation();
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+
+      navigation.navigate('Profile');
+    });
+
+    return unsubscribe;
+  }, [navigation]);
   useEffect(() => {
     const backAction = () => {
       if (activePage === 'modal') {
@@ -92,6 +148,22 @@ const PersonalDetails = () => {
 
     return unsubscribe;
   }, [navigation, activePage]);
+
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setDateOfBirth(selectedDate);
+      const formattedDate = formatApiDate(selectedDate);
+      setFieldValues(prev => ({
+        ...prev,
+        'Date of Birth': formattedDate,
+      }));
+    }
+  };
+
+  const showDatepicker = () => {
+    setShowDatePicker(true);
+  };
 
   const handleImagePick = () => {
     ImagePicker.openPicker({
@@ -141,15 +213,19 @@ const PersonalDetails = () => {
       const response = await getSpecificProfile(resumeId);
 
       if (response.status === 200) {
-        console.log('as', response.data.profile.personalInfo);
         const data = response.data.profile.personalInfo;
         setName(data?.fullName || '');
         setAddress(data?.address || '');
         setEmail(data?.email || '');
         setPhone(data?.phone || '');
         setProfileImage(data?.profileImage?.url || null);
-        setFieldValues(prev => ({
-          ...prev,
+
+        // Initialize date of birth if it exists
+        if (data?.dateOfBirth) {
+          setDateOfBirth(new Date(data.dateOfBirth));
+        }
+
+        const initialFieldValues = {
           'Date of Birth': data?.dateOfBirth || '',
           Nationality: data?.nationality || '',
           'Marital Status': data?.maritalStatus || '',
@@ -165,7 +241,9 @@ const PersonalDetails = () => {
           'Salary Claim': data?.salary || '',
           Occupation: data?.occupation || '',
           Hobbies: data?.hobbies || '',
-        }));
+        };
+
+        setFieldValues(initialFieldValues);
 
         const updatedFields = fields.map(field => {
           const fieldValue = data?.[field.key] || '';
@@ -176,12 +254,6 @@ const PersonalDetails = () => {
           };
         });
         setFields(updatedFields);
-
-        const newFieldValues = {};
-        updatedFields.forEach(field => {
-          newFieldValues[field.label] = field.value;
-        });
-        setFieldValues(newFieldValues);
       } else {
         console.log(response);
       }
@@ -206,16 +278,43 @@ const PersonalDetails = () => {
     checkAndFetchResumeInfo();
   }, []);
 
-  const createFormData = (data) => {
+  const handleToggle = index => {
+    const updatedFields = [...fields];
+    updatedFields[index].isActive = !updatedFields[index].isActive;
+  
+    if (!updatedFields[index].isActive) {
+      // Clear the field value when toggled off
+      updatedFields[index].value = '';
+      
+      // Special handling for date fields
+      if (updatedFields[index].isDateField) {
+        setDateOfBirth(new Date()); // Reset to current date
+      }
+  
+      // Update field values state
+      setFieldValues(prev => {
+        const newValues = {...prev};
+        delete newValues[updatedFields[index].label];
+        return newValues;
+      });
+    }
+  
+    setFields(updatedFields);
+    setTimeout(() => {
+      setActivePage('form');
+    }, 500);
+  };
+
+  const createFormData = data => {
     const formData = new FormData();
-    
+
     // Append all text fields
     Object.keys(data).forEach(key => {
       if (key !== 'profileImage') {
         formData.append(key, data[key]);
       }
     });
-    
+
     // Append image if it exists
     if (data.profileImage) {
       formData.append('profileImage', {
@@ -224,7 +323,7 @@ const PersonalDetails = () => {
         name: data.profileImage.name || `profile_${Date.now()}.jpg`,
       });
     }
-    
+
     return formData;
   };
 
@@ -258,7 +357,6 @@ const PersonalDetails = () => {
     try {
       const formattedData = createFormData(formData);
       const response = await addPersonalInfo(formattedData);
-      console.log('Response from API:', response);
 
       if (response.status === 201) {
         AsyncStorage.setItem('profileId', response.data.profile._id);
@@ -308,7 +406,9 @@ const PersonalDetails = () => {
       address,
       email,
       phone,
-      profileImage,
+      ...(profileImage && typeof profileImage === 'object'
+        ? {profileImage}
+        : {}),
       dateOfBirth: fieldValues['Date of Birth'] || '',
       nationality: fieldValues['Nationality'] || '',
       gender: fieldValues['Gender'] || '',
@@ -329,7 +429,6 @@ const PersonalDetails = () => {
     try {
       const formattedData = createFormData(formData);
       const response = await updateProfile({formData: formattedData, resumeId});
-      console.log('Response from API:', response);
 
       if (response.status === 200) {
         AsyncStorage.setItem('profileId', response.data.profile._id);
@@ -348,7 +447,7 @@ const PersonalDetails = () => {
         });
       }
     } catch (error) {
-      console.log('Error response 2:', error.response?.data);
+      console.log('Error response:', error.response?.data);
 
       if (error.response?.status === 400 && error.response?.data?.errors) {
         let errorObj = {};
@@ -383,12 +482,13 @@ const PersonalDetails = () => {
                   {key: 'PersonalDetails', label: 'Personal Details'},
                   {key: 'Help', label: 'Help'},
                 ]}
+                value={activeTab}
                 onTabChange={tabKey => setActiveTab(tabKey)}
               />
 
               <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{paddingBottom: 100}}>
+                contentContainerStyle={{paddingBottom: 150}}>
                 {activeTab === 'PersonalDetails' && (
                   <View>
                     <CustomTextInput
@@ -422,20 +522,46 @@ const PersonalDetails = () => {
                     />
                     {fields
                       .filter(field => field.isActive)
-                      .map((field, index) => (
-                        <CustomTextInput
-                          key={index}
-                          label={field.label}
-                          placeholder={`Enter your ${field.label}`}
-                          value={fieldValues[field.label] || ''}
-                          onChangeText={text => {
-                            setFieldValues(prevState => ({
-                              ...prevState,
-                              [field.label]: text,
-                            }));
-                          }}
-                        />
-                      ))}
+                      .map((field, index) =>
+                        field.isDateField ? (
+                          <View key={index}>
+                            <Text style={styles.label}>{field.label}</Text>
+                            <TouchableOpacity
+                              onPress={showDatepicker}
+                              activeOpacity={1}
+                              style={styles.dateInputContainer}>
+                              <CustomTextInput
+                                placeholder={`Select your ${field.label}`}
+                                value={fieldValues[field.label] ? formatDisplayDate(fieldValues[field.label]) : ''}
+                                editable={false}
+                                pointerEvents="none"
+                              />
+                            </TouchableOpacity>
+                            {showDatePicker && (
+                              <DateTimePicker
+                                mode="date"
+                                display="default"
+                                value={dateOfBirth}
+                                onChange={handleDateChange}
+                                maximumDate={new Date()}
+                              />
+                            )}
+                          </View>
+                        ) : (
+                          <CustomTextInput
+                            key={index}
+                            label={field.label}
+                            placeholder={`Enter your ${field.label}`}
+                            value={fieldValues[field.label] || ''}
+                            onChangeText={text => {
+                              setFieldValues(prevState => ({
+                                ...prevState,
+                                [field.label]: text,
+                              }));
+                            }}
+                          />
+                        ),
+                      )}
 
                     <View>
                       <Text style={styles.label}>Photo (optional)</Text>
@@ -479,6 +605,7 @@ const PersonalDetails = () => {
                       onSave={resumeId ? handleUpdate : handleSave}
                       addIcon={Images.add}
                       saveIcon={Images.check}
+                      loading={loading}
                     />
                   </View>
                 )}

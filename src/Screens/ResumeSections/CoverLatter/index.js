@@ -165,6 +165,7 @@ const CoverLetter = () => {
                     <ActionButtons
                       onSave={handleSaveOrUpdate}
                       saveIcon={Images.check}
+                      loading={loading}
                     />
                   </View>
                 )}

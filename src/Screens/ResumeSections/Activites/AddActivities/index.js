@@ -19,7 +19,13 @@ import { addActivities } from '../../../../../lib/api';
   
   const AddActivities = () => {
     const [activeTab, setActiveTab] = useState('Activites');
-    const [activitesForms, setActivitesForms] = useState([]);
+    const [activitesForms, setActivitesForms] = useState([
+      {
+        id: Date.now(),
+        title: '',
+        description: '',
+      }
+    ]);
     const [resumeId, setResumeId] = useState(null);
     const [loading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -124,7 +130,7 @@ import { addActivities } from '../../../../../lib/api';
         if (error.response?.status === 400 && error.response?.data?.errors) {
           let errorObj = {};
           error.response.data.errors.forEach(err => {
-            const match = err.path.match(/Activites\[(\d+)\]\.(\w+)/);
+            const match = err.path.match(/activity\[(\d+)\]\.(\w+)/);
             if (match) {
               const [, index, field] = match;
               errorObj[`${index}_${field}`] = err.msg;
@@ -152,13 +158,16 @@ import { addActivities } from '../../../../../lib/api';
               {key: 'Activites', label: 'Activites'},
               {key: 'Example', label: 'Example'},
             ]}
+            value={activeTab}
             onTabChange={tabKey => setActiveTab(tabKey)}
           />
   
           {activeTab === 'Activites' && (
             <ScrollView
               contentContainerStyle={{paddingBottom: 100}}
-              showsVerticalScrollIndicator={false}>
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="always"
+              >
               {activitesForms.map((form, index) => (
                 <View key={form.id} style={styles.formBox}>
                   <View style={styles.titleView}>
@@ -186,6 +195,7 @@ import { addActivities } from '../../../../../lib/api';
                 onSave={handleSave}
                 addIcon={Images.add}
                 saveIcon={Images.check}
+                loading={loading}
               />
             </ScrollView>
           )}
