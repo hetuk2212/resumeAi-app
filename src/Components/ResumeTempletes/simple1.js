@@ -6,40 +6,18 @@ import {
   Alert,
   Platform,
   ActivityIndicator,
-  PermissionsAndroid,
 } from 'react-native';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS from 'react-native-fs';
 import Pdf from 'react-native-pdf';
 import Toast from 'react-native-toast-message';
 
-const requestStoragePermission = async () => {
-  if (Platform.OS !== 'android') return true;
-  try {
-    // For Android 13+ (API 33+), use READ_MEDIA_IMAGES/READ_MEDIA_VIDEO/READ_MEDIA_AUDIO if needed
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      {
-        title: 'Storage Permission',
-        message: 'App needs access to your storage to save the PDF resume.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      }
-    );
-    return granted === PermissionsAndroid.RESULTS.GRANTED;
-  } catch (err) {
-    console.warn(err);
-    return false;
-  }
-};
-
 const Simple1 = ({data}) => {
   const [pdfPath, setPdfPath] = useState(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const fullName = data.personalInfo.fullName;
-
+  const [firstName, lastName] = fullName.split(' ');
   useEffect(() => {
     generatePDF();
   }, []);
@@ -337,47 +315,52 @@ const Simple1 = ({data}) => {
   
     const downloadPDF = async () => {
       if (!pdfPath) return;
-    
-      if (Platform.OS === 'android') {
-        const hasPermission = await requestStoragePermission();
-        console.log('Storage permission granted:', hasPermission);
-        if (!hasPermission) {
-          Toast.show({
-            type: 'error',
-            text1: 'Permission denied',
-            text2: 'Cannot save PDF without storage permission.',
-          });
-          return;
-        }
-      }
-    
+  
       try {
         setDownloading(true);
-        const downloadsDir = RNFS.DownloadDirectoryPath;
-        const fileName = 'Resume_Hetuk_Patel.pdf';
+  
+        // Create downloads directory if it doesn't exist
+        const downloadsDir = Platform.select({
+          android: `${RNFS.ExternalStorageDirectoryPath}/Download`,
+          ios: RNFS.DocumentDirectoryPath,
+        });
+  
+        // Check if downloads directory exists, create if not
+        const dirExists = await RNFS.exists(downloadsDir);
+        if (!dirExists) {
+          await RNFS.mkdir(downloadsDir);
+        }
+  
+        const fileName = `Resume_${fullName.replace(/\s+/g, '_')}.pdf`;
         const destinationPath = `${downloadsDir}/${fileName}`;
-        console.log('Saving PDF to:', destinationPath);
-    
+  
+        // Check if file exists and delete if it does
+        const fileExists = await RNFS.exists(destinationPath);
+        if (fileExists) {
+          await RNFS.unlink(destinationPath);
+        }
+  
+        // Copy the file to downloads
         await RNFS.copyFile(pdfPath, destinationPath);
-        await RNFS.scanFile(destinationPath);
-    
+  
+        if (Platform.OS === 'android') {
+          // Scan the file so it appears in Downloads immediately
+          await RNFS.scanFile(destinationPath);
+        }
+  
         Toast.show({
           type: 'success',
           text1: 'Resume successfully downloaded!',
-          text2: `Saved to Downloads as ${fileName}`,
+          text2: `Resume saved to Downloads as ${fileName}`,
+          position: 'bottom',
         });
       } catch (error) {
         console.error('PDF Download Error:', error);
-        Toast.show({
-          type: 'error',
-          text1: 'Failed to save PDF',
-          text2: error.message,
-        });
+        showToast('Failed to save PDF to Downloads');
       } finally {
         setDownloading(false);
       }
     };
-    
   
     return (
       <View
@@ -412,19 +395,16 @@ const Simple1 = ({data}) => {
         <TouchableOpacity
           onPress={downloadPDF}
           style={{
-            backgroundColor: downloading ? 'gray' : 'green',
+            backgroundColor: 'green',
             padding: 10,
             borderRadius: 5,
             marginTop: 20,
-          }}
-          disabled={downloading}
-        >
-          <Text style={{color: 'white', fontSize: 16}}>
-            {downloading ? 'Downloading...' : 'Download Resume'}
-          </Text>
+          }}>
+          <Text style={{color: 'white', fontSize: 16}}>Download Resume</Text>
         </TouchableOpacity>
       </View>
     );
   };
   
   export default Simple1;
+  
