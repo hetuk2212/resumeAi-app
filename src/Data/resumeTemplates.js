@@ -1,4 +1,5 @@
 import professional1 from "../Components/ResumeTempletes/professional1";
+import professional2 from "../Components/ResumeTempletes/professional2";
 import Simple1 from "../Components/ResumeTempletes/simple1";
 import MainResume from "../Screens/MainResume";
 
@@ -16,6 +17,10 @@ export default {
     component: professional1,
   },
   4: {
+    name: 'Professional 2',
+    component: professional2,
+  },
+  5: {
     name: 'Premium 1',
     component: MainResume,
   },

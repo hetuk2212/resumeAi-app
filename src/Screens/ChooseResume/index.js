@@ -12,9 +12,10 @@ const dummyResumes = {
   ],
   Professional: [
     { id: 3, name: 'Professional 1', image: Images.simple1 },
+    { id: 4, name: 'Professional 2', image: Images.simple1 },
   ],
   Premium: [
-    { id: 4, name: 'Premium 1', image: Images.simple1 },
+    { id: 5, name: 'Premium 1', image: Images.simple1 },
   ],
 };
 
