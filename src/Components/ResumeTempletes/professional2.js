@@ -16,112 +16,109 @@ import Toast from 'react-native-toast-message';
 // ---- STATIC DATA DEFINITION ----
 const staticData = {
     personalInfo: {
-      fullName: "John Doe",
-      email: "john.doe@example.com",
-      phone: "+1 (123) 456-7890",
-      address: "New York, USA",
-      linkedIn: "linkedin.com/in/johndoe",
-      github: "github.com/johndoe",
-      objective: "Experienced software engineer with 5+ years of expertise in full-stack development, seeking a challenging role to leverage my technical and leadership skills in an innovative environment.",
+      fullName: "Hetuk Patel",
+      email: "hetuk2212@gmail.com",
+      phone: "+91 7203954483",
+      address: "Vastral, Ahmedabad",
+      linkedIn: "linkedin.com/in/hetuk-patel-586127240",
+      objective: "Passionate and results-driven React Developer with 1.5 years of professional experience in building scalable web and mobile applications. Skilled in React.js, React Native, and backend integration with a strong focus on performance and user experience. Seeking a challenging role to contribute to innovative projects and continue growing as a full-stack developer.",
     },
     skills: {
-      technical: ["JavaScript/TypeScript", "React/React Native", "Node.js", "Python", "AWS", "Docker", "Kubernetes", "CI/CD"],
-      soft: ["Team Leadership", "Agile Methodology", "Problem Solving", "Mentoring"]
+      technical: ["React JS", "React Native","Next Js", "Node.js", "Mongo DB", "AWS", "Docker", "CI/CD"],
+      soft: ["Problem Solving", "Mentoring"]
     },
     experience: [
       {
-        jobTitle: "Senior Software Engineer",
-        company: "Tech Corp",
-        startDate: "Jan 2018",
-        endDate: "Present",
-        location: "New York, USA",
-        responsibilities: [
-          "Led development of scalable microservices architecture serving 1M+ users",
-          "Mentored junior engineers and conducted code reviews",
-          "Optimized application performance reducing load times by 40%",
-          "Implemented CI/CD pipeline reducing deployment time by 60%"
-        ],
-        technologiesUsed: ["Java", "Spring Boot", "AWS", "React"]
+        jobTitle: "React Native Developer (Intern to Full-time)",
+        company: "BM Coder",
+        startDate: "Jan 2023",
+        endDate: "Jun 2024",
+        location: "Prahlad Nagar, Ahmedabad, India",
+        desc: "Started as intern and transitioned to full-time developer, Developed clone applications including Blinkit clone and Tinder clone",
+        technologiesUsed: ["React Native", "JavaScript", "Firebase", "Redux"]
       },
       {
-        jobTitle: "Software Engineer",
-        company: "Innovate Solutions",
-        startDate: "Jun 2015",
-        endDate: "Dec 2017",
-        location: "Boston, USA",
-        responsibilities: [
-          "Developed core features for SaaS platform",
-          "Collaborated with product team on UX improvements",
-          "Reduced production bugs by 30% through test automation"
-        ],
-        technologiesUsed: ["JavaScript", "Angular", "Node.js", "MongoDB"]
+        jobTitle: "React Developer",
+        company: "PM Communications",
+        startDate: "Jul 2024",
+        endDate: "Dec 2024",
+        location: "ISCON, Ahmedabad, India",
+        desc: "Developed both web and mobile applications using React.js and React Native, Built responsive UIs and implemented state management solutions",
+        technologiesUsed: ["React.js", "React Native", "JavaScript", "REST APIs"]
+      },
+      {
+        jobTitle: "React Developer",
+        company: "Tankar Solutions Pvt Ltd",
+        startDate: "Dec 2024",
+        endDate: "Present",
+        location: "Ahmedabad, India",
+        desc: "Developed web and mobile applications including a traveling app, Implemented features for booking, user profiles, and location services",
+        technologiesUsed: ["React.js", "React Native", "Node.js", "MongoDB"]
       }
     ],
     education: [
       {
-        degree: "Master of Science",
-        fieldOfStudy: "Computer Science",
-        institution: "State University",
-        location: "New York, USA",
-        startYear: "2014",
-        endYear: "2016",
-        gpa: "3.8/4.0"
-      },
-      {
-        degree: "Bachelor of Science",
+        degree: "Bachelor of Engineering (B.E.)",
         fieldOfStudy: "Computer Engineering",
-        institution: "City College",
-        location: "Boston, USA",
-        startYear: "2010",
-        endYear: "2014",
-        gpa: "3.6/4.0"
-      }
-    ],
-    certifications: [
-      {
-        name: "AWS Certified Solutions Architect - Professional",
-        issuingOrganization: "Amazon Web Services",
-        date: "2020"
+        institution: "SAL College of Engineering",
+        location: "Ahmedabad, India",
+        startYear: "2021",
+        endYear: "2024",
+        gpa: "8.45 CGPA"
       },
       {
-        name: "Google Cloud Professional Architect",
-        issuingOrganization: "Google",
-        date: "2019"
+        degree: "Diploma",
+        fieldOfStudy: "Computer Engineering",
+        institution: "L.J. Polytechnic",
+        location: "Ahmedabad, India",
+        startYear: "2018",
+        endYear: "2021",
+        gpa: "8.65 CGPA"
       }
     ],
     projects: [
       {
-        name: "E-commerce Platform",
-        date: "2021",
-        description: "Developed a full-stack e-commerce solution with payment integration and inventory management",
-        technologiesUsed: ["React", "Node.js", "MongoDB", "Stripe API"],
-        link: "github.com/johndoe/ecommerce"
+        name: "Meditation Music Player",
+        description: "Created a mindfulness app with curated meditation music playlists and timer functionality",
+        technologiesUsed: ["React Native", "Audio API", "Redux"],
       },
       {
-        name: "AI Recommendation Engine",
-        date: "2020",
-        description: "Built machine learning model for personalized content recommendations",
-        technologiesUsed: ["Python", "TensorFlow", "Flask"],
-        link: "github.com/johndoe/recommendation-engine"
+        name: "Fitness Tracker App",
+        description: "Developed a workout and nutrition tracking application with exercise demos and progress analytics",
+        technologiesUsed: ["React Native", "Firebase", "Google Fit API"],
+      },
+      {
+        name: "Forex Trading App",
+        description: "Developed a comprehensive forex trading platform with web (React.js/Next.js) and mobile (React Native) applications featuring real-time trading, account management, and market analytics",
+        technologiesUsed: ["React Native", "React.js", "Next.js", "WebSocket", "Chart.js", "Node.js"],
+      },
+      {
+        name: "AdStar (Celebrity Booking Platform)",
+        description: "Built a full-stack celebrity booking platform with both web (React.js/Next.js) and mobile (React Native) applications featuring profile management, booking system, and payment processing",
+        technologiesUsed: ["React.js", "Next.js", "React Native", "MongoDB", "Payment Gateway"],
+      },
+      {
+        name: "TripBnG.com (Travel Booking Platform)",
+        description: "Developed a complete travel booking ecosystem with web (Next.js) and mobile (React Native) applications offering flight, hotel, visa, bus, and holiday package booking functionalities",
+        technologiesUsed: ["React Native", "Next.js", "React.js", "Node.js", "REST APIs"],
       }
     ],
     languages: [
       {
-        language: "English",
+        language: "Gujarati",
         proficiency: "Native"
       },
       {
-        language: "Spanish",
+        language: "Hindi",
+        proficiency: "Fluent"
+      },
+      {
+        language: "English",
         proficiency: "Professional Working"
       }
     ],
-    achievements: [
-      "Employee of the Year 2020 at Tech Corp",
-      "Published paper on AI in IEEE Journal 2019",
-      "Open source contributor with 500+ GitHub stars"
-    ],
-    interests: ["Open Source", "AI Research", "Mentoring", "Public Speaking"]
-  };
+   
+    interests: ["Technology", "Travel", "Music", "Reading"]  };
 
 const Professional2 = () => {
   const [pdfPath, setPdfPath] = useState(null);
@@ -155,12 +152,14 @@ const Professional2 = () => {
           background-color: #ffffff;
         }
         .page {
-          padding: 40px;
+          padding-top: 30px;
+          padding-left: 30px;
+          padding-right: 30px;
         }
         .header {
           display: flex;
           justify-content: space-between;
-          margin-bottom: 30px;
+          margin-bottom: 15px;
           border-bottom: 1px solid #e0e0e0;
           padding-bottom: 20px;
         }
@@ -188,28 +187,28 @@ const Professional2 = () => {
           line-height: 1.6;
         }
         .contact-info div {
-          margin-bottom: 5px;
+          margin-bottom: 1px;
         }
         .section {
-          margin-bottom: 25px;
+          margin-bottom: 10px;
         }
         .section-title {
           font-size: 18px;
           font-weight: 700;
           color: #2c3e50;
-          margin-bottom: 15px;
+          margin-bottom: 10px;
           padding-bottom: 5px;
           border-bottom: 2px solid #f0f0f0;
           text-transform: uppercase;
           letter-spacing: 1px;
         }
         .subsection {
-          margin-bottom: 20px;
+          margin-bottom: 10px;
         }
         .subsection-header {
           display: flex;
           justify-content: space-between;
-          margin-bottom: 8px;
+          margin-bottom: 4px;
         }
         .job-title {
           font-weight: 600;
@@ -228,11 +227,10 @@ const Professional2 = () => {
           font-style: italic;
           color: #7f8c8d;
           font-size: 14px;
-          margin-bottom: 10px;
+          margin-bottom: 5px;
         }
         ul {
           padding-left: 20px;
-          margin-top: 10px;
         }
         li {
           margin-bottom: 8px;
@@ -250,7 +248,7 @@ const Professional2 = () => {
           display: flex;
           flex-wrap: wrap;
           gap: 10px;
-          margin-top: 10px;
+          margin-top: 5px;
         }
         .skill-category {
           margin-bottom: 15px;
@@ -268,19 +266,10 @@ const Professional2 = () => {
           color: #2c3e50;
           font-weight: 500;
         }
-        .two-column {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 30px;
-        }
-        .column {
-          flex: 1;
-          min-width: 250px;
-        }
         .tech-used {
           font-size: 13px;
           color: #7f8c8d;
-          margin-top: 8px;
+          margin-left:10px;
           font-style: italic;
         }
         .project-link {
@@ -319,6 +308,11 @@ const Professional2 = () => {
         .language-proficiency {
           color: #7f8c8d;
         }
+          .years{
+          display: flex;,
+        gap:1px;
+          justify-content: start;
+          }
       </style>
     </head>
     <body>
@@ -326,7 +320,7 @@ const Professional2 = () => {
         <div class="header">
           <div class="name-container">
             <div class="name">${fullName}</div>
-            <div class="title">Senior Software Engineer</div>
+            <div class="title">React Developer</div>
           </div>
           <div class="contact-info">
             <div>${data.personalInfo.email}</div>
@@ -366,7 +360,7 @@ const Professional2 = () => {
             </div>
             <div class="location">${exp.location}</div>
             <ul>
-              ${exp.responsibilities.map(resp => `<li>${resp}</li>`).join('')}
+              <p>${exp.desc}</p>
             </ul>
             ${exp.technologiesUsed ? `
             <div class="tech-used">Technologies: ${exp.technologiesUsed.join(', ')}</div>
@@ -375,90 +369,60 @@ const Professional2 = () => {
           `).join('')}
         </div>
     
-        <div class="two-column">
-          <div class="column">
-            <div class="section">
-              <div class="section-title">Education</div>
-              ${data.education.map(edu => `
-              <div class="subsection">
-                <div class="education-degree">${edu.degree} in ${edu.fieldOfStudy}</div>
-                <div class="education-institution">${edu.institution}</div>
-                <div class="location">${edu.location}</div>
-                <div class="date">${edu.startYear} — ${edu.endYear}</div>
-                ${edu.gpa ? `<div class="tech-used">GPA: ${edu.gpa}</div>` : ''}
-              </div>
-              `).join('')}
-            </div>
-    
-            ${data.certifications.length > 0 ? `
-            <div class="section">
-              <div class="section-title">Certifications</div>
-              ${data.certifications.map(cert => `
-              <div class="subsection">
-                <div class="certification-name">${cert.name}</div>
-                <div class="certification-org">${cert.issuingOrganization}</div>
-                <div class="certification-date">${cert.date}</div>
-              </div>
-              `).join('')}
-            </div>
-            ` : ''}
+        <div class="section">
+          <div class="section-title">Education</div>
+          ${data.education.map(edu => `
+          <div class="subsection">
+            <div class="education-degree">${edu.degree} in ${edu.fieldOfStudy}</div>
+            <div class="education-institution">${edu.institution}</div>
+            <div class="location">${edu.location}</div>
+            <div class="years"><div class="date">${edu.startYear} — ${edu.endYear}</div>
+            ${edu.gpa ? `<div class="tech-used">GPA: ${edu.gpa}</div>` : ''}</div>
           </div>
+          `).join('')}
+        </div>
     
-          <div class="column">
-            ${data.skills.soft.length > 0 ? `
-            <div class="section">
-              <div class="section-title">Soft Skills</div>
-              <div class="skills-container">
-                ${data.skills.soft.map(skill => `
-                  <div class="skill-item">${skill}</div>
-                `).join('')}
-              </div>
+        <div class="section">
+          <div class="section-title">Projects</div>
+          ${data.projects.map(project => `
+          <div class="subsection">
+            <div class="subsection-header">
+              <div class="job-title">${project.name}</div>
+              ${project.date ? `<div class="date">${project.date}</div>` : ''}
             </div>
+            <p>${project.description}</p>
+            ${project.technologiesUsed ? `
+            <div class="tech-used">Technologies: ${project.technologiesUsed.join(', ')}</div>
             ` : ''}
+            ${project.link ? `<div><a href="${project.link}" class="project-link">View Project</a></div>` : ''}
+          </div>
+          `).join('')}
+        </div>
     
-            ${data.projects.length > 0 ? `
-            <div class="section">
-              <div class="section-title">Key Projects</div>
-              ${data.projects.map(project => `
-              <div class="subsection">
-                <div class="subsection-header">
-                  <div class="job-title">${project.name}</div>
-                  ${project.date ? `<div class="date">${project.date}</div>` : ''}
-                </div>
-                <p>${project.description}</p>
-                ${project.technologiesUsed ? `
-                <div class="tech-used">Technologies: ${project.technologiesUsed.join(', ')}</div>
-                ` : ''}
-                ${project.link ? `<div><a href="${project.link}" class="project-link">View Project</a></div>` : ''}
-              </div>
-              `).join('')}
-            </div>
-            ` : ''}
+        
     
-            ${data.languages.length > 0 ? `
-            <div class="section">
-              <div class="section-title">Languages</div>
-              ${data.languages.map(lang => `
-              <div class="language-item">
-                <div class="language-name">${lang.language}</div>
-                <div class="language-proficiency">${lang.proficiency}</div>
-              </div>
-              `).join('')}
-            </div>
-            ` : ''}
+        ${data.languages.length > 0 ? `
+        <div class="section">
+          <div class="section-title">Languages</div>
+          ${data.languages.map(lang => `
+          <div class="language-item">
+            <div class="language-name">${lang.language}</div>
+            <div class="language-proficiency">${lang.proficiency}</div>
+          </div>
+          `).join('')}
+        </div>
+        ` : ''}
     
-            ${data.interests.length > 0 ? `
-            <div class="section">
-              <div class="section-title">Interests</div>
-              <div class="skills-container">
-                ${data.interests.map(int => `
-                  <div class="skill-item">${int}</div>
-                `).join('')}
-              </div>
-            </div>
-            ` : ''}
+        ${data.interests.length > 0 ? `
+        <div class="section">
+          <div class="section-title">Interests</div>
+          <div class="skills-container">
+            ${data.interests.map(int => `
+              <div class="skill-item">${int}</div>
+            `).join('')}
           </div>
         </div>
+        ` : ''}
       </div>
     </body>
     </html>
