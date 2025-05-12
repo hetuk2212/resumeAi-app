@@ -1,5 +1,5 @@
-import {View, Text, SafeAreaView, Image, ScrollView} from 'react-native';
 import React, {useState, useEffect} from 'react';
+import {View, Text, SafeAreaView, ScrollView, Keyboard, ActivityIndicator} from 'react-native';
 import styles from './style';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,93 +7,149 @@ import Toast from 'react-native-toast-message';
 import TabSwitcher from '../../../Components/TabSwitcher';
 import {Images} from '../../../Assets/Images';
 import CustomTextInput from '../../../Components/TextInput';
-import {addObjective} from '../../../../lib/api';
-import ActionButtons from '../../../Components/ActionButtons'; // optional, if you still want Save button style
+import {addObjective, getObjective} from '../../../../lib/api';
+import ActionButtons from '../../../Components/ActionButtons';
 
 const Objective = () => {
   const [activeTab, setActiveTab] = useState('Objective');
-  const [projectForm, setProjectForm] = useState({
+  const [formData, setFormData] = useState({
     objective: '',
   });
-  
   const [resumeId, setResumeId] = useState(null);
-  const [loading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
-
   const navigation = useNavigation();
 
+  // Fetch resume ID and existing objective on component mount
   useEffect(() => {
-    const getResumeId = async () => {
+    const fetchResumeData = async () => {
+      setIsLoading(true);
       try {
         const id = await AsyncStorage.getItem('profileId');
-        if (id !== null) {
+        if (id) {
           setResumeId(id);
-          console.log('Resume ID:', id);
-        } else {
-          console.log('No resume ID found');
+          // Fetch existing objective
+          try {
+            const response = await getObjective({resumeId: id});
+            console.log(response);
+            
+            if (response?.data?.objective?.statement) {
+              setFormData({
+                objective: response.data.objective.statement,
+              });
+            }
+          } catch (error) {
+            // Handle 404 or other errors when fetching objective
+            if (error.response?.status !== 404) {
+              console.error('Error fetching objective:', error);
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Failed to load objective. Please try again.',
+              });
+            }
+          }
         }
       } catch (error) {
-        console.log('Error fetching resume ID:', error);
+        console.error('Error fetching resume data:', error);
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Failed to load resume data. Please try again.',
+        });
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    getResumeId();
+    fetchResumeData();
   }, []);
 
   const handleInputChange = (field, value) => {
-    setProjectForm(prev => ({...prev, [field]: value}));
+    setFormData(prev => ({...prev, [field]: value}));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({...prev, [field]: ''}));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.objective.trim()) {
+      newErrors.objective = 'Objective is required';
+    } else if (formData.objective.length < 20) {
+      newErrors.objective = 'Objective should be at least 20 characters';
+    } else if (formData.objective.length > 500) {
+      newErrors.objective = 'Objective should not exceed 500 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = async () => {
-    setIsLoading(true);
-    setErrors({});
-
-    const body = {
-      objective: projectForm.objective,
-    };
+    Keyboard.dismiss();
     
+    if (!validateForm()) return;
+    if (!resumeId) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'No resume found. Please create a resume first.',
+      });
+      return;
+    }
 
+    setIsSubmitting(true);
+    
     try {
-      const response = await addObjective({resumeId, body});
-      if (response.status === 201) {
-        navigation.navigate('Objective');
-
+      const response = await addObjective({
+        resumeId,
+        body: {
+          statement: formData.objective.trim()
+        }
+      });
+      
+      if (response.status === 200) {
         Toast.show({
           type: 'success',
-          text1: response.data.message || 'Project saved!',
-          text2: 'Your project has been saved successfully.',
+          text1: 'Success',
+          text2: 'Objective saved successfully!',
           position: 'bottom',
         });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Unexpected Error',
-          text2: 'Something went wrong, please try again.',
-        });
+        navigation.goBack();
       }
     } catch (error) {
+      console.error('Save Objective Error:', error);
+      
       if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
+        const serverErrors = {};
         error.response.data.errors.forEach(err => {
-          const match = err.path.match(/objective\[0\]\.(\w+)/);
-          if (match) {
-            const [, field] = match;
-            errorObj[field] = err.msg;
+          if (err.path.includes('statement')) {
+            serverErrors.objective = err.msg;
           }
         });
-        setErrors(errorObj);
+        setErrors(serverErrors);
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
+          text2: error.response?.data?.message || 'Failed to save objective. Please try again.',
         });
       }
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -104,37 +160,56 @@ const Objective = () => {
             {key: 'Example', label: 'Example'},
           ]}
           value={activeTab}
-          onTabChange={tabKey => setActiveTab(tabKey)}
+          onTabChange={setActiveTab}
         />
 
-        {activeTab === 'Objective' && (
+        {activeTab === 'Objective' ? (
           <ScrollView
-            contentContainerStyle={{paddingBottom: 100}}
+            contentContainerStyle={styles.scrollContainer}
+            keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>
             <View style={styles.formBox}>
               <View style={styles.titleView}>
                 <Text style={styles.title}>Objective</Text>
               </View>
+              
               <View style={styles.formDetails}>
                 <CustomTextInput
                   label="Objective"
-                  value={projectForm.objective}
+                  placeholder="Describe your career goals and what you bring to the table"
+                  value={formData.objective}
                   onChangeText={text => handleInputChange('objective', text)}
-                  errorMessage={errors['objective']}
-                  multiline={true}
-                  numberOfLines={4}
+                  errorMessage={errors.objective}
+                  multiline
+                  numberOfLines={6}
+                  textAlignVertical="top"
+                  maxLength={500}
                 />
+                <Text style={styles.charCounter}>
+                  {formData.objective.length}/500 characters
+                </Text>
               </View>
             </View>
 
-            {/* Optional Save Button */}
             <ActionButtons
               onSave={handleSave}
               saveIcon={Images.check}
               hideAdd
-              loading={loading}
+              loading={isSubmitting}
+              saveLabel="Save Objective"
             />
           </ScrollView>
+        ) : (
+          <View style={styles.exampleContainer}>
+            <Text style={styles.exampleTitle}>Good Objective Example:</Text>
+            <Text style={styles.exampleText}>
+              "Detail-oriented software engineer with 5+ years of experience in 
+              mobile app development seeking to leverage my expertise in React Native 
+              and problem-solving skills at XYZ Company. Passionate about creating 
+              efficient, user-friendly applications and collaborating with 
+              cross-functional teams to deliver high-quality products."
+            </Text>
+          </View>
         )}
       </View>
     </SafeAreaView>
