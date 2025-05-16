@@ -25,6 +25,7 @@
     "react-native": "0.78.0",
     "react-native-blob-util": "^0.21.2",
     "react-native-date-picker": "^5.0.12",
+    "react-native-device-info": "^14.0.4",
     "react-native-file-viewer": "^2.1.5",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.24.0",
@@ -45,7 +46,9 @@
     "react-native-toast-message": "^2.2.1",
     "react-native-view-shot": "^4.0.3",
     "react-native-webview": "^13.13.4",
-    "toggle-switch-react-native": "^3.3.0"
+    "sp-react-native-in-app-updates": "^1.5.0",
+    "toggle-switch-react-native": "^3.3.0",
+    "underscore": "^1.13.7"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
