@@ -63,7 +63,7 @@ const OnBoarding = () => {
           </Text>
           <SubmitBtn
             buttonText="Get Started"
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => navigation.navigate('MainApp')}
           />
         </View>
       </View>

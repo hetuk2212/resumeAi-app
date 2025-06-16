@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,10 +12,10 @@ import {
 } from 'react-native';
 import styles from './style';
 import CustomTextInput from '../../../Components/TextInput';
-import {Images} from '../../../Assets/Images';
+import { Images } from '../../../Assets/Images';
 import LinearGradient from 'react-native-linear-gradient';
 import ImagePicker from 'react-native-image-crop-picker';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import TabSwitcher from '../../../Components/TabSwitcher';
 import ActionButtons from '../../../Components/ActionButtons';
@@ -23,18 +23,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-toast-message';
 
-// Helper function to format date for display (e.g., "22, December, 2002")
+// Helper function to format date for display
 const formatDisplayDate = dateString => {
   if (!dateString) return '';
-
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
-
     const day = date.getDate();
-    const month = date.toLocaleString('default', {month: 'long'});
+    const month = date.toLocaleString('default', { month: 'long' });
     const year = date.getFullYear();
-
     return `${day}, ${month}, ${year}`;
   } catch (error) {
     console.error('Error formatting date:', error);
@@ -45,15 +42,12 @@ const formatDisplayDate = dateString => {
 // Helper function to format date for API (yyyy-mm-dd)
 const formatApiDate = date => {
   if (!date) return '';
-
   try {
     const d = new Date(date);
     if (isNaN(d.getTime())) return '';
-
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-
     return `${year}-${month}-${day}`;
   } catch (error) {
     console.error('Error formatting API date:', error);
@@ -74,33 +68,23 @@ const PersonalDetails = () => {
   const [errors, setErrors] = useState({});
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [resumeId, setResumeId] = useState(null);
   const [fields, setFields] = useState([
-    {
-      label: 'Date of Birth',
-      key: 'dateOfBirth',
-      isActive: false,
-      value: '',
-      isDateField: true,
-    },
-    {label: 'Nationality', key: 'nationality', isActive: false, value: ''},
-    {label: 'Marital Status', key: 'maritalStatus', isActive: false, value: ''},
-    {label: 'Website', key: 'website', isActive: false, value: ''},
-    {label: 'LinkedIn', key: 'linkedIn', isActive: false, value: ''},
-    {label: 'Facebook', key: 'facebook', isActive: false, value: ''},
-    {label: 'Twitter', key: 'twitter', isActive: false, value: ''},
-    {label: 'Religion', key: 'religion', isActive: false, value: ''},
-    {label: 'Passport', key: 'passport', isActive: false, value: ''},
-    {label: 'Gender', key: 'gender', isActive: false, value: ''},
-    {
-      label: 'Driving License',
-      key: 'drivingLicense',
-      isActive: false,
-      value: '',
-    },
-    {label: 'Place', key: 'place', isActive: false, value: ''},
-    {label: 'Salary Claim', key: 'salaryClaim', isActive: false, value: ''},
-    {label: 'Occupation', key: 'occupation', isActive: false, value: ''},
-    {label: 'Hobbies', key: 'hobbies', isActive: false, value: ''},
+    { label: 'Date of Birth', key: 'dateOfBirth', isActive: false, value: '', isDateField: true },
+    { label: 'Nationality', key: 'nationality', isActive: false, value: '' },
+    { label: 'Marital Status', key: 'maritalStatus', isActive: false, value: '' },
+    { label: 'Website', key: 'website', isActive: false, value: '' },
+    { label: 'LinkedIn', key: 'linkedIn', isActive: false, value: '' },
+    { label: 'Facebook', key: 'facebook', isActive: false, value: '' },
+    { label: 'Twitter', key: 'twitter', isActive: false, value: '' },
+    { label: 'Religion', key: 'religion', isActive: false, value: '' },
+    { label: 'Passport', key: 'passport', isActive: false, value: '' },
+    { label: 'Gender', key: 'gender', isActive: false, value: '' },
+    { label: 'Driving License', key: 'drivingLicense', isActive: false, value: '' },
+    { label: 'Place', key: 'place', isActive: false, value: '' },
+    { label: 'Salary Claim', key: 'salaryClaim', isActive: false, value: '' },
+    { label: 'Occupation', key: 'occupation', isActive: false, value: '' },
+    { label: 'Hobbies', key: 'hobbies', isActive: false, value: '' },
   ]);
 
   const navigation = useNavigation();
@@ -110,7 +94,6 @@ const PersonalDetails = () => {
       e.preventDefault();
       navigation.navigate('Profile');
     });
-
     return unsubscribe;
   }, [navigation]);
 
@@ -122,34 +105,16 @@ const PersonalDetails = () => {
       }
       return false;
     };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
     return () => backHandler.remove();
   }, [activePage]);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', e => {
-      if (activePage === 'modal') {
-        e.preventDefault();
-        setActivePage('form');
-      }
-    });
-
-    return unsubscribe;
-  }, [navigation, activePage]);
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
       setDateOfBirth(selectedDate);
       const formattedDate = formatApiDate(selectedDate);
-      setFieldValues(prev => ({
-        ...prev,
-        'Date of Birth': formattedDate,
-      }));
+      setFieldValues(prev => ({ ...prev, 'Date of Birth': formattedDate }));
     }
   };
 
@@ -184,12 +149,8 @@ const PersonalDetails = () => {
       'Remove Profile Picture',
       'Are you sure you want to remove your profile picture?',
       [
-        {text: 'Cancel', style: 'cancel'},
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: () => setProfileImage(null),
-        },
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Remove', style: 'destructive', onPress: () => setProfileImage(null) },
       ],
     );
   };
@@ -198,10 +159,25 @@ const PersonalDetails = () => {
     setActivePage('modal');
   };
 
-  const saveDataToStorage = async (resumeId, data) => {
+  const saveDataToStorage = async (resumeId, profileData) => {
     try {
+      let resumes = await AsyncStorage.getItem('resumes');
+      resumes = resumes ? JSON.parse(resumes) : [];
+
+      const existingResumeIndex = resumes.findIndex(
+        resume => resume && resume.profile && resume.profile._id === resumeId
+      );
+
+      if (existingResumeIndex !== -1) {
+        resumes[existingResumeIndex] = profileData;
+      } else {
+        resumes.push(profileData);
+      }
+console.log("sas",resumes);
+
+      await AsyncStorage.setItem('resumes', JSON.stringify(resumes));
       await AsyncStorage.setItem('resumeId', resumeId);
-      await AsyncStorage.setItem(resumeId, JSON.stringify(data));
+
       Toast.show({
         type: 'success',
         text1: 'Profile saved successfully!',
@@ -221,24 +197,25 @@ const PersonalDetails = () => {
   const getDataFromStorage = async () => {
     try {
       const resumeId = await AsyncStorage.getItem('resumeId');
-      if (resumeId !== null) {
-        const data = await AsyncStorage.getItem(resumeId);
-        if (data !== null) {
-          const parsedData = JSON.parse(data);
-          const userResume = parsedData.profile.personalInfo;
-
+      const resumes = await AsyncStorage.getItem('resumes');
+      if (resumeId && resumes !== null) {
+        const parsedResumes = JSON.parse(resumes);
+        const existingResume = parsedResumes.find(
+          resume => resume && resume.profile && resume.profile._id === resumeId
+        );
+        if (existingResume) {
+          const userResume = existingResume.profile.personalInfo;
+          setResumeId(resumeId);
           setName(userResume.fullName || '');
           setAddress(userResume.address || '');
           setEmail(userResume.email || '');
           setPhone(userResume.phone || '');
           setProfileImage(userResume.profileImage || null);
 
-          // Update field values and set fields to active if they have a value
           const updatedFields = fields.map(field => {
-            const value =
-              userResume[field.key] || fieldValues[field.label] || '';
+            const value = userResume[field.key] || fieldValues[field.label] || '';
             if (value) {
-              return {...field, isActive: true, value};
+              return { ...field, isActive: true, value };
             }
             return field;
           });
@@ -258,6 +235,9 @@ const PersonalDetails = () => {
             Passport: userResume.passport || '',
             'Driving License': userResume.drivingLicense || '',
             'Salary Claim': userResume.salary || '',
+            Place: userResume.place || '',
+            Occupation: userResume.occupation || '',
+            Hobbies: userResume.hobbies || '',
           });
         }
       }
@@ -268,6 +248,7 @@ const PersonalDetails = () => {
 
   useEffect(() => {
     getDataFromStorage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleToggle = index => {
@@ -276,13 +257,11 @@ const PersonalDetails = () => {
 
     if (!updatedFields[index].isActive) {
       updatedFields[index].value = '';
-
       if (updatedFields[index].isDateField) {
         setDateOfBirth(new Date());
       }
-
       setFieldValues(prev => {
-        const newValues = {...prev};
+        const newValues = { ...prev };
         delete newValues[updatedFields[index].label];
         return newValues;
       });
@@ -295,14 +274,11 @@ const PersonalDetails = () => {
   };
 
   const generateUUID = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-      /[xy]/g,
-      function (c) {
-        const r = (Math.random() * 16) | 0;
-        const v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      },
-    );
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
   };
 
   const handleSave = async () => {
@@ -313,10 +289,10 @@ const PersonalDetails = () => {
       ? formatDisplayDate(fieldValues['Date of Birth'])
       : null;
 
-    const resumeId = (await AsyncStorage.getItem('resumeId')) || generateUUID();
+    const id = resumeId || generateUUID();
+    setResumeId(id);
 
     const profileData = {
-      message: 'Profile created successfully',
       profile: {
         personalInfo: {
           fullName: name,
@@ -336,11 +312,13 @@ const PersonalDetails = () => {
           passport: fieldValues['Passport'] || null,
           drivingLicense: fieldValues['Driving License'] || null,
           salary: fieldValues['Salary Claim'] || null,
-          _id: generateUUID(),
+          place: fieldValues['Place'] || null,
+          occupation: fieldValues['Occupation'] || null,
+          hobbies: fieldValues['Hobbies'] || null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
-        _id: resumeId,
+        _id: id,
         education: [],
         experience: [],
         skills: [],
@@ -356,7 +334,8 @@ const PersonalDetails = () => {
       },
     };
 
-    await saveDataToStorage(resumeId, profileData);
+    await saveDataToStorage(id, profileData);
+    navigation.navigate('Profile');
     setIsLoading(false);
   };
 
@@ -367,8 +346,8 @@ const PersonalDetails = () => {
           <View>
             <TabSwitcher
               tabs={[
-                {key: 'PersonalDetails', label: 'Personal Details'},
-                {key: 'Help', label: 'Help'},
+                { key: 'PersonalDetails', label: 'Personal Details' },
+                { key: 'Help', label: 'Help' },
               ]}
               value={activeTab}
               onTabChange={tabKey => setActiveTab(tabKey)}
@@ -376,7 +355,7 @@ const PersonalDetails = () => {
 
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{paddingBottom: 150}}>
+              contentContainerStyle={{ paddingBottom: 150 }}>
               {activeTab === 'PersonalDetails' && (
                 <View>
                   <CustomTextInput
@@ -454,14 +433,13 @@ const PersonalDetails = () => {
                         />
                       ),
                     )}
-
                   <View>
                     <Text style={styles.label}>Photo (optional)</Text>
                     <View style={styles.profileImgView}>
                       <Image
                         source={
                           profileImage
-                            ? {uri: profileImage.uri || profileImage}
+                            ? { uri: profileImage.uri || profileImage }
                             : Images.profileAccount
                         }
                         style={styles.userProfile}
@@ -472,8 +450,8 @@ const PersonalDetails = () => {
                           onPress={handleImagePick}>
                           <LinearGradient
                             colors={['#33abff', '#4db6ff', '#1aa1ff']}
-                            start={{x: 0, y: 0}}
-                            end={{x: 1, y: 0}}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
                             style={styles.gradientBtn}>
                             <Text style={styles.profileBtnText}>Change</Text>
                           </LinearGradient>
@@ -483,8 +461,8 @@ const PersonalDetails = () => {
                           onPress={handleRemoveImage}>
                           <LinearGradient
                             colors={['#ff9800', '#ff7300', '#ff5722']}
-                            start={{x: 0, y: 0}}
-                            end={{x: 1, y: 0}}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
                             style={styles.gradientBtn}>
                             <Text style={styles.profileBtnText}>Remove</Text>
                           </LinearGradient>
@@ -506,7 +484,7 @@ const PersonalDetails = () => {
         )}
 
         {activePage === 'modal' && (
-          <ScrollView contentContainerStyle={{paddingBottom: 100}}>
+          <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
             <Text style={styles.headerText}>
               Click the switch button to Enable / Disable any profile fields
             </Text>

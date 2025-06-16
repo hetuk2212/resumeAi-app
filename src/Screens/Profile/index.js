@@ -78,7 +78,7 @@ const Profile = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -207,26 +207,32 @@ const Profile = () => {
   const getResumeInfo = async () => {
     setIsLoading(true);
     try {
-      const response = await getSpecificProfile(resumeId);
+      // 1. Get all resumes from storage
+      const storedResumes = await AsyncStorage.getItem('resumes');
+      if (!storedResumes) return;
 
-      if (response.status === 200) {
-        const profile = response.data.profile;
-        setProfileInfo(profile);
-        setOptionalSections(prev => ({
-          ...prev,
-          interests:
-            Array.isArray(profile.interests) && profile.interests.length > 0,
-          achievements:
-            Array.isArray(profile.achievements) &&
-            profile.achievements.length > 0,
-          activities:
-            Array.isArray(profile.activities) && profile.activities.length > 0,
-          // languages:
-          //   Array.isArray(profile.languages) && profile.languages.length > 0,
-        }));
-      }
+      const resumesArray = JSON.parse(storedResumes);
+
+      // 2. Find the specific resume by resumeId
+      const foundResume = resumesArray.find(resume => resume._id === resumeId);
+      console.log("ss", foundResume);
+      if (!foundResume) return;
+
+      
+
+      const profile = foundResume.profile;
+
+      // 3. Update states
+      setProfileInfo(profile);
+      setOptionalSections(prev => ({
+        ...prev,
+        interests: profile.interests?.length > 0 || false,
+        achievements: profile.achievements?.length > 0 || false,
+        activities: profile.activities?.length > 0 || false,
+        languages: profile.languages?.length > 0 || false,
+      }));
     } catch (error) {
-      console.log('Failed to fetch resume info:', error);
+      console.log('Error getting resume:', error);
     } finally {
       setIsLoading(false);
     }
@@ -241,7 +247,7 @@ const Profile = () => {
         text1: 'Missing Personal Information',
         text2:
           'Please fill in your personal details before viewing the resume.',
-          position:"bottom"
+        position: 'bottom',
       });
     }
   };

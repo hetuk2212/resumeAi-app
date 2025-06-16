@@ -34,11 +34,12 @@ const AddEducation = () => {
   const [errors, setErrors] = useState({});
 
   const navigation = useNavigation();
+console.log("ds", resumeId);
 
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
           console.log('Resume ID:', id);
@@ -97,68 +98,114 @@ const AddEducation = () => {
   // };
 
   // Add education api
+const handleSave = async () => {
+  setIsLoading(true);
+  setErrors({});
 
-  const handleSave = async () => {
-    setIsLoading(true);
-    setErrors({});
+  // Validate forms
+  let hasErrors = false;
+  const newErrors = {};
 
-    const formattedEducation = educationForms.map(form => ({
-      course: form.course || '',
-      university: form.school || '',
-      grade: form.grade || '',
-      startYear: form.startYear ? parseInt(form.startYear, 10) : '',
-      endYear: form.endYear ? parseInt(form.endYear, 10) : '',
-    }));
-
-    const body = {education: formattedEducation};
-
-    console.log(body);
-
-    try {
-      const response = await addEducation({resumeId, body});
-      console.log('Response from API:', response);
-
-      if (response.status === 201) {
-        navigation.navigate('Education');
-
-        Toast.show({
-          type: 'success',
-          text1: response.data.message || 'Education saved!',
-          text2: 'Your education details have been saved successfully.',
-          position: 'bottom',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Unexpected Error',
-          text2: 'Something went wrong, please try again.',
-        });
-      }
-    } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          const match = err.path.match(/education\[(\d+)\]\.(\w+)/);
-          if (match) {
-            const [, index, field] = match;
-            errorObj[`${index}_${field}`] = err.msg;
-          }
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
-    } finally {
-      setIsLoading(false);
+  educationForms.forEach((form, index) => {
+    if (!form.course) {
+      newErrors[`${index}_course`] = 'Course is required';
+      hasErrors = true;
     }
-  };
+    if (!form.school) {
+      newErrors[`${index}_university`] = 'School/University is required';
+      hasErrors = true;
+    }
+    // Add other validations as needed
+  });
+
+  if (hasErrors) {
+    setErrors(newErrors);
+    setIsLoading(false);
+    return;
+  }
+
+  try {
+    // Get existing resume data from AsyncStorage
+    const existingResumesString = await AsyncStorage.getItem('resumes');
+    let existingResumes = existingResumesString ? JSON.parse(existingResumesString) : [];
+    
+    // Ensure we have an array
+    if (!Array.isArray(existingResumes)) {
+      console.error('Resumes data is not an array:', existingResumes);
+      existingResumes = [];
+    }
+
+    console.log("All resumes:", existingResumes);
+    console.log("Looking for resume with ID:", resumeId);
+    
+    // Find the resume to update - now checking profile._id
+    const resumeIndex = existingResumes.findIndex(r => r.profile?._id === resumeId);
+    console.log("Found at index:", resumeIndex);
+    
+    if (resumeIndex !== -1) {
+      // Format education data
+      const formattedEducation = educationForms.map(form => ({
+        course: form.course,
+        university: form.school,
+        grade: form.grade,
+        startYear: form.startYear ? parseInt(form.startYear, 10) : null,
+        endYear: form.endYear ? parseInt(form.endYear, 10) : null,
+        isOngoing: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        _id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      }));
+
+      // Create a deep copy of the resumes array
+      const updatedResumes = JSON.parse(JSON.stringify(existingResumes));
+      
+      // Update the specific resume's education array
+      updatedResumes[resumeIndex].profile = {
+        ...updatedResumes[resumeIndex].profile,
+        education: [
+          ...(updatedResumes[resumeIndex].profile.education || []),
+          ...formattedEducation
+        ]
+      };
+      
+      updatedResumes[resumeIndex].updatedAt = new Date().toISOString();
+      
+      // Save back to AsyncStorage
+      await AsyncStorage.setItem('resumes', JSON.stringify(updatedResumes));
+
+      console.log('Successfully saved education:', updatedResumes[resumeIndex]);
+      
+      // Show success toast
+      Toast.show({
+        type: 'success',
+        text1: 'Education saved!',
+        text2: 'Your education details have been saved successfully.',
+        position: 'bottom',
+      });
+
+      // Navigate after toast is shown
+      setTimeout(() => {
+        navigation.navigate('Education');
+      }, 1500);
+      
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: `Resume with ID ${resumeId} not found in local storage`,
+      });
+    }
+  } catch (error) {
+    console.error('Error saving education:', error);
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: 'Failed to save education details',
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -237,7 +284,7 @@ const AddEducation = () => {
             ))}
             <ActionButtons
               onAdd={handleAdd}
-              onSave={educationForms.length > 0 ? handleSave : null} 
+              onSave={handleSave} 
               addIcon={Images.add}
               saveIcon={Images.check}
               loading={loading}
