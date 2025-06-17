@@ -30,7 +30,7 @@ const UpdateEducation = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -58,52 +58,74 @@ const UpdateEducation = () => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await updateEducation({
-        resumeId,
-        educationId: educationData._id,
-        data: {
-          course: form.course,
-          university: form.university,
-          grade: form.grade,
-          startYear: Number(form.startYear),
-          endYear: Number(form.endYear),
-        },
-      });
+      const existingResumesString = await AsyncStorage.getItem('resumes');
+      let existingResumes = existingResumesString
+        ? JSON.parse(existingResumesString)
+        : [];
 
-      if (response.status === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: response.data.message || 'Education updated successfully',
-          position: 'bottom',
-        });
+      if (!Array.isArray(existingResumes)) {
+        console.error('Resumes data is not an array:', existingResumes);
+        existingResumes = [];
+      }
 
-        navigation.navigate('Education');
+      const resumeIndex = existingResumes.findIndex(
+        r => r.profile?._id === resumeId,
+      );
+
+      if (resumeIndex !== -1) {
+        const educationIndex = existingResumes[
+          resumeIndex
+        ].profile.education.findIndex(
+          education => education._id === educationData._id,
+        );
+
+        if (educationIndex !== -1) {
+          existingResumes[resumeIndex].profile.education[educationIndex] = {
+            ...existingResumes[resumeIndex].profile.education[educationIndex],
+            course: form.course,
+            university: form.university,
+            grade: form.grade,
+            startYear: Number(form.startYear),
+            endYear: Number(form.endYear),
+          };
+
+          await AsyncStorage.setItem(
+            'resumes',
+            JSON.stringify(existingResumes),
+          );
+
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Education updated successfully',
+            position: 'bottom',
+          });
+
+          navigation.navigate('Education');
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Education entry not found',
+            position: 'bottom',
+          });
+        }
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Unexpected response from server',
+          text2: 'Resume not found',
           position: 'bottom',
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          errorObj[err.path] = err.msg;
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
+      console.error('Error updating education:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong, try again.',
+        position: 'bottom',
+      });
     } finally {
       setLoading(false);
     }

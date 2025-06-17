@@ -34,7 +34,7 @@ const AddEducation = () => {
   const [errors, setErrors] = useState({});
 
   const navigation = useNavigation();
-console.log("ds", resumeId);
+  console.log('ds', resumeId);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -88,124 +88,106 @@ console.log("ds", resumeId);
     });
   };
 
-  // Handle Save (log form values)
-  // const handleSave = () => {
-  //   console.log(
-  //     'Submitted Education Data:',
-  //     JSON.stringify(educationForms, null, 2),
-  //   );
-  //   navigation.navigate('Choose Resume');
-  // };
-
   // Add education api
-const handleSave = async () => {
-  setIsLoading(true);
-  setErrors({});
+  const handleSave = async () => {
+    setIsLoading(true);
+    setErrors({});
 
-  // Validate forms
-  let hasErrors = false;
-  const newErrors = {};
+    let hasErrors = false;
+    const newErrors = {};
 
-  educationForms.forEach((form, index) => {
-    if (!form.course) {
-      newErrors[`${index}_course`] = 'Course is required';
-      hasErrors = true;
-    }
-    if (!form.school) {
-      newErrors[`${index}_university`] = 'School/University is required';
-      hasErrors = true;
-    }
-    // Add other validations as needed
-  });
+    educationForms.forEach((form, index) => {
+      if (!form.course) {
+        newErrors[`${index}_course`] = 'Course is required';
+        hasErrors = true;
+      }
+      if (!form.school) {
+        newErrors[`${index}_university`] = 'School/University is required';
+        hasErrors = true;
+      }
+    });
 
-  if (hasErrors) {
-    setErrors(newErrors);
-    setIsLoading(false);
-    return;
-  }
-
-  try {
-    // Get existing resume data from AsyncStorage
-    const existingResumesString = await AsyncStorage.getItem('resumes');
-    let existingResumes = existingResumesString ? JSON.parse(existingResumesString) : [];
-    
-    // Ensure we have an array
-    if (!Array.isArray(existingResumes)) {
-      console.error('Resumes data is not an array:', existingResumes);
-      existingResumes = [];
+    if (hasErrors) {
+      setErrors(newErrors);
+      setIsLoading(false);
+      return;
     }
 
-    console.log("All resumes:", existingResumes);
-    console.log("Looking for resume with ID:", resumeId);
-    
-    // Find the resume to update - now checking profile._id
-    const resumeIndex = existingResumes.findIndex(r => r.profile?._id === resumeId);
-    console.log("Found at index:", resumeIndex);
-    
-    if (resumeIndex !== -1) {
-      // Format education data
-      const formattedEducation = educationForms.map(form => ({
-        course: form.course,
-        university: form.school,
-        grade: form.grade,
-        startYear: form.startYear ? parseInt(form.startYear, 10) : null,
-        endYear: form.endYear ? parseInt(form.endYear, 10) : null,
-        isOngoing: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        _id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      }));
+    try {
+      const existingResumesString = await AsyncStorage.getItem('resumes');
+      let existingResumes = existingResumesString
+        ? JSON.parse(existingResumesString)
+        : [];
 
-      // Create a deep copy of the resumes array
-      const updatedResumes = JSON.parse(JSON.stringify(existingResumes));
+      if (!Array.isArray(existingResumes)) {
+        console.error('Resumes data is not an array:', existingResumes);
+        existingResumes = [];
+      }
       
-      // Update the specific resume's education array
-      updatedResumes[resumeIndex].profile = {
-        ...updatedResumes[resumeIndex].profile,
-        education: [
-          ...(updatedResumes[resumeIndex].profile.education || []),
-          ...formattedEducation
-        ]
-      };
-      
-      updatedResumes[resumeIndex].updatedAt = new Date().toISOString();
-      
-      // Save back to AsyncStorage
-      await AsyncStorage.setItem('resumes', JSON.stringify(updatedResumes));
+      const resumeIndex = existingResumes.findIndex(
+        r => r.profile?._id === resumeId,
+      );
 
-      console.log('Successfully saved education:', updatedResumes[resumeIndex]);
-      
-      // Show success toast
-      Toast.show({
-        type: 'success',
-        text1: 'Education saved!',
-        text2: 'Your education details have been saved successfully.',
-        position: 'bottom',
-      });
+      if (resumeIndex !== -1) {
+        const formattedEducation = educationForms.map(form => ({
+          course: form.course,
+          university: form.school,
+          grade: form.grade,
+          startYear: form.startYear ? parseInt(form.startYear, 10) : null,
+          endYear: form.endYear ? parseInt(form.endYear, 10) : null,
+          isOngoing: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          _id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        }));
 
-      // Navigate after toast is shown
-      setTimeout(() => {
-        navigation.navigate('Education');
-      }, 1500);
-      
-    } else {
+        const updatedResumes = JSON.parse(JSON.stringify(existingResumes));
+
+        updatedResumes[resumeIndex].profile = {
+          ...updatedResumes[resumeIndex].profile,
+          education: [
+            ...(updatedResumes[resumeIndex].profile.education || []),
+            ...formattedEducation,
+          ],
+        };
+
+        updatedResumes[resumeIndex].updatedAt = new Date().toISOString();
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(updatedResumes));
+
+        console.log(
+          'Successfully saved education:',
+          updatedResumes[resumeIndex],
+        );
+
+        Toast.show({
+          type: 'success',
+          text1: 'Education saved!',
+          text2: 'Your education details have been saved successfully.',
+          position: 'bottom',
+        });
+
+        setTimeout(() => {
+          navigation.navigate('Education');
+        }, 1500);
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: `Resume with ID ${resumeId} not found in local storage`,
+        });
+      }
+    } catch (error) {
+      console.error('Error saving education:', error);
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: `Resume with ID ${resumeId} not found in local storage`,
+        text2: 'Failed to save education details',
       });
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Error saving education:', error);
-    Toast.show({
-      type: 'error',
-      text1: 'Error',
-      text2: 'Failed to save education details',
-    });
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   return (
     <SafeAreaView style={styles.safeView}>
@@ -284,7 +266,7 @@ const handleSave = async () => {
             ))}
             <ActionButtons
               onAdd={handleAdd}
-              onSave={handleSave} 
+              onSave={handleSave}
               addIcon={Images.add}
               saveIcon={Images.check}
               loading={loading}

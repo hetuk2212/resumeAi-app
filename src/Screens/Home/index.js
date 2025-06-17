@@ -30,7 +30,7 @@ const Home = () => {
   const handleCreateNewResume = async () => {
     try {
       await AsyncStorage.removeItem('resumeId');
-      await AsyncStorage.removeItem('resumes');
+      // await AsyncStorage.removeItem('resumes');
       navigation.navigate('Profile');
     } catch (error) {
       console.log('Error removing profileId:', error);

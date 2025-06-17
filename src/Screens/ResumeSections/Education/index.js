@@ -39,10 +39,13 @@ const Education = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  console.log('sas', education);
+  console.log('sas', resumeId);
+
   const navigation = useNavigation();
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+    const unsubscribe = navigation.addListener('beforeRemove', e => {
       e.preventDefault();
 
       navigation.navigate('Profile');
@@ -54,7 +57,7 @@ const Education = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -78,16 +81,38 @@ const Education = () => {
     setLoading(true);
     setRefreshing(true);
     try {
-      const response = await getEducation(resumeId);
-      if (response.status === 200 && response.data?.education) {
-        setEducation(response.data.education);
+      // Retrieve existing resumes from AsyncStorage
+      const existingResumesString = await AsyncStorage.getItem('resumes');
+      let existingResumes = existingResumesString
+        ? JSON.parse(existingResumesString)
+        : [];
+
+      if (!Array.isArray(existingResumes)) {
+        console.error('Resumes data is not an array:', existingResumes);
+        existingResumes = [];
+      }
+
+      // Find the index of the resume with the matching resumeId
+      const resumeIndex = existingResumes.findIndex(
+        r => r.profile?._id === resumeId,
+      );
+
+      console.log('as', existingResumes);
+      console.log('as', resumeIndex);
+
+      if (resumeIndex !== -1) {
+        // Assuming the education data is stored within the resume object under a key 'education'
+        console.log('Resume found:', existingResumes[resumeIndex]);
+        const educationData =
+          existingResumes[resumeIndex].profile.education || [];
+        setEducation(educationData);
       } else {
-        console.log(response?.data?.message || 'Unexpected response.');
+        console.log('Resume not found for the given resumeId');
       }
     } catch (error) {
       console.error(
         'Error fetching education:',
-        error?.response?.data?.message || 'Something went wrong',
+        error?.message || 'Something went wrong',
       );
     } finally {
       setLoading(false);
@@ -101,13 +126,30 @@ const Education = () => {
 
   const handleDelete = async educationId => {
     try {
-      const response = await deleteEducation({resumeId, educationId});
+      const existingResumesString = await AsyncStorage.getItem('resumes');
+      let existingResumes = existingResumesString
+        ? JSON.parse(existingResumesString)
+        : [];
 
-      if (response.status === 200) {
+      if (!Array.isArray(existingResumes)) {
+        existingResumes = [];
+      }
+
+      const resumeIndex = existingResumes.findIndex(
+        r => r.profile?._id === resumeId,
+      );
+
+      if (resumeIndex !== -1) {
+        existingResumes[resumeIndex].profile.education = existingResumes[
+          resumeIndex
+        ].profile.education.filter(education => education._id !== educationId);
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(existingResumes));
+        setEducation(existingResumes[resumeIndex].profile.education);
         Toast.show({
           type: 'success',
           text1: 'Education deleted successfully!',
-          text2: response?.data?.message || 'The entry has been removed.',
+          text2: 'The entry has been removed.',
           position: 'bottom',
         });
         getAllEducation();
@@ -115,7 +157,7 @@ const Education = () => {
         Toast.show({
           type: 'error',
           text1: 'Deletion failed!',
-          text2: response?.data?.message || 'Please try again later.',
+          text2: 'Resume not found.',
           position: 'bottom',
         });
       }
@@ -153,12 +195,11 @@ const Education = () => {
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Image 
-        source={Images.noData}
-        style={styles.emptyImage}
-      />
+      <Image source={Images.noData} style={styles.emptyImage} />
       <Text style={styles.emptyText}>No Education Found</Text>
-      <Text style={styles.emptySubText}>Add your education details to get started</Text>
+      <Text style={styles.emptySubText}>
+        Add your education details to get started
+      </Text>
     </View>
   );
 
