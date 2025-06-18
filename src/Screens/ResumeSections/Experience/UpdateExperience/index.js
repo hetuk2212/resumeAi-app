@@ -10,6 +10,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from './style';
 import {updateExperience} from '../../../../../lib/api';
 import dayjs from 'dayjs';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../../lib/asyncStorageUtils';
 
 const UpdateExperience = () => {
   const route = useRoute();
@@ -47,7 +51,7 @@ const UpdateExperience = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -75,55 +79,68 @@ const UpdateExperience = () => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await updateExperience({
-        resumeId,
-        experienceId: experienceData._id,
-        data: {
-          company: form.company,
-          location: form.location,
-          position: form.position,
-          startDate: form.startDate
-            ? dayjs(form.startDate).format('YYYY-MM-DD')
-            : '',
-          endDate: form.endDate ? dayjs(form.endDate).format('YYYY-MM-DD') : '',
-          description: form.details,
-        },
-      });
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: response.data.message || 'Experience updated successfully',
-          position: 'bottom',
-        });
+      if (resumeIndex !== -1) {
+        const experienceIndex = existingResumes[
+          resumeIndex
+        ].profile.experience.findIndex(
+          experience => experience._id === experienceData._id,
+        );
 
-        navigation.navigate('Experience');
+        if (experienceIndex !== -1) {
+          existingResumes[resumeIndex].profile.experience[experienceIndex] = {
+            ...existingResumes[resumeIndex].profile.experience[experienceIndex],
+            company: form.company,
+            location: form.location,
+            position: form.position,
+            startDate: form.startDate
+              ? dayjs(form.startDate).format('YYYY-MM-DD')
+              : '',
+            endDate: form.endDate
+              ? dayjs(form.endDate).format('YYYY-MM-DD')
+              : '',
+            description: form.details,
+          };
+
+          await AsyncStorage.setItem(
+            'resumes',
+            JSON.stringify(existingResumes),
+          );
+
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Experience updated successfully',
+            position: 'bottom',
+          });
+
+          navigation.navigate('Experience');
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Experience entry not found',
+            position: 'bottom',
+          });
+        }
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Unexpected response from server',
+          text2: 'Resume not found',
           position: 'bottom',
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          errorObj[err.path] = err.msg;
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
+      console.error('Error updating Experience:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong, try again.',
+        position: 'bottom',
+      });
     } finally {
       setLoading(false);
     }
@@ -133,7 +150,7 @@ const UpdateExperience = () => {
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
         <View style={styles.createNew}>
-          <Text style={styles.title}>Update Education</Text>
+          <Text style={styles.title}>Update Experience</Text>
         </View>
         <View style={styles.inputContainer}>
           <CustomTextInput
@@ -189,9 +206,7 @@ const UpdateExperience = () => {
                 <CustomTextInput
                   label="End Date"
                   value={
-                    form.endDate
-                      ? dayjs(form.endDate).format('YYYY-MM-DD')
-                      : ''
+                    form.endDate ? dayjs(form.endDate).format('YYYY-MM-DD') : ''
                   }
                   editable={false}
                   pointerEvents="none"

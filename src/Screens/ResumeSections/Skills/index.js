@@ -19,6 +19,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {deleteSkill, getSkills} from '../../../../lib/api';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../lib/asyncStorageUtils';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -42,7 +46,7 @@ const Skills = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+    const unsubscribe = navigation.addListener('beforeRemove', e => {
       e.preventDefault();
 
       navigation.navigate('Profile');
@@ -54,7 +58,7 @@ const Skills = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -78,18 +82,22 @@ const Skills = () => {
     setLoading(true);
     setRefreshing(true);
     try {
-      const response = await getSkills(resumeId);
-      console.log(response);
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200 && response.data?.skills) {
-        setSkills(response.data.skills);
+      if (resumeIndex !== 1) {
+        console.log('Resume found:', existingResumes[resumeIndex]);
+
+        const skillsData = existingResumes[resumeIndex].profile.skills || [];
+
+        setSkills(skillsData);
       } else {
-        console.log(response?.data?.message || 'Unexpected response.');
+        console.log('Resume not found for the given resumeId');
       }
     } catch (error) {
       console.error(
         'Error fetching Skills:',
-        error?.response?.data?.message || 'Something went wrong',
+        error?.message || 'Something went wrong',
       );
     } finally {
       setLoading(false);
@@ -103,13 +111,21 @@ const Skills = () => {
 
   const handleDelete = async skillId => {
     try {
-      const response = await deleteSkill({resumeId, skillId});
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
+      if (resumeIndex !== 1) {
+        existingResumes[resumeIndex].profile.skills = existingResumes[
+          resumeIndex
+        ].profile.skills.filter(skills => skills._id !== skillId);
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(existingResumes));
+        setSkills(existingResumes[resumeIndex].profile.skills);
+
         Toast.show({
           type: 'success',
           text1: 'Skill deleted successfully!',
-          text2: response?.data?.message || 'The entry has been removed.',
+          text2: 'The entry has been removed.',
           position: 'bottom',
         });
         getAllSkills();
@@ -155,12 +171,11 @@ const Skills = () => {
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Image 
-        source={Images.noData}
-        style={styles.emptyImage}
-      />
+      <Image source={Images.noData} style={styles.emptyImage} />
       <Text style={styles.emptyText}>No Skills Found</Text>
-      <Text style={styles.emptySubText}>Add your skills details to get started</Text>
+      <Text style={styles.emptySubText}>
+        Add your skills details to get started
+      </Text>
     </View>
   );
 

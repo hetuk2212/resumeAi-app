@@ -7,7 +7,11 @@ import {Images} from '../../../../Assets/Images';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { updateSkill } from '../../../../../lib/api';
+import {updateSkill} from '../../../../../lib/api';
+import {
+  getResumesFromStorage,
+  findResumeIndex,
+} from '../../../../../lib/asyncStorageUtils';
 
 const UpdateSkill = () => {
   const route = useRoute();
@@ -27,7 +31,7 @@ const UpdateSkill = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -54,52 +58,63 @@ const UpdateSkill = () => {
 
   const handleSave = async () => {
     if (!form.skill.trim()) {
-      setErrors({ skill: 'Skill name is required' });
+      setErrors({skill: 'Skill name is required'});
       return;
     }
     setLoading(true);
 
     try {
-      const response = await updateSkill({
-        resumeId,
-        skillId: skillData._id,
-        data: {
-          skillName: form.skill,
-          rating: form.rating,
-        },
-      });
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: response.data.message || 'Skill updated successfully',
-          position: 'bottom',
-        });
+      if (resumeIndex !== 1) {
+        const skillIndex = existingResumes[
+          resumeIndex
+        ].profile.skills.findIndex(skills => skills._id === skillData._id);
+        if (skillIndex !== -1) {
+          existingResumes[resumeIndex].profile.skills[skillIndex] = {
+            ...existingResumes[resumeIndex].profile.skills[skillIndex],
+            skillName: form.skill,
+            rating: form.rating,
+          };
 
-        navigation.navigate('Skills');
+          await AsyncStorage.setItem(
+            'resumes',
+            JSON.stringify(existingResumes),
+          );
+
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Skills updated successfully',
+            position: 'bottom',
+          });
+
+          navigation.navigate('Skills');
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Skills entry not found',
+            position: 'bottom',
+          });
+        }
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Unexpected response from server',
+          text2: 'Resume not found',
           position: 'bottom',
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        
-        setErrors(response?.data?.errorsrorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
+      console.error('Error updating Skills:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong, try again.',
+        position: 'bottom',
+      });
     } finally {
       setLoading(false);
     }
@@ -119,22 +134,21 @@ const UpdateSkill = () => {
             errorMessage={errors.skill}
           />
           <View style={styles.ratingContainer}>
-  <Text style={styles.ratingLabel}>Rating:</Text>
-  <View style={styles.ratingRow}>
-    {[1, 2, 3, 4, 5].map(level => (
-      <TouchableOpacity
-        key={level}
-        style={[
-          styles.ratingCircle,
-          form.rating === level && styles.ratingCircleActive,
-        ]}
-        onPress={() => handleInputChange('rating', level)}
-      >
-        <Text style={styles.ratingText}>{level}</Text>
-      </TouchableOpacity>
-    ))}
-  </View>
-</View>
+            <Text style={styles.ratingLabel}>Rating:</Text>
+            <View style={styles.ratingRow}>
+              {[1, 2, 3, 4, 5].map(level => (
+                <TouchableOpacity
+                  key={level}
+                  style={[
+                    styles.ratingCircle,
+                    form.rating === level && styles.ratingCircleActive,
+                  ]}
+                  onPress={() => handleInputChange('rating', level)}>
+                  <Text style={styles.ratingText}>{level}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
 
           <ActionButtons
             onSave={handleSave}

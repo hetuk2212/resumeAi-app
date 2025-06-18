@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, ScrollView, Keyboard, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  Keyboard,
+  ActivityIndicator,
+} from 'react-native';
 import styles from './style';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,8 +14,11 @@ import Toast from 'react-native-toast-message';
 import TabSwitcher from '../../../Components/TabSwitcher';
 import {Images} from '../../../Assets/Images';
 import CustomTextInput from '../../../Components/TextInput';
-import {addObjective, getObjective} from '../../../../lib/api';
 import ActionButtons from '../../../Components/ActionButtons';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../lib/asyncStorageUtils';
 
 const Objective = () => {
   const [activeTab, setActiveTab] = useState('Objective');
@@ -21,34 +31,25 @@ const Objective = () => {
   const [errors, setErrors] = useState({});
   const navigation = useNavigation();
 
-  // Fetch resume ID and existing objective on component mount
   useEffect(() => {
     const fetchResumeData = async () => {
       setIsLoading(true);
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id) {
           setResumeId(id);
-          // Fetch existing objective
-          try {
-            const response = await getObjective({resumeId: id});
-            console.log(response);
-            
-            if (response?.data?.objective?.statement) {
-              setFormData({
-                objective: response.data.objective.statement,
-              });
-            }
-          } catch (error) {
-            // Handle 404 or other errors when fetching objective
-            if (error.response?.status !== 404) {
-              console.error('Error fetching objective:', error);
-              Toast.show({
-                type: 'error',
-                text1: 'Error',
-                text2: 'Failed to load objective. Please try again.',
-              });
-            }
+          // Fetch existing profile data
+          const existingResumes = await getResumesFromStorage();
+          const resumeIndex = findResumeIndex(existingResumes, resumeId);
+
+          if (
+            resumeIndex !== -1 &&
+            existingResumes[resumeIndex].profile.objective.statement
+          ) {
+            setFormData({
+              objective:
+                existingResumes[resumeIndex].profile.objective.statement,
+            });
           }
         }
       } catch (error) {
@@ -64,11 +65,10 @@ const Objective = () => {
     };
 
     fetchResumeData();
-  }, []);
+  }, [resumeId]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({...prev, [field]: value}));
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({...prev, [field]: ''}));
     }
@@ -83,14 +83,12 @@ const Objective = () => {
     } else if (formData.objective.length > 500) {
       newErrors.objective = 'Objective should not exceed 500 characters';
     }
-    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = async () => {
     Keyboard.dismiss();
-    
     if (!validateForm()) return;
     if (!resumeId) {
       Toast.show({
@@ -102,42 +100,39 @@ const Objective = () => {
     }
 
     setIsSubmitting(true);
-    
     try {
-      const response = await addObjective({
-        resumeId,
-        body: {
-          statement: formData.objective.trim()
-        }
-      });
-      
-      if (response.status === 200) {
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
+
+      if (resumeIndex !== -1) {
+        existingResumes[resumeIndex].profile.objective = {
+          statement: formData.objective.trim(),
+        };
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(existingResumes));
+
         Toast.show({
           type: 'success',
           text1: 'Success',
           text2: 'Objective saved successfully!',
           position: 'bottom',
         });
+
         navigation.goBack();
-      }
-    } catch (error) {
-      console.error('Save Objective Error:', error);
-      
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        const serverErrors = {};
-        error.response.data.errors.forEach(err => {
-          if (err.path.includes('statement')) {
-            serverErrors.objective = err.msg;
-          }
-        });
-        setErrors(serverErrors);
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: error.response?.data?.message || 'Failed to save objective. Please try again.',
+          text2: 'Resume not found.',
         });
       }
+    } catch (error) {
+      console.error('Save Objective Error:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to save objective. Please try again.',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -172,7 +167,6 @@ const Objective = () => {
               <View style={styles.titleView}>
                 <Text style={styles.title}>Objective</Text>
               </View>
-              
               <View style={styles.formDetails}>
                 <CustomTextInput
                   label="Objective"
@@ -203,11 +197,11 @@ const Objective = () => {
           <View style={styles.exampleContainer}>
             <Text style={styles.exampleTitle}>Good Objective Example:</Text>
             <Text style={styles.exampleText}>
-              "Detail-oriented software engineer with 5+ years of experience in 
-              mobile app development seeking to leverage my expertise in React Native 
-              and problem-solving skills at XYZ Company. Passionate about creating 
-              efficient, user-friendly applications and collaborating with 
-              cross-functional teams to deliver high-quality products."
+              "Detail-oriented software engineer with 5+ years of experience in
+              mobile app development seeking to leverage my expertise in React
+              Native and problem-solving skills at XYZ Company. Passionate about
+              creating efficient, user-friendly applications and collaborating
+              with cross-functional teams to deliver high-quality products."
             </Text>
           </View>
         )}

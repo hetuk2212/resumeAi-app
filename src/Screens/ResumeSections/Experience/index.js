@@ -20,6 +20,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import styles from './style';
 import dayjs from 'dayjs';
+import { findResumeIndex, getResumesFromStorage } from '../../../../lib/asyncStorageUtils';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -42,8 +43,13 @@ const Experience = () => {
 
   const navigation = useNavigation();
 
+  console.log(experience);
+  console.log(resumeId);
+  
+  
+
   useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+    const unsubscribe = navigation.addListener('beforeRemove', e => {
       e.preventDefault();
 
       navigation.navigate('Profile');
@@ -55,7 +61,7 @@ const Experience = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -79,16 +85,37 @@ const Experience = () => {
     setLoading(true);
     setRefreshing(true);
     try {
-      const response = await getExperience(resumeId);
-      if (response.status === 200 && response.data?.experience) {
-        setExperience(response.data.experience);
+      const existingResumesString = await AsyncStorage.getItem('resumes');
+      let existingResumes = existingResumesString
+        ? JSON.parse(existingResumesString)
+        : [];
+
+      if (!Array.isArray(existingResumes)) {
+        console.error('Resume data is not an array:', existingResumes);
+        existingResumes = [];
+      }
+
+      const resumeIndex = existingResumes.findIndex(
+        r => r.profile?._id === resumeId,
+      );
+
+        console.log('as', existingResumes);
+      console.log('as', resumeIndex);
+
+      if (resumeIndex !== -1) {
+        console.log('Resume found:', existingResumes[resumeIndex]);
+
+        const experienceData =
+          existingResumes[resumeIndex].profile.experience || [];
+
+        setExperience(experienceData);
       } else {
-        console.log(response?.data?.message || 'Unexpected response.');
+        console.log('Resume not found for the given resumeId');
       }
     } catch (error) {
       console.error(
         'Error fetching experience:',
-        error?.response?.data?.message || 'Something went wrong',
+        error?.message || 'Something went wrong',
       );
     } finally {
       setLoading(false);
@@ -102,13 +129,22 @@ const Experience = () => {
 
   const handleDelete = async experienceId => {
     try {
-      const response = await deleteExperience({resumeId, experienceId});
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
+      if (resumeIndex !== -1) {
+
+        existingResumes[resumeIndex].profile.experience = existingResumes[
+          resumeIndex
+        ].profile.experience.filter(experience => experience._id !== experienceId);
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(existingResumes));
+        setExperience(existingResumes[resumeIndex].profile.experience);
+
         Toast.show({
           type: 'success',
           text1: 'Experience deleted successfully!',
-          text2: response?.data?.message || 'The entry has been removed.',
+          text2: 'The entry has been removed.',
           position: 'bottom',
         });
         getAllExperience();
@@ -116,7 +152,7 @@ const Experience = () => {
         Toast.show({
           type: 'error',
           text1: 'Deletion failed!',
-          text2: response?.data?.message || 'Please try again later.',
+          text2: 'Resume not found',
           position: 'bottom',
         });
       }
@@ -153,12 +189,11 @@ const Experience = () => {
   );
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Image 
-        source={Images.noData}
-        style={styles.emptyImage}
-      />
+      <Image source={Images.noData} style={styles.emptyImage} />
       <Text style={styles.emptyText}>No Experience Found</Text>
-      <Text style={styles.emptySubText}>Add your experience details to get started</Text>
+      <Text style={styles.emptySubText}>
+        Add your experience details to get started
+      </Text>
     </View>
   );
   const renderExperienceItem = ({item}) => (

@@ -16,7 +16,7 @@ import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { addExperience } from '../../../../../lib/api';
+import {addExperience} from '../../../../../lib/api';
 const AddExperience = () => {
   const [activeTab, setActiveTab] = useState('Experience');
   const [experienceForms, setExperienceForms] = useState([
@@ -35,8 +35,6 @@ const AddExperience = () => {
   const [datePickerVisible, setDatePickerVisible] = useState({});
   const [selectedDates, setSelectedDates] = useState({});
 
-  
-
   const showDatePicker = (formId, field) => {
     setDatePickerVisible({[`${formId}_${field}`]: true});
   };
@@ -54,7 +52,7 @@ const AddExperience = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
           console.log('Resume ID:', id);
@@ -119,32 +117,81 @@ const AddExperience = () => {
     setIsLoading(true);
     setErrors({});
 
-    const formattedExperience = experienceForms.map(form => ({
-      company: form.company || '',
-      location: form.school || '',
-      position: form.position || '',
-      startDate: form.startDate || '',
-      endDate: form.endDate || '',
-      description: form.details
-    }));
+    let hasErrors = false;
+    const newErrors = {};
 
-    const body = {experience: formattedExperience};
+    experienceForms.forEach((form, index) => {
+      if (!form.company) {
+        newErrors[`${index}_company`] = 'Company is required';
+        hasErrors = true;
+      }
+      if (!form.location) {
+        newErrors[`${index}_location`] = 'Location is required';
+        hasErrors = true;
+      }
+    });
 
-    console.log(body);
+    if (hasErrors) {
+      setErrors(newErrors);
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const response = await addExperience({resumeId, body});
-      console.log('Response from API:', response);
+      const existingResumesString = await AsyncStorage.getItem('resumes');
+      let existingResumes = existingResumesString
+        ? JSON.parse(existingResumesString)
+        : [];
 
-      if (response.status === 201) {
-        navigation.navigate('Experience');
+      if (!Array.isArray(existingResumes)) {
+        console.log('Resumes data is not an array:', existingResumes);
+        existingResumes = [];
+      }
+
+      const resumeIndex = existingResumes.findIndex(
+        r => r.profile?._id === resumeId,
+      );
+
+      if (resumeIndex !== -1) {
+        const formattedExperience = experienceForms.map(form => ({
+          company: form.company || '',
+          location: form.location || '',
+          position: form.position || '',
+          startDate: form.startDate || '',
+          endDate: form.endDate || '',
+          description: form.details,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          _id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        }));
+
+        const updatedResumes = JSON.parse(JSON.stringify(existingResumes));
+
+        updatedResumes[resumeIndex].profile = {
+          ...updatedResumes[resumeIndex].profile,
+          experience: [
+            ...(updatedResumes[resumeIndex].profile.experience || []),
+            ...formattedExperience,
+          ],
+        };
+
+        updatedResumes[resumeIndex].updatedAt = new Date().toISOString();
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(updatedResumes));
+console.log("updated", updatedResumes);
+
 
         Toast.show({
           type: 'success',
-          text1: response.data.message || 'Experience saved!',
+          text1:'Experience saved!',
           text2: 'Your experience details have been saved successfully.',
           position: 'bottom',
         });
+
+        setTimeout(() => {
+          navigation.navigate('Experience');
+        }, 1500);
+
       } else {
         Toast.show({
           type: 'error',
@@ -153,26 +200,12 @@ const AddExperience = () => {
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          const match = err.path.match(/experience\[(\d+)\]\.(\w+)/);
-          if (match) {
-            const [, index, field] = match;
-            errorObj[`${index}_${field}`] = err.msg;
-          }
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
+      console.error('Error saving experience:', error);
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: 'Failed to save experience details',
+            });
     } finally {
       setIsLoading(false);
     }
@@ -236,8 +269,7 @@ const AddExperience = () => {
                     <View style={styles.dateBox}>
                       <TouchableOpacity
                         onPress={() => showDatePicker(form.id, 'startDate')}
-                        activeOpacity={1}
-                      >
+                        activeOpacity={1}>
                         <CustomTextInput
                           label="Start Date"
                           value={form.startDate}
@@ -252,7 +284,9 @@ const AddExperience = () => {
                           mode="date"
                           display="default"
                           value={
-                            form.startDate ? new Date(form.startDate) : new Date()
+                            form.startDate
+                              ? new Date(form.startDate)
+                              : new Date()
                           }
                           onChange={(e, date) =>
                             handleDateChange(e, date, form.id, 'startDate')
@@ -264,8 +298,7 @@ const AddExperience = () => {
                     <View style={styles.dateBox}>
                       <TouchableOpacity
                         onPress={() => showDatePicker(form.id, 'endDate')}
-                        activeOpacity={1}
-                      >
+                        activeOpacity={1}>
                         <CustomTextInput
                           label="End Date"
                           value={form.endDate}

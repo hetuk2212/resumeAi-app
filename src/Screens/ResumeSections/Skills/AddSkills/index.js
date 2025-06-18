@@ -16,6 +16,10 @@ import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
 import {addSkills} from '../../../../../lib/api';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../../lib/asyncStorageUtils';
 
 const AddSkills = () => {
   const [activeTab, setActiveTab] = useState('Skills');
@@ -35,7 +39,7 @@ const AddSkills = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
           console.log('Resume ID:', id);
@@ -95,7 +99,7 @@ const AddSkills = () => {
   const handleSave = async () => {
     setIsLoading(true);
     setErrors({});
-  
+
     // First validate locally before making API call
     const localErrors = {};
     skillsForms.forEach((form, index) => {
@@ -103,48 +107,66 @@ const AddSkills = () => {
         localErrors[`${index}_skill`] = 'Skill name is required';
       }
     });
-  
+
     if (Object.keys(localErrors).length > 0) {
       setErrors(localErrors);
       setIsLoading(false);
       return;
     }
-  
-    const formattedSkills = skillsForms.map(form => ({
-      skillName: form.skill || '',
-      rating: form.rating || 0,
-    }));
-  
-    const body = {skills: formattedSkills};
-  
+
+
     try {
-      const response = await addSkills({resumeId, body});
-      
-      if (response.status === 201) {
-        navigation.navigate('Skills');
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
+
+      if (resumeIndex !== -1) {
+        const formattedSkills = skillsForms.map(form => ({
+          skillName: form.skill || '',
+          rating: form.rating || 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          _id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        }));
+
+        const updatedResumes = JSON.parse(JSON.stringify(existingResumes));
+
+        updatedResumes[resumeIndex].profile = {
+          ...updatedResumes[resumeIndex].profile,
+          skills: [
+            ...(updatedResumes[resumeIndex].profile.skills || []),
+            ...formattedSkills,
+          ],
+        };
+
+        updatedResumes[resumeIndex].updatedAt = new Date().toISOString();
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(updatedResumes));
+        console.log('updated', updatedResumes);
+
         Toast.show({
           type: 'success',
-          text1: response.data.message || 'Skills saved!',
+          text1: 'Skills saved!',
           text2: 'Your Skills details have been saved successfully.',
           position: 'bottom',
         });
-      }
-    } catch (error) {
-      if (error.response?.status === 400 && error.response?.data?.invalidEntries) {
-        let errorObj = {};
-        error.response.data.invalidEntries.forEach((entry, index) => {
-          if (!entry.skillName) {
-            errorObj[`${index}_skill`] = 'Skill name is required';
-          }
-        });
-        setErrors(errorObj);
+
+        setTimeout(() => {
+          navigation.navigate('Skills');
+        }, 1500);
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Error',
-          text2: error.response?.data?.message || 'Something went wrong, try again.',
+          text1: 'Unexpected Error',
+          text2: 'Something went wrong, please try again.',
         });
       }
+    } catch (error) {
+      console.error('Error saving skills:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to save skills details',
+      });
     } finally {
       setIsLoading(false);
     }
