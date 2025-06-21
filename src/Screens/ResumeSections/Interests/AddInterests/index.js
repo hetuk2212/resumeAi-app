@@ -16,6 +16,7 @@ import {
   import {Images} from '../../../../Assets/Images';
   import CustomTextInput from '../../../../Components/TextInput';
 import { addInterests } from '../../../../../lib/api';
+import { findResumeIndex, getResumesFromStorage } from '../../../../../lib/asyncStorageUtils';
   
   const AddInterests = () => {
     const [activeTab, setActiveTab] = useState('Interests');
@@ -33,7 +34,7 @@ import { addInterests } from '../../../../../lib/api';
     useEffect(() => {
       const getResumeId = async () => {
         try {
-          const id = await AsyncStorage.getItem('profileId');
+          const id = await AsyncStorage.getItem('resumeId');
           if (id !== null) {
             setResumeId(id);
             console.log('Resume ID:', id);
@@ -79,42 +80,45 @@ import { addInterests } from '../../../../../lib/api';
       });
     };
   
-    // Handle Save (log form values)
-    // const handleSave = () => {
-    //   console.log(
-    //     'Submitted Interests Data:',
-    //     JSON.stringify(InterestsForms, null, 2),
-    //   );
-    //   navigation.navigate('Choose Resume');
-    // };
-  
-    // Add Interests api
-  
     const handleSave = async () => {
       setIsLoading(true);
       setErrors({});
   
-      const formattedInterests = interestsForms.map(form => ({
-        interest: form.interest || '',
-      }));
-  
-      const body = {interests: formattedInterests};
-  
-      console.log(body);
-  
       try {
-        const response = await addInterests({resumeId, body});
-        console.log('Response from API:', response);
+        const existingResumes = await getResumesFromStorage();
+        const resumeIndex = findResumeIndex(existingResumes, resumeId);
   
-        if (response.status === 200) {
-          navigation.navigate('Interests');
+        if (resumeIndex !== -1) {
+          const formattedInterests = interestsForms.map(form => ({
+        interest: form.interest || '',
+        createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          _id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      }));
+          const updatedResumes = JSON.parse(JSON.stringify(existingResumes));
+
+        updatedResumes[resumeIndex].profile = {
+          ...updatedResumes[resumeIndex].profile,
+          interests: [
+            ...(updatedResumes[resumeIndex].profile.interests || []),
+            ...formattedInterests,
+          ],
+        };
+
+        updatedResumes[resumeIndex].updatedAt = new Date().toISOString();
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(updatedResumes));
+        console.log('updated', updatedResumes);
   
           Toast.show({
             type: 'success',
-            text1: response.data.message || 'Interests saved!',
+            text1: 'Interests saved!',
             text2: 'Your Interests details have been saved successfully.',
             position: 'bottom',
           });
+          setTimeout(() => {
+          navigation.navigate('Interests');
+        }, 1500);
         } else {
           Toast.show({
             type: 'error',
@@ -123,30 +127,16 @@ import { addInterests } from '../../../../../lib/api';
           });
         }
       } catch (error) {
-        console.log('Error response:', error.response?.data);
-  
-        if (error.response?.status === 400 && error.response?.data?.errors) {
-          let errorObj = {};
-          error.response.data.errors.forEach(err => {
-            const match = err.path.match(/interests\[(\d+)\]\.(\w+)/);
-            if (match) {
-              const [, index, field] = match;
-              errorObj[`${index}_${field}`] = err.msg;
-            }
-          });
-          setErrors(errorObj);
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2:
-              error.response?.data?.message || 'Something went wrong, try again.',
-          });
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
+            console.error('Error saving interests:', error);
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: 'Failed to save interests details',
+            });
+          } finally {
+            setIsLoading(false);
+          }
+        };
   
     return (
       <SafeAreaView style={styles.safeView}>

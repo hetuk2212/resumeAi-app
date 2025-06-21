@@ -19,6 +19,10 @@ import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getSpecificProfile} from '../../../lib/api';
 import Color from '../../Theme/Color';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../lib/asyncStorageUtils';
 
 const sectionImages = {
   projects: Images.SectionProjects,
@@ -58,11 +62,6 @@ const Profile = () => {
     {id: 3, name: 'Experience', image: Images.SectionExperience},
     {id: 4, name: 'Skills', image: Images.SectionSkills},
     {id: 5, name: 'Objective', image: Images.SectionObjective},
-  ];
-
-  const manageSections = [
-    {id: 11, name: 'Rearrange / Edit Heading', image: Images.SectionArrange},
-    {id: 12, name: 'Help', image: Images.SectionHelp},
   ];
 
   const navigation = useNavigation();
@@ -208,28 +207,19 @@ const Profile = () => {
     setIsLoading(true);
     try {
       // 1. Get all resumes from storage
-      const storedResumes = await AsyncStorage.getItem('resumes');
-      if (!storedResumes) return;
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      const resumesArray = JSON.parse(storedResumes);
-
-      // 2. Find the specific resume by resumeId
-      const foundResume = resumesArray.find(resume => resume._id === resumeId);
-      console.log("ss", foundResume);
-      if (!foundResume) return;
-
-      
-
-      const profile = foundResume.profile;
+      const profile = existingResumes[resumeIndex].profile;
 
       // 3. Update states
       setProfileInfo(profile);
       setOptionalSections(prev => ({
         ...prev,
-        interests: profile.interests?.length > 0 || false,
-        achievements: profile.achievements?.length > 0 || false,
-        activities: profile.activities?.length > 0 || false,
-        languages: profile.languages?.length > 0 || false,
+        interests: profile?.interests?.length > 0 || false,
+        achievements: profile?.achievements?.length > 0 || false,
+        activities: profile?.activites?.length > 0 || false,
+        languages: profile?.languages?.length > 0 || false,
       }));
     } catch (error) {
       console.log('Error getting resume:', error);
@@ -278,7 +268,6 @@ const Profile = () => {
                     })),
                   true,
                 )}
-                {renderSection('Manage Section', manageSections)}
               </>
             )}
             {showOptions && (

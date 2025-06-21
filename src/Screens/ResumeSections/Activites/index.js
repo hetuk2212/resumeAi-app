@@ -18,7 +18,11 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { deleteActivity, getActivites } from '../../../../lib/api';
+import {deleteActivity, getActivites} from '../../../../lib/api';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../lib/asyncStorageUtils';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -42,7 +46,7 @@ const Activites = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+    const unsubscribe = navigation.addListener('beforeRemove', e => {
       e.preventDefault();
 
       navigation.navigate('Profile');
@@ -54,7 +58,7 @@ const Activites = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -78,18 +82,20 @@ const Activites = () => {
     setLoading(true);
     setRefreshing(true);
     try {
-      const response = await getActivites(resumeId);
-      console.log(response);
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200 && response.data?.activities) {
-        setActivites(response.data.activities);
+      if (resumeIndex !== -1) {
+        const activityData =
+          existingResumes[resumeIndex].profile.activites || [];
+        setActivites(activityData);
       } else {
-        console.log(response?.data?.message || 'Unexpected response.');
+        console.log('Resume not found for the given resumeId');
       }
     } catch (error) {
       console.error(
         'Error fetching Activities:',
-        error?.response?.data?.message || 'Something went wrong',
+        error?.response?.message || 'Something went wrong',
       );
     } finally {
       setLoading(false);
@@ -103,13 +109,20 @@ const Activites = () => {
 
   const handleDelete = async activityId => {
     try {
-      const response = await deleteActivity({resumeId, activityId});
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
+      if (resumeIndex !== -1) {
+        existingResumes[resumeIndex].profile.activites = existingResumes[
+          resumeIndex
+        ].profile.activites.filter(activites => activites._id !== activityId);
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(existingResumes));
+        setActivites(existingResumes[resumeIndex].profile.skills);
         Toast.show({
           type: 'success',
           text1: 'Skill deleted successfully!',
-          text2: response?.data?.message || 'The entry has been removed.',
+          text2: 'The entry has been removed.',
           position: 'bottom',
         });
         getAllActivites();
@@ -117,7 +130,7 @@ const Activites = () => {
         Toast.show({
           type: 'error',
           text1: 'Deletion failed!',
-          text2: response?.data?.message || 'Please try again later.',
+          text2: 'Please try again later.',
           position: 'bottom',
         });
       }
@@ -155,12 +168,11 @@ const Activites = () => {
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Image 
-        source={Images.noData}
-        style={styles.emptyImage}
-      />
+      <Image source={Images.noData} style={styles.emptyImage} />
       <Text style={styles.emptyText}>No Activites Found</Text>
-      <Text style={styles.emptySubText}>Add your activites details to get started</Text>
+      <Text style={styles.emptySubText}>
+        Add your activites details to get started
+      </Text>
     </View>
   );
 

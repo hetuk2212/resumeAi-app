@@ -1,4 +1,11 @@
-import {View, Text, SafeAreaView, TouchableOpacity, Image, StatusBar} from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  StatusBar,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Images} from '../../Assets/Images';
 import styles from './style';
@@ -17,8 +24,10 @@ const Home = () => {
         if (userData) {
           const parsedData = JSON.parse(userData);
           console.log('parsedData', parsedData.user.phone);
-          
-          setUserName(parsedData.user.username || parsedData.user.phone || 'User');
+
+          setUserName(
+            parsedData.user.username || parsedData.user.phone || 'User',
+          );
         }
       } catch (error) {
         console.log('Error fetching user data:', error);
@@ -38,15 +47,14 @@ const Home = () => {
   };
   return (
     <SafeAreaView style={styles.safeView}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={Color.primary}
-      />
+      <StatusBar barStyle="dark-content" backgroundColor={Color.primary} />
       <View style={styles.container}>
         <View style={styles.headerView}>
           <View style={styles.profileView}>
             <Text style={styles.profileText}>Welcome !</Text>
-            <Text style={styles.profileName}>{userName}</Text>
+            <Text style={styles.profileName}>
+              Create professional resumes in minutes.
+            </Text>
           </View>
           <Image source={Images.profileAccount} style={styles.logoProfile} />
           <View style={styles.homeBox}>
@@ -59,10 +67,11 @@ const Home = () => {
         </View>
 
         <View style={styles.resumeView}>
-          
-          <TouchableOpacity style={styles.resumeBtn} onPress={() => {
-            handleCreateNewResume();
-          }}>
+          <TouchableOpacity
+            style={styles.resumeBtn}
+            onPress={() => {
+              handleCreateNewResume();
+            }}>
             <Image source={Images.edit} style={styles.resumeBtnImg} />
             <Text style={styles.resumeBtnText}>Create New</Text>
           </TouchableOpacity>

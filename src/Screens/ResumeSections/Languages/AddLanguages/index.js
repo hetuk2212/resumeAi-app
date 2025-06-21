@@ -114,7 +114,7 @@ const AddLanguages = () => {
         updatedResumes[resumeIndex].profile = {
           ...updatedResumes[resumeIndex].profile,
           languages: [
-            ...(updatedResumes[resumeIndex].profile.Languages || []),
+            ...(updatedResumes[resumeIndex].profile.languages || []),
             ...formattedLanguages,
           ],
         };
@@ -141,7 +141,7 @@ const AddLanguages = () => {
         });
       }
     } catch (error) {
-      console.error('Error saving skills:', error);
+      console.error('Error saving languages:', error);
       Toast.show({
         type: 'error',
         text1: 'Error',

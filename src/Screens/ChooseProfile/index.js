@@ -9,9 +9,12 @@ import {
 } from 'react-native';
 import styles from './style';
 import LinearGradient from 'react-native-linear-gradient';
-import {Images} from '../../Assets/Images';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {deleteResume, getAllProfileInfo, getSpecificProfile} from '../../../lib/api';
+import {
+  deleteResume,
+  getAllProfileInfo,
+  getSpecificProfile,
+} from '../../../lib/api';
 import Toast from 'react-native-toast-message';
 import Animated, {
   useSharedValue,
@@ -20,6 +23,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Images} from '../../Assets/Images';
 
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
@@ -41,7 +45,7 @@ const ChooseProfile = () => {
   const [loading, setLoading] = useState(false);
   const [visibleDropdown, setVisibleDropdown] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getProfiles();
@@ -57,10 +61,15 @@ const ChooseProfile = () => {
     setLoading(true);
     setRefreshing(true);
     try {
-      const response = await getAllProfileInfo();
-      if (response) {
-        const sortedProfiles = response.profile.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+      const resumesData = await AsyncStorage.getItem('resumes');
+      if (resumesData) {
+        const resumes = JSON.parse(resumesData);
+        console.log(resumes[0], 'sasd');
+
+        const sortedProfiles = resumes.sort(
+          (a, b) =>
+            new Date(b.profile?.createdAt || 0) -
+            new Date(a.profile?.createdAt || 0),
         );
         setProfiles(sortedProfiles);
       } else {
@@ -82,11 +91,11 @@ const ChooseProfile = () => {
     }
   };
 
-  const getResumeInfo = async (profileId) => {
+  const getResumeInfo = async profileId => {
     setIsLoading(true);
     try {
       const response = await getSpecificProfile(profileId);
-  
+
       if (response.status === 200) {
         const profile = response.data.profile;
         // Navigate immediately with the response data
@@ -142,7 +151,7 @@ const ChooseProfile = () => {
   // };
   const handleEdit = async profileId => {
     try {
-      await AsyncStorage.setItem('profileId', profileId);
+      await AsyncStorage.setItem('resumeId', profileId);
       navigation.navigate('Profile');
     } catch (error) {
       console.log('Error removing profileId:', error);
@@ -199,22 +208,22 @@ const ChooseProfile = () => {
       <View style={styles.profileInfoView}>
         <Image
           source={
-            item.personalInfo?.profileImage?.url
-              ? {uri: item.personalInfo.profileImage.url}
+            item.profile?.personalInfo?.profileImage?.uri
+              ? {uri: item.profile.personalInfo.profileImage.uri}
               : Images.profileAccount
           }
           style={styles.profileImg}
         />
         <View style={styles.profileInfoDetails}>
           <Text style={styles.profileName}>
-            {item.personalInfo?.fullName || 'N/A'}
+            {item.profile?.personalInfo?.fullName || 'N/A'}
           </Text>
           <Text style={styles.profileEmail}>
-            {item.personalInfo?.email || 'N/A'}
+            {item.profile?.personalInfo?.email || 'N/A'}
           </Text>
           <View style={styles.profileDateView}>
             <Text style={styles.profileDate}>
-              {new Date(item.createdAt).toLocaleString()}
+              {new Date(item.profile?.createdAt).toLocaleString()}
             </Text>
           </View>
         </View>
@@ -222,14 +231,14 @@ const ChooseProfile = () => {
       <View style={styles.profileBtnView}>
         <TouchableOpacity
           style={styles.profileBtn}
-          onPress={() => handleEdit(item._id)}>
+          onPress={() => handleEdit(item.profile?._id)}>
           <Image source={Images.edit} style={styles.ProfileIconImg} />
           <Text style={styles.profileBtnText}>Edit</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.profileBtn}
           onPress={() => {
-            getResumeInfo(item._id)
+            getResumeInfo(item._id);
           }}>
           <Image source={Images.view} style={styles.ProfileIconImg} />
           <Text style={styles.profileBtnText}>View CV</Text>

@@ -19,6 +19,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {deleteAchievement, getAchievements} from '../../../../lib/api';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../lib/asyncStorageUtils';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -42,7 +46,7 @@ const Achievements = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+    const unsubscribe = navigation.addListener('beforeRemove', e => {
       e.preventDefault();
 
       navigation.navigate('Profile');
@@ -54,7 +58,7 @@ const Achievements = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -78,11 +82,13 @@ const Achievements = () => {
     setLoading(true);
     setRefreshing(true);
     try {
-      const response = await getAchievements(resumeId);
-      console.log(response);
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200 && response.data?.achievements) {
-        setAchievements(response.data.achievements);
+      if (resumeIndex !== -1) {
+        const achievementData =
+          existingResumes[resumeIndex].profile.achievements || [];
+        setAchievements(achievementData);
       } else {
         console.log(response?.data?.message || 'Unexpected response.');
       }
@@ -103,13 +109,22 @@ const Achievements = () => {
 
   const handleDelete = async achievementId => {
     try {
-      const response = await deleteAchievement({resumeId, achievementId});
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
+      if (resumeIndex !== -1) {
+        existingResumes[resumeIndex].profile.achievements = existingResumes[
+          resumeIndex
+        ].profile.achievements.filter(
+          achievements => achievements._id !== achievementId,
+        );
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(existingResumes));
+        setAchievements(existingResumes[resumeIndex].profile.skills);
         Toast.show({
           type: 'success',
           text1: 'Achievement deleted successfully!',
-          text2: response?.data?.message || 'The entry has been removed.',
+          text2: 'The entry has been removed.',
           position: 'bottom',
         });
         getAllAchievements();
@@ -117,7 +132,7 @@ const Achievements = () => {
         Toast.show({
           type: 'error',
           text1: 'Deletion failed!',
-          text2: response?.data?.message || 'Please try again later.',
+          text2: 'Please try again later.',
           position: 'bottom',
         });
       }
@@ -155,12 +170,11 @@ const Achievements = () => {
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Image 
-        source={Images.noData}
-        style={styles.emptyImage}
-      />
+      <Image source={Images.noData} style={styles.emptyImage} />
       <Text style={styles.emptyText}>No Achievements Found</Text>
-      <Text style={styles.emptySubText}>Add your achievements details to get started</Text>
+      <Text style={styles.emptySubText}>
+        Add your achievements details to get started
+      </Text>
     </View>
   );
 

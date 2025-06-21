@@ -16,8 +16,6 @@ const BottomTabNavigation = () => {
   const HomeInactiveIcon = Images.home;
   const ProfileActiveIcon = Images.profileActive;
   const ProfileInactiveIcon = Images.profile;
-  const DownloadsActiveIcon = Images.downloadsActive;
-  const DownloadsInActiveIcon = Images.downloads;
 
   return (
     <>
@@ -53,19 +51,6 @@ const BottomTabNavigation = () => {
               tabBarIcon: ({focused}) => (
                 <Image
                   source={focused ? HomeActiveIcon : HomeInactiveIcon}
-                  style={{width: 24, height: 24}}
-                  resizeMode="contain"
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Downloads"
-            component={Downloads}
-            options={{
-              tabBarIcon: ({focused}) => (
-                <Image
-                  source={focused ? DownloadsActiveIcon : DownloadsInActiveIcon}
                   style={{width: 24, height: 24}}
                   resizeMode="contain"
                 />

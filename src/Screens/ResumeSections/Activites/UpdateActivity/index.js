@@ -7,12 +7,16 @@ import {Images} from '../../../../Assets/Images';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { updateActivity } from '../../../../../lib/api';
+import {updateActivity} from '../../../../../lib/api';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../../lib/asyncStorageUtils';
 
 const UpdateActivity = () => {
   const route = useRoute();
   const {activityData} = route.params || '';
-console.log(activityData);
+  console.log(activityData);
 
   const [form, setForm] = useState({
     activity: activityData?.activity || '',
@@ -27,7 +31,7 @@ console.log(activityData);
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -55,48 +59,57 @@ console.log(activityData);
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await updateActivity({
-        resumeId,
-        activityId: activityData._id,
-        data: {
-          activity: form.activity,
-        },
-      });
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: response.data.message || 'Activity updated successfully',
-          position: 'bottom',
-        });
+      if (resumeIndex !== 1) {
+        const activityIndex = existingResumes[
+          resumeIndex
+        ].profile.activites.findIndex(
+          activites => activites._id === activityData._id,
+        );
+        if (activityIndex !== -1) {
+          existingResumes[resumeIndex].profile.activites[activityIndex] = {
+            ...existingResumes[resumeIndex].profile.activites[activityIndex],
+            activity: form.activity,
+          };
 
-        navigation.navigate('Activities');
+          await AsyncStorage.setItem(
+            'resumes',
+            JSON.stringify(existingResumes),
+          );
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Activity updated successfully',
+            position: 'bottom',
+          });
+
+          navigation.navigate('Activities');
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Activity entry not found',
+            position: 'bottom',
+          });
+        }
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Unexpected response from server',
+          text2: 'Resume not found',
           position: 'bottom',
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          errorObj[err.path] = err.msg;
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
+      console.error('Error updating Activity:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong, try again.',
+        position: 'bottom',
+      });
     } finally {
       setLoading(false);
     }

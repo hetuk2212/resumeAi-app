@@ -53,14 +53,14 @@ const Account = () => {
             try {
               const response = await deleteUser();
               console.log('response', response);
-  
+
               Toast.show({
                 type: 'success',
                 text1: 'Account Deleted',
                 text2: 'Your account has been deleted successfully.',
                 position: 'bottom',
               });
-  
+
               setTimeout(() => {
                 navigation.reset({
                   index: 0,
@@ -82,7 +82,6 @@ const Account = () => {
       {cancelable: true},
     );
   };
-  
 
   const handleLogout = async () => {
     Alert.alert(
@@ -133,24 +132,24 @@ const Account = () => {
       />
       <View style={styles.container}>
         {/* Profile Section */}
-        <View style={styles.profileSection}>
+        {/* <View style={styles.profileSection}>
           <Image source={Images.profileAccount} style={styles.profileImage} />
           <View style={styles.profileInfo}>
             <Text style={styles.userName}>Profiles</Text>
             <Text style={styles.userEmail}>{userName}</Text>
           </View>
-        </View>
+        </View> */}
 
         {/* Account Options */}
         <View style={styles.buttonContainer}>
-          <Text style={styles.buttonTitle}>Account Settings</Text>
+          <Text style={styles.buttonTitle}>Easy Resume Builder</Text>
           <View style={styles.optionContainer}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.option}
               onPress={() => navigation.navigate('AccountDetails')}>
               <Image source={Images.profile} style={styles.icon} />
               <Text style={styles.optionText}>View Account Details</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               style={styles.option}
@@ -159,17 +158,17 @@ const Account = () => {
               <Text style={styles.optionText}>Privacy Policy</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.option}
               onPress={() => navigation.navigate('Settings')}>
               <Image source={Images.settings} style={styles.icon} />
               <Text style={styles.optionText}>Account Settings</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
 
         {/* More Options */}
-        <View style={styles.buttonContainer}>
+        {/* <View style={styles.buttonContainer}>
           <Text style={styles.buttonTitle}>More Settings</Text>
 
           <View style={styles.optionContainer}>
@@ -194,7 +193,7 @@ const Account = () => {
               <Text style={[styles.optionText, {color: 'red'}]}>Logout</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
       </View>
 
       {/* Toast Notification */}
