@@ -8,11 +8,14 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {updateLanguage} from '../../../../../lib/api';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../../lib/asyncStorageUtils';
 
 const UpdateLanguage = () => {
   const route = useRoute();
   const {languageData} = route.params || '';
-  
 
   const [form, setForm] = useState({
     language: languageData?.language || '',
@@ -28,7 +31,7 @@ const UpdateLanguage = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -56,49 +59,58 @@ const UpdateLanguage = () => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await updateLanguage({
-        resumeId,
-        languageId: languageData._id,
-        data: {
-          language: form.language,
-          rating: form.rating,
-        },
-      });
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: response.data.message || 'Language updated successfully',
-          position: 'bottom',
-        });
+      if (resumeIndex !== 1) {
+        const languageIndex = existingResumes[
+          resumeIndex
+        ].profile.languages.findIndex(
+          languages => languages._id === languageData._id,
+        );
+        if (languageIndex !== -1) {
+          existingResumes[resumeIndex].profile.languages[languageIndex] = {
+            ...existingResumes[resumeIndex].profile.languages[languageIndex],
+            language: form.language,
+            rating: form.rating,
+          };
 
-        navigation.navigate('Languages');
+          await AsyncStorage.setItem(
+            'resumes',
+            JSON.stringify(existingResumes),
+          );
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Language updated successfully',
+            position: 'bottom',
+          });
+
+          navigation.navigate('Languages');
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Languages entry not found',
+            position: 'bottom',
+          });
+        }
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Unexpected response from server',
+          text2: 'Resume not found',
           position: 'bottom',
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          errorObj[err.path] = err.msg;
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
+      console.error('Error updating Language:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong, try again.',
+        position: 'bottom',
+      });
     } finally {
       setLoading(false);
     }
@@ -118,28 +130,26 @@ const UpdateLanguage = () => {
             errorMessage={errors.language}
           />
           <View style={styles.ratingContainer}>
-  <Text style={styles.ratingLabel}>Rating:</Text>
-  <View style={styles.ratingRow}>
-    {[1, 2, 3, 4, 5].map(level => (
-      <TouchableOpacity
-        key={level}
-        style={[
-          styles.ratingCircle,
-          form.rating === level && styles.ratingCircleActive,
-        ]}
-        onPress={() => handleInputChange('rating', level)}
-      >
-        <Text style={styles.ratingText}>{level}</Text>
-      </TouchableOpacity>
-    ))}
-  </View>
-</View>
+            <Text style={styles.ratingLabel}>Rating:</Text>
+            <View style={styles.ratingRow}>
+              {[1, 2, 3, 4, 5].map(level => (
+                <TouchableOpacity
+                  key={level}
+                  style={[
+                    styles.ratingCircle,
+                    form.rating === level && styles.ratingCircleActive,
+                  ]}
+                  onPress={() => handleInputChange('rating', level)}>
+                  <Text style={styles.ratingText}>{level}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
           <ActionButtons
             onSave={handleSave}
             saveIcon={Images.check}
             loading={loading}
           />
-          
         </View>
       </View>
     </SafeAreaView>

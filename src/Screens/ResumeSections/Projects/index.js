@@ -19,6 +19,7 @@ import {
     withRepeat,
     withTiming,
   } from 'react-native-reanimated';
+import { findResumeIndex, getResumesFromStorage } from '../../../../lib/asyncStorageUtils';
   const ShimmerEffect = ({style}) => {
     const opacity = useSharedValue(0.3);
   
@@ -54,7 +55,7 @@ import {
     useEffect(() => {
       const getResumeId = async () => {
         try {
-          const id = await AsyncStorage.getItem('profileId');
+          const id = await AsyncStorage.getItem('resumeId');
           if (id !== null) {
             setResumeId(id);
           } else {
@@ -78,16 +79,22 @@ import {
       setLoading(true);
       setRefreshing(true);
       try {
-        const response = await getProjects(resumeId);
-        if (response.status === 200 && response.data?.projects) {
-          setProjects(response.data.projects);
+        const existingResumes = await getResumesFromStorage()
+        const resumeIndex = findResumeIndex(existingResumes, resumeId)
+        if (resumeIndex !== -1) {
+          
+
+        const projectData =
+          existingResumes[resumeIndex].profile.projects || [];
+
+        setProjects(projectData);
         } else {
-          console.log(response?.data?.message || 'Unexpected response.');
+          console.log('Resume not found for the given resumeId');
         }
       } catch (error) {
         console.error(
           'Error fetching projects:',
-          error?.response?.data?.message || 'Something went wrong',
+          error?.response?.message || 'Something went wrong',
         );
       } finally {
         setLoading(false);
@@ -101,13 +108,21 @@ import {
   
     const handleDelete = async projectsId => {
       try {
-        const response = await deleteProjects({resumeId, projectsId});
+        const existingResumes = await getResumesFromStorage();
+              const resumeIndex = findResumeIndex(existingResumes, resumeId);
   
-        if (response.status === 200) {
+        if (resumeIndex !== -1) {
+
+          existingResumes[resumeIndex].profile.projects = existingResumes[
+          resumeIndex
+        ].profile.projects.filter(projects => projects._id !== projectsId);
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(existingResumes));
+        setProjects(existingResumes[resumeIndex].profile.experience);
           Toast.show({
             type: 'success',
             text1: 'Projects deleted successfully!',
-            text2: response?.data?.message || 'The entry has been removed.',
+            text2: 'The entry has been removed.',
             position: 'bottom',
           });
           getAllProjects();

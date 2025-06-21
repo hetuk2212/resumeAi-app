@@ -133,7 +133,7 @@ const Skills = () => {
         Toast.show({
           type: 'error',
           text1: 'Deletion failed!',
-          text2: response?.data?.message || 'Please try again later.',
+          text2: 'Please try again later.',
           position: 'bottom',
         });
       }

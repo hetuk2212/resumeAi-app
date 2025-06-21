@@ -16,6 +16,11 @@ import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
 import {addLanguages} from '../../../../../lib/api';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../../lib/asyncStorageUtils';
+import Languages from '..';
 
 const AddLanguages = () => {
   const [activeTab, setActiveTab] = useState('Languages');
@@ -31,7 +36,7 @@ const AddLanguages = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
           console.log('Resume ID:', id);
@@ -92,28 +97,42 @@ const AddLanguages = () => {
     setIsLoading(true);
     setErrors({});
 
-    const formattedLanguages = LanguagesForms.map(form => ({
-      language: form.language || '',
-      rating: form.rating || 0,
-    }));
-
-    const body = {languages: formattedLanguages};
-
-    console.log(body);
-
     try {
-      const response = await addLanguages({resumeId, body});
-      console.log('Response from API:', response);
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
+      if (resumeIndex !== -1) {
+        const formattedLanguages = LanguagesForms.map(form => ({
+          language: form.language || '',
+          rating: form.rating || 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          _id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        }));
 
-      if (response.status === 201) {
-        navigation.navigate('Languages');
+        const updatedResumes = JSON.parse(JSON.stringify(existingResumes));
+
+        updatedResumes[resumeIndex].profile = {
+          ...updatedResumes[resumeIndex].profile,
+          languages: [
+            ...(updatedResumes[resumeIndex].profile.Languages || []),
+            ...formattedLanguages,
+          ],
+        };
+
+        updatedResumes[resumeIndex].updatedAt = new Date().toISOString();
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(updatedResumes));
+        console.log('updated', updatedResumes);
 
         Toast.show({
           type: 'success',
-          text1: response.data.message || 'Languages saved!',
+          text1: 'Languages saved!',
           text2: 'Your Languages details have been saved successfully.',
           position: 'bottom',
         });
+        setTimeout(() => {
+          navigation.navigate('Languages');
+        }, 1500);
       } else {
         Toast.show({
           type: 'error',
@@ -122,26 +141,12 @@ const AddLanguages = () => {
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          const match = err.path.match(/languages\[(\d+)\]\.(\w+)/);
-          if (match) {
-            const [, index, field] = match;
-            errorObj[`${index}_${field}`] = err.msg;
-          }
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
+      console.error('Error saving skills:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to save languages details',
+      });
     } finally {
       setIsLoading(false);
     }

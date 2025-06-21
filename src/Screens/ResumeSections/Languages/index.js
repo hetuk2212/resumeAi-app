@@ -18,7 +18,11 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { deleteLanguage, getLanguages } from '../../../../lib/api';
+import {deleteLanguage, getLanguages} from '../../../../lib/api';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../lib/asyncStorageUtils';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -42,7 +46,7 @@ const Languages = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+    const unsubscribe = navigation.addListener('beforeRemove', e => {
       e.preventDefault();
 
       navigation.navigate('Profile');
@@ -54,7 +58,7 @@ const Languages = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -78,18 +82,21 @@ const Languages = () => {
     setLoading(true);
     setRefreshing(true);
     try {
-      const response = await getLanguages(resumeId);
-      console.log(response);
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200 && response.data?.languages) {
-        setLanguages(response.data.languages);
+      if (resumeIndex !== -1) {
+        const languageData =
+          existingResumes[resumeIndex].profile.languages || [];
+
+        setLanguages(languageData);
       } else {
-        console.log(response?.data?.message || 'Unexpected response.');
+        console.log('Resume not found for the given resumeId');
       }
     } catch (error) {
       console.error(
         'Error fetching Activities:',
-        error?.response?.data?.message || 'Something went wrong',
+        error?.response?.message || 'Something went wrong',
       );
     } finally {
       setLoading(false);
@@ -103,13 +110,20 @@ const Languages = () => {
 
   const handleDelete = async languageId => {
     try {
-      const response = await deleteLanguage({resumeId, languageId});
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
+      if (resumeId !== -1) {
+        existingResumes[resumeIndex].profile.languages = existingResumes[
+          resumeIndex
+        ].profile.languages.filter(languages => languages._id !== languageId);
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(existingResumes));
+        setLanguages(existingResumes[resumeIndex].profile.skills);
         Toast.show({
           type: 'success',
           text1: 'Language deleted successfully!',
-          text2: response?.data?.message || 'The entry has been removed.',
+          text2: 'The entry has been removed.',
           position: 'bottom',
         });
         getAllLanguages();
@@ -117,7 +131,7 @@ const Languages = () => {
         Toast.show({
           type: 'error',
           text1: 'Deletion failed!',
-          text2: response?.data?.message || 'Please try again later.',
+          text2: 'Please try again later.',
           position: 'bottom',
         });
       }
@@ -155,15 +169,14 @@ const Languages = () => {
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Image 
-        source={Images.noData}
-        style={styles.emptyImage}
-      />
+      <Image source={Images.noData} style={styles.emptyImage} />
       <Text style={styles.emptyText}>No Languages Found</Text>
-      <Text style={styles.emptySubText}>Add your languages details to get started</Text>
+      <Text style={styles.emptySubText}>
+        Add your languages details to get started
+      </Text>
     </View>
   );
-  
+
   const renderLanguagesItem = ({item}) => {
     const renderStars = (rating = 0) => {
       return [...Array(5)].map((_, index) => (
@@ -179,32 +192,32 @@ const Languages = () => {
       ));
     };
     return (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.course}>{item.language}</Text>
-        <View style={styles.iconRow}>
-          <TouchableOpacity onPress={() => handleEdit(item)}>
-            <Image source={Images.edit} style={styles.iconImage} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleDelete(item._id)}
-            style={{marginLeft: 15}}>
-            <Image
-              source={Images.delete}
-              style={[styles.iconImage, {tintColor: 'red'}]}
-            />
-          </TouchableOpacity>
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.course}>{item.language}</Text>
+          <View style={styles.iconRow}>
+            <TouchableOpacity onPress={() => handleEdit(item)}>
+              <Image source={Images.edit} style={styles.iconImage} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleDelete(item._id)}
+              style={{marginLeft: 15}}>
+              <Image
+                source={Images.delete}
+                style={[styles.iconImage, {tintColor: 'red'}]}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      {item.rating > 0 && (
+        {item.rating > 0 && (
           <View style={styles.ratingDisplay}>
             <View style={styles.starsRow}>{renderStars(item.rating)}</View>
             <Text style={styles.ratingText}>{item.rating}/5</Text>
           </View>
         )}
-    </View>
-  );
-};
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeView}>

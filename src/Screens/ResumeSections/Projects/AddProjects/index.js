@@ -16,6 +16,10 @@ import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
 import {addProjects} from '../../../../../lib/api';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../../lib/asyncStorageUtils';
 
 const AddProjects = () => {
   const [activeTab, setActiveTab] = useState('Projects');
@@ -31,7 +35,7 @@ const AddProjects = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
           console.log('Resume ID:', id);
@@ -92,28 +96,44 @@ const AddProjects = () => {
     setIsLoading(true);
     setErrors({});
 
-    const formattedProjects = projectsForms.map(form => ({
-      title: form.title || '',
-      description: form.description || '',
-    }));
-
-    const body = {projects: formattedProjects};
-
-    console.log(body);
-
     try {
-      const response = await addProjects({resumeId, body});
-      console.log('Response from API:', response);
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 201) {
-        navigation.navigate('Projects');
+      if (resumeId !== -1) {
+        const formattedProjects = projectsForms.map(form => ({
+          title: form.title || '',
+          description: form.description || '',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          _id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        }));
+
+        const updatedResumes = JSON.parse(JSON.stringify(existingResumes));
+
+        updatedResumes[resumeIndex].profile = {
+          ...updatedResumes[resumeIndex].profile,
+          projects: [
+            ...(updatedResumes[resumeIndex].profile.projects || []),
+            ...formattedProjects,
+          ],
+        };
+
+        updatedResumes[resumeIndex].updatedAt = new Date().toISOString();
+
+        await AsyncStorage.setItem('resumes', JSON.stringify(updatedResumes));
+
+        console.log(updatedResumes);
 
         Toast.show({
           type: 'success',
-          text1: response.data.message || 'Projects saved!',
+          text1: 'Projects saved!',
           text2: 'Your projects details have been saved successfully.',
           position: 'bottom',
         });
+        setTimeout(() => {
+          navigation.navigate('Projects');
+        }, 1500);
       } else {
         Toast.show({
           type: 'error',
@@ -122,26 +142,12 @@ const AddProjects = () => {
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          const match = err.path.match(/projects\[(\d+)\]\.(\w+)/);
-          if (match) {
-            const [, index, field] = match;
-            errorObj[`${index}_${field}`] = err.msg;
-          }
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
+      console.error('Error saving projects:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to save projects details',
+      });
     } finally {
       setIsLoading(false);
     }

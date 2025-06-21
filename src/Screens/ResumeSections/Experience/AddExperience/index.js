@@ -178,12 +178,10 @@ const AddExperience = () => {
         updatedResumes[resumeIndex].updatedAt = new Date().toISOString();
 
         await AsyncStorage.setItem('resumes', JSON.stringify(updatedResumes));
-console.log("updated", updatedResumes);
-
 
         Toast.show({
           type: 'success',
-          text1:'Experience saved!',
+          text1: 'Experience saved!',
           text2: 'Your experience details have been saved successfully.',
           position: 'bottom',
         });
@@ -191,7 +189,6 @@ console.log("updated", updatedResumes);
         setTimeout(() => {
           navigation.navigate('Experience');
         }, 1500);
-
       } else {
         Toast.show({
           type: 'error',
@@ -201,11 +198,11 @@ console.log("updated", updatedResumes);
       }
     } catch (error) {
       console.error('Error saving experience:', error);
-            Toast.show({
-              type: 'error',
-              text1: 'Error',
-              text2: 'Failed to save experience details',
-            });
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to save experience details',
+      });
     } finally {
       setIsLoading(false);
     }

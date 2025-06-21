@@ -1,13 +1,15 @@
-import {View, Text, SafeAreaView} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import styles from '../style';
-import CustomTextInput from '../../../../Components/TextInput';
-import ActionButtons from '../../../../Components/ActionButtons';
-import {Images} from '../../../../Assets/Images';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
-import {updateProject} from '../../../../../lib/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, Text, View} from 'react-native';
+import Toast from 'react-native-toast-message';
+
+import {updateProject} from '../../../../../lib/api';
+import {findResumeIndex, getResumesFromStorage,} from '../../../../../lib/asyncStorageUtils';
+import {Images} from '../../../../Assets/Images';
+import ActionButtons from '../../../../Components/ActionButtons';
+import CustomTextInput from '../../../../Components/TextInput';
+import styles from '../style';
 
 const UpdateProject = () => {
   const route = useRoute();
@@ -27,7 +29,7 @@ const UpdateProject = () => {
   useEffect(() => {
     const getResumeId = async () => {
       try {
-        const id = await AsyncStorage.getItem('profileId');
+        const id = await AsyncStorage.getItem('resumeId');
         if (id !== null) {
           setResumeId(id);
         } else {
@@ -43,61 +45,70 @@ const UpdateProject = () => {
 
   const handleInputChange = (key, value) => {
     setForm(prev => ({
-      ...prev,
-      [key]: value,
-    }));
+              ...prev,
+              [key]: value,
+            }));
     setErrors(prev => ({
-      ...prev,
-      [key]: null,
-    }));
+                ...prev,
+                [key]: null,
+              }));
   };
 
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await updateProject({
-        resumeId,
-        projectId: projectData._id,
-        data: {
-          title: form.title,
-          description: form.university,
-        },
-      });
+      const existingResumes = await getResumesFromStorage();
+      const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (response.status === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: response.data.message || 'Project updated successfully',
-          position: 'bottom',
-        });
+      if (resumeIndex !== -1) {
+        const projectIndex =
+            existingResumes[resumeIndex].profile.projects.findIndex(
+                projects => projects._id === projectData._id,
+            );
+        if (projectIndex !== -1) {
+          existingResumes[resumeIndex].profile.projects[projectIndex] = {
+            ...existingResumes[resumeIndex].profile.projects[projectIndex],
+            title: form.title,
+            description: form.description,
+          };
 
-        navigation.navigate('Projects');
+          await AsyncStorage.setItem(
+              'resumes',
+              JSON.stringify(existingResumes),
+          );
+
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Project updated successfully',
+            position: 'bottom',
+          });
+
+          navigation.navigate('Projects');
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Project entry not found',
+            position: 'bottom',
+          });
+        }
       } else {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Unexpected response from server',
+          text2: 'Resume not found',
           position: 'bottom',
         });
       }
     } catch (error) {
-      console.log('Error response:', error.response?.data);
-
-      if (error.response?.status === 400 && error.response?.data?.errors) {
-        let errorObj = {};
-        error.response.data.errors.forEach(err => {
-          errorObj[err.path] = err.msg;
-        });
-        setErrors(errorObj);
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2:
-            error.response?.data?.message || 'Something went wrong, try again.',
-        });
-      }
+      console.error('Error updating Project:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong, try again.',
+        position: 'bottom',
+      });
     } finally {
       setLoading(false);
     }
@@ -111,11 +122,12 @@ const UpdateProject = () => {
         </View>
         <View style={styles.inputContainer}>
           <CustomTextInput
-            label="Project Name"
-            value={form.title}
-            onChangeText={text => handleInputChange('title', text)}
-            errorMessage={errors.title}
-          />
+  label = 'Project Name'
+  value = {form.title} onChangeText =
+      {text => handleInputChange('title', text)} errorMessage =
+  {
+    errors.title
+  } />
           <CustomTextInput
             label="Project Details"
             value={form.description}
@@ -123,11 +135,12 @@ const UpdateProject = () => {
             errorMessage={errors.description}
             multiline={true}
             numberOfLines={4}
-          />
-          <ActionButtons
+          / >
+      < ActionButtons
             onSave={handleSave}
             saveIcon={Images.check}
-            loading={loading}
+            loading={
+    loading}
           />
         </View>
       </View>
