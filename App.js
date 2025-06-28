@@ -3,6 +3,7 @@ import { LogBox } from 'react-native';
 import MainNavigation from './src/Navigation/MainNavigation';
 import Toast from 'react-native-toast-message';
 import InAppUpdates, { IAUUpdateKind } from 'sp-react-native-in-app-updates';
+import { ThemeProvider } from './src/Theme/ ThemeContext';
 
 const App = () => {
   const inAppUpdates = new InAppUpdates(true); // Enable debug logs
@@ -27,7 +28,10 @@ const App = () => {
 
   return (
     <>
+        <ThemeProvider>
+
       <MainNavigation />
+        </ThemeProvider>
       <Toast />
     </>
   );

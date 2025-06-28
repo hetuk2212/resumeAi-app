@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
-import Color from '../../Theme/Color';
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
@@ -17,23 +17,19 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   textView: {
-    backgroundColor: Color.white,
+    backgroundColor: theme.white,
     height: '35%',
     alignItems: 'center',
     paddingHorizontal: 15,
   },
   textTitle: {
-    color: Color.greyText,
+    color: theme.smallText,
     fontSize: 14,
     fontWeight: '500',
     width: '100%',
     textAlign: 'center',
     marginTop: 60,
     marginBottom: 35,
-  },
-  loginText:{
-    marginTop:25,
-    color:Color.bottomText
   },
   blurView: {
     position: 'absolute',
@@ -64,13 +60,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',  
-    color: Color.primary,        
+    color: theme.primary,        
     lineHeight: 32,
   },
   signInText:{
     fontSize:14,
     fontWeight:"500",
-    color:Color.black
+    color:theme.black
   }
 });
-export default styles;
+export default getStyles;

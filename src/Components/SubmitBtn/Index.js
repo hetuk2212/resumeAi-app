@@ -1,11 +1,14 @@
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import React from 'react';
-import styles from './style';
+import getStyles from './style';
+import { useTheme } from '../../Theme/ ThemeContext';
 
 const SubmitBtn = ({ onPress, buttonText, loading }) => {
+  const { theme } = useTheme();
+  const styles = getStyles(theme);
   return (
     <TouchableOpacity
-      style={[styles.buttonView, loading && { opacity: 0.5 }]} // Optional: Change opacity when loading
+      style={[styles.buttonView, loading && { opacity: 0.5 }]}
       onPress={onPress}
       disabled={loading}
     >

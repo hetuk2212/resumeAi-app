@@ -6,12 +6,13 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Images} from '../../Assets/Images';
 import styles from './style';
-import {getProfile} from '../../../lib/api';
+import {useTheme} from '../../Theme/ ThemeContext';
 
 const Splash = ({navigation}) => {
+  const {theme} = useTheme();
+
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.8);
 
@@ -20,7 +21,7 @@ const Splash = ({navigation}) => {
     scale.value = withTiming(1, {duration: 1500});
 
     const timer = setTimeout(() => {
-      navigation.replace('Onboarding');
+      navigation.replace('Home');
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -32,7 +33,9 @@ const Splash = ({navigation}) => {
   }));
 
   return (
-    <LinearGradient colors={['#ffffff', '#ffffff']} style={styles.container}>
+    <LinearGradient
+      colors={[theme.white, theme.white]}
+      style={styles.container}>
       <Animated.Image
         source={Images.MainLogo}
         style={[styles.logo, animatedStyle]}

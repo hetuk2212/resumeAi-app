@@ -4,16 +4,20 @@ import {
   StatusBar,
 } from 'react-native';
 import React from 'react';
-import styles from './style';
+import getStyles from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import SubmitBtn from '../../Components/SubmitBtn/Index';
 import ImageSliders from '../../Components/Slider/ImageSlider';
 import { Images } from '../../Assets/Images';
+import { useTheme } from '../../Theme/ ThemeContext';
 
 const OnBoarding = () => {
   const navigation = useNavigation();
   const [activeSlide, setActiveSlide] = React.useState(0);
+
+  const { theme } = useTheme();
+  const styles = getStyles(theme);
 
   const slides = [
     {
@@ -63,7 +67,7 @@ const OnBoarding = () => {
           </Text>
           <SubmitBtn
             buttonText="Get Started"
-            onPress={() => navigation.navigate('MainApp')}
+            onPress={() => navigation.navigate('Home')}
           />
         </View>
       </View>

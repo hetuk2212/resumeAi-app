@@ -69,7 +69,7 @@ const Profile = () => {
     const unsubscribe = navigation.addListener('beforeRemove', e => {
       e.preventDefault();
 
-      navigation.navigate('MainApp');
+      navigation.navigate('Home');
     });
 
     return unsubscribe;

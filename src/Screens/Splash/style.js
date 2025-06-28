@@ -7,8 +7,8 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     logo: {
-      width: 300,
-      height: 300,
+      width: 400,
+      height: 400,
     },
     
   });

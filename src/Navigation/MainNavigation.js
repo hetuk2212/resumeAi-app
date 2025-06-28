@@ -2,10 +2,7 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import Splash from '../Screens/Splash';
-import Login from '../Screens/Auth/Login';
-import BottomTabNavigation from './BottomTabNavigation';
 import Onboarding from '../Screens/Onboarding';
-import Otp from '../Screens/Auth/Otp';
 import ChooseProfile from '../Screens/ChooseProfile';
 import Profile from '../Screens/Profile';
 import PersonalDetails from '../Screens/ResumeSections/PersonalDetails';
@@ -39,6 +36,7 @@ import UpdateLanguage from '../Screens/ResumeSections/Languages/UpdateLanguage';
 import CoverLatter from '../Screens/ResumeSections/CoverLatter';
 import ResumePreview from '../Screens/ResumePreview';
 import Color from '../Theme/Color';
+import Home from '../Screens/Home';
 
 const Stack = createStackNavigator();
 
@@ -48,9 +46,7 @@ const StackNavigation = () => {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Onboarding" component={Onboarding} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Otp" component={Otp} />
-        <Stack.Screen name="MainApp" component={BottomTabNavigation} />
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen
           name="Choose Profile"
           component={ChooseProfile}

@@ -62,6 +62,7 @@ const PersonalDetails = () => {
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [position, setPosition] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [fieldValues, setFieldValues] = useState({});
   const [loading, setIsLoading] = useState(false);
@@ -210,6 +211,7 @@ console.log("sas",resumes);
           setAddress(userResume.address || '');
           setEmail(userResume.email || '');
           setPhone(userResume.phone || '');
+          setPosition(userResume.position || '');
           setProfileImage(userResume.profileImage || null);
 
           const updatedFields = fields.map(field => {
@@ -299,6 +301,7 @@ console.log("sas",resumes);
           address: address,
           email: email,
           phone: phone,
+          position: position,
           dateOfBirth: formattedDateOfBirth,
           nationality: fieldValues['Nationality'] || null,
           gender: fieldValues['Gender'] || null,
@@ -387,6 +390,13 @@ console.log("sas",resumes);
                     onChangeText={setPhone}
                     keyboardType="phone-pad"
                     errorMessage={errors.phone}
+                  />
+                  <CustomTextInput
+                    label="Position"
+                    placeholder="React Developer"
+                    value={position}
+                    onChangeText={setPosition}
+                    errorMessage={errors.position}
                   />
                   {fields
                     .filter(field => field.isActive)
