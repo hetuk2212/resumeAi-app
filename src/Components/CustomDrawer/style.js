@@ -51,7 +51,7 @@ const getStyles = theme =>
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
       elevation: 10,
-      marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+      // marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
     drawerTitle: {
       fontSize: 20,

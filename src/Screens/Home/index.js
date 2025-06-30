@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import {Images} from '../../Assets/Images';
-import Color from '../../Theme/Color';
 import getStyles from './style';
 import Animated, {
   useSharedValue,
@@ -22,7 +21,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomDrawer from '../../Components/CustomDrawer/Index';
+import Header from '../../Components/Header/Index';
 import { useTheme } from '../../Theme/ ThemeContext';
+
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -36,15 +37,17 @@ const ShimmerEffect = ({style}) => {
 
   return <Animated.View style={[style, animatedStyle]} />;
 };
+
 const Home = () => {
   const navigation = useNavigation();
   const [profiles, setProfiles] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Initialize as true
   const [refreshing, setRefreshing] = useState(false);
   const [visibleDropdown, setVisibleDropdown] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-   const { theme } = useTheme();
+  const {theme} = useTheme();
   const styles = getStyles(theme);
+
   useEffect(() => {
     getProfiles();
   }, []);
@@ -72,11 +75,6 @@ const Home = () => {
         setProfiles(sortedProfiles);
       } else {
         setProfiles([]);
-        Toast.show({
-          type: 'info',
-          text1: 'No profiles found!',
-          position: 'bottom',
-        });
       }
     } catch (error) {
       Toast.show({
@@ -218,46 +216,66 @@ const Home = () => {
     </View>
   );
 
+  const renderEmptyState = () => (
+    <View style={styles.emptyContainer}>
+      <Image source={Images.noResumeIcon} style={styles.emptyImage} />
+      <TouchableOpacity
+        style={styles.createResumeBtn}
+        onPress={handleCreateNewResume}>
+        <Text style={styles.createResumeBtnText}>
+          Create your first resume now
+        </Text>
+        <Image source={Images.rightArrowIcon} style={styles.rightIcon} />
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderResumeList = () => (
+    <>
+      <TouchableOpacity
+        style={styles.resumeBtn}
+        onPress={handleCreateNewResume}>
+        <View style={styles.createBtn}>
+          <Image source={Images.add} style={styles.resumeBtnImg} />
+        </View>
+        <Text style={styles.resumeBtnText}>Create New Resume</Text>
+      </TouchableOpacity>
+
+      <FlatList
+        data={profiles}
+        renderItem={renderResumeItem}
+        keyExtractor={item => item.profile?._id}
+        showsVerticalScrollIndicator={false}
+        refreshing={refreshing}
+        onRefresh={getProfiles}
+        contentContainerStyle={styles.resumeListContainer}
+        ItemSeparatorComponent={() => <View style={{height: 15}} />}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
+        removeClippedSubviews={true}
+        windowSize={10}
+        updateCellsBatchingPeriod={50}
+      />
+    </>
+  );
+
+  const renderContent = () => {
+    if (loading) {
+      return renderLoader();
+    }
+    return profiles.length > 0 ? renderResumeList() : renderEmptyState();
+  };
+
   return (
     <SafeAreaView style={styles.safeView}>
-      <StatusBar barStyle="dark-content" backgroundColor={Color.white} />
+      <StatusBar barStyle="dark-content" backgroundColor={theme.white} />
       <View style={styles.container}>
-        <View style={styles.headerView}>
-          <TouchableOpacity onPress={() => setIsDrawerOpen(true)}>
-            {' '}
-            <Image source={Images.barIcon} style={styles.barIcon} />
-          </TouchableOpacity>{' '}
-          <Text style={styles.mainTitle}>Resumes</Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.resumeBtn}
-          onPress={handleCreateNewResume}>
-          <View style={styles.createBtn}>
-            <Image source={Images.add} style={styles.resumeBtnImg} />
-          </View>
-          <Text style={styles.resumeBtnText}>Create New Resume</Text>
-        </TouchableOpacity>
-
-        {loading ? (
-          renderLoader()
-        ) : (
-          <FlatList
-            data={profiles}
-            renderItem={renderResumeItem}
-            keyExtractor={item => item.profile?._id}
-            showsVerticalScrollIndicator={false}
-            refreshing={refreshing}
-            onRefresh={getProfiles}
-            contentContainerStyle={styles.resumeListContainer}
-            ItemSeparatorComponent={() => <View style={{height: 15}} />}
-            initialNumToRender={5}
-            maxToRenderPerBatch={5}
-            removeClippedSubviews={true}
-            windowSize={10}
-            updateCellsBatchingPeriod={50}
-          />
-        )}
+        <Header
+          title="Resume"
+          headerIcon={Images.barIcon}
+          onPress={() => setIsDrawerOpen(true)}
+        />
+        {renderContent()}
       </View>
 
       {visibleDropdown && (

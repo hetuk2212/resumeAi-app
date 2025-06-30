@@ -1,15 +1,12 @@
 import {
   View,
   Text,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Image,
-  TextInput,
-  Button,
-  Switch,
   ActivityIndicator,
   StatusBar,
+  Modal,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './style';
@@ -23,11 +20,15 @@ import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../lib/asyncStorageUtils';
+import Header from '../../Components/Header/Index';
+import {useTheme} from '../../Theme/ ThemeContext';
+import getStyles from './style';
+import OptionalSectionsModal from '../../Components/OptionalSectionsModal/Index';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const sectionImages = {
   projects: Images.SectionProjects,
   'cover Latter': Images.SectionLetter,
-  // 'additional information': Images.SectionInfo,
   interests: Images.SectionInterests,
   achievements: Images.SectionAchievements,
   activities: Images.SectionActivities,
@@ -40,7 +41,6 @@ const Profile = () => {
   const [optionalSections, setOptionalSections] = useState({
     projects: true,
     'Cover Latter': true,
-    // 'additional information': true,
     interests: false,
     achievements: false,
     activities: false,
@@ -52,7 +52,10 @@ const Profile = () => {
   const [profileInfo, setProfileInfo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const sections = [
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
+
+  const baseSections = [
     {id: 1, name: 'Personal Details', image: Images.SectionProfile},
     {
       id: 2,
@@ -62,6 +65,23 @@ const Profile = () => {
     {id: 3, name: 'Experience', image: Images.SectionExperience},
     {id: 4, name: 'Skills', image: Images.SectionSkills},
     {id: 5, name: 'Objective', image: Images.SectionObjective},
+  ];
+
+  // Combine base sections with active optional sections
+  const allSections = [
+    ...baseSections,
+    ...Object.entries(optionalSections)
+      .filter(([_, isActive]) => isActive)
+      .map(([key]) => ({
+        id: `${key}-${Date.now()}`,
+        name: key.charAt(0).toUpperCase() + key.slice(1),
+        image: sectionImages[key] || Images.SectionInfo,
+      })),
+    {
+      id: 'add-more-section',
+      name: 'Add More Section',
+      image: Images.SectionAdd,
+    },
   ];
 
   const navigation = useNavigation();
@@ -74,6 +94,7 @@ const Profile = () => {
 
     return unsubscribe;
   }, [navigation]);
+
   useEffect(() => {
     const getResumeId = async () => {
       try {
@@ -118,21 +139,6 @@ const Profile = () => {
         [section]: !prev[section],
       };
 
-      if (updatedSections[section]) {
-        setMoreSections(prevSections => [
-          ...prevSections,
-          {
-            id: `${section}-${Date.now()}`,
-            name: section.charAt(0).toUpperCase() + section.slice(1),
-            image: sectionImages[section] || Images.profile, // Use correct image
-          },
-        ]);
-      } else {
-        setMoreSections(prevSections =>
-          prevSections.filter(item => item.name.toLowerCase() !== section),
-        );
-      }
-
       return updatedSections;
     });
     setShowOptions(false);
@@ -162,40 +168,13 @@ const Profile = () => {
       return;
     }
 
+    if (item.id === 'add-more-section') {
+      setShowOptions(true);
+      return;
+    }
+
     navigation.navigate(item.name);
   };
-
-  const renderSection = (title, items, showAddButton = false) => (
-    <View style={styles.sectionContainer}>
-      <Text style={styles.sectionHeader}>{title}</Text>
-      <View style={styles.sectionBtnContainer}>
-        {[
-          ...items,
-          showAddButton && {
-            id: 'add-more-section',
-            name: 'Add More Section',
-            image: Images.SectionAdd,
-          },
-        ]
-          .filter(Boolean)
-          .map(item => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.sectionBtn}
-              onPress={() => {
-                if (item.id === 'add-more-section') {
-                  setShowOptions(true);
-                } else {
-                  handleNavigation(item);
-                }
-              }}>
-              <Image source={item.image} style={styles.sectionBtnImg} />
-              <Text style={styles.sectionTitle}>{item.name}</Text>
-            </TouchableOpacity>
-          ))}
-      </View>
-    </View>
-  );
 
   useEffect(() => {
     if (resumeId) {
@@ -206,13 +185,10 @@ const Profile = () => {
   const getResumeInfo = async () => {
     setIsLoading(true);
     try {
-      // 1. Get all resumes from storage
       const existingResumes = await getResumesFromStorage();
       const resumeIndex = findResumeIndex(existingResumes, resumeId);
-
       const profile = existingResumes[resumeIndex].profile;
 
-      // 3. Update states
       setProfileInfo(profile);
       setOptionalSections(prev => ({
         ...prev,
@@ -241,6 +217,7 @@ const Profile = () => {
       });
     }
   };
+
   return (
     <SafeAreaView style={styles.safeView}>
       <StatusBar
@@ -252,74 +229,60 @@ const Profile = () => {
         <ActivityIndicator size="large" color="blue" style={styles.loader} />
       ) : (
         <View style={styles.container}>
+          <Header
+            title="Edit Resume"
+            headerIcon={Images.leftArrowIcon}
+            onPress={() => {
+              navigation.navigate('Home');
+            }}
+          />
           <ScrollView
-            contentContainerStyle={{paddingHorizontal: 10, paddingBottom: 50}}>
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: 50}}>
             {!showOptions && (
-              <>
-                {renderSection('Sections', sections)}
-                {renderSection(
-                  'Optional Sections',
-                  Object.entries(optionalSections)
-                    .filter(([_, isActive]) => isActive)
-                    .map(([key]) => ({
-                      id: `${key}-${Date.now()}`,
-                      name: key.charAt(0).toUpperCase() + key.slice(1),
-                      image: sectionImages[key] || Images.SectionInfo, // Use correct image
-                    })),
-                  true,
-                )}
-              </>
-            )}
-            {showOptions && (
-              <View style={styles.optionsContainer}>
-                <Text style={styles.sectionHeader}>Optional Sections</Text>
-                {Object.entries(optionalSections).map(([key, value]) => (
-                  <View key={key} style={styles.optionalSectionRow}>
-                    <Text style={styles.sectionTitle}>
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </Text>
-                    <Switch
-                      value={value}
-                      onValueChange={() => toggleOptionalSection(key)}
-                    />
-                  </View>
-                ))}
-                <Text style={styles.modalTitle}>Add New Section</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter section title"
-                  value={newSectionTitle}
-                  onChangeText={setNewSectionTitle}
-                />
-                <Button title="Add Section" onPress={addNewSection} />
-                <Button
-                  title="Cancel"
-                  color="red"
-                  onPress={() => setShowOptions(false)}
-                />
-                {moreSections
-                  .filter(section => section.isUserAdded)
-                  .map(section => (
-                    <View key={section.id} style={styles.deleteSectionRow}>
-                      <Text style={styles.sectionTitle}>{section.name}</Text>
-                      <Button
-                        title="Delete"
-                        color="red"
-                        onPress={() => deleteSection(section.id)}
-                      />
-                    </View>
+              <View style={styles.sectionContainer}>
+                <View style={styles.sectionBtnContainer}>
+                  {allSections.map(item => (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={styles.sectionBtn}
+                      onPress={() => handleNavigation(item)}>
+                      <Image source={item.image} style={styles.sectionBtnImg} />
+                      <Text style={styles.sectionTitle}>{item.name}</Text>
+                    </TouchableOpacity>
                   ))}
+                </View>
               </View>
             )}
+
+            <TouchableOpacity
+              style={styles.viewBtn}
+              onPress={() => {
+                handleViewCV(profileInfo);
+              }}>
+              <Image source={Images.eye} style={styles.viewIcon} />
+              <Text style={styles.viewText}>View CV</Text>
+            </TouchableOpacity>
           </ScrollView>
-          <TouchableOpacity
-            style={styles.viewBtn}
-            onPress={() => {
-              handleViewCV(profileInfo);
-            }}>
-            <Image source={Images.eye} style={styles.viewIcon} />
-            <Text style={styles.viewText}>View CV</Text>
-          </TouchableOpacity>
+          <Modal
+            visible={showOptions}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={() => setShowOptions(false)}
+            statusBarTranslucent={true}>
+            <SafeAreaView style={styles.modalOverlay}>
+              <OptionalSectionsModal
+                optionalSections={optionalSections}
+                toggleOptionalSection={toggleOptionalSection}
+                newSectionTitle={newSectionTitle}
+                setNewSectionTitle={setNewSectionTitle}
+                addNewSection={addNewSection}
+                onCancel={() => setShowOptions(false)}
+                moreSections={moreSections}
+                deleteSection={deleteSection}
+              />
+            </SafeAreaView>
+          </Modal>
         </View>
       )}
     </SafeAreaView>
