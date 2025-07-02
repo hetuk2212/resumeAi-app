@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,19 +9,23 @@ import {
   ScrollView,
   BackHandler,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
-import styles from './style';
+import getStyles from './style';
 import CustomTextInput from '../../../Components/TextInput';
-import { Images } from '../../../Assets/Images';
+import {Images} from '../../../Assets/Images';
 import LinearGradient from 'react-native-linear-gradient';
 import ImagePicker from 'react-native-image-crop-picker';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import ToggleSwitch from 'toggle-switch-react-native';
 import TabSwitcher from '../../../Components/TabSwitcher';
 import ActionButtons from '../../../Components/ActionButtons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-toast-message';
+import Color from '../../../Theme/Color';
+import Header from '../../../Components/Header/Index';
+import {useTheme} from '../../../Theme/ ThemeContext';
 
 // Helper function to format date for display
 const formatDisplayDate = dateString => {
@@ -30,7 +34,7 @@ const formatDisplayDate = dateString => {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString;
     const day = date.getDate();
-    const month = date.toLocaleString('default', { month: 'long' });
+    const month = date.toLocaleString('default', {month: 'long'});
     const year = date.getFullYear();
     return `${day}, ${month}, ${year}`;
   } catch (error) {
@@ -71,24 +75,38 @@ const PersonalDetails = () => {
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [resumeId, setResumeId] = useState(null);
   const [fields, setFields] = useState([
-    { label: 'Date of Birth', key: 'dateOfBirth', isActive: false, value: '', isDateField: true },
-    { label: 'Nationality', key: 'nationality', isActive: false, value: '' },
-    { label: 'Marital Status', key: 'maritalStatus', isActive: false, value: '' },
-    { label: 'Website', key: 'website', isActive: false, value: '' },
-    { label: 'LinkedIn', key: 'linkedIn', isActive: false, value: '' },
-    { label: 'Facebook', key: 'facebook', isActive: false, value: '' },
-    { label: 'Twitter', key: 'twitter', isActive: false, value: '' },
-    { label: 'Religion', key: 'religion', isActive: false, value: '' },
-    { label: 'Passport', key: 'passport', isActive: false, value: '' },
-    { label: 'Gender', key: 'gender', isActive: false, value: '' },
-    { label: 'Driving License', key: 'drivingLicense', isActive: false, value: '' },
-    { label: 'Place', key: 'place', isActive: false, value: '' },
-    { label: 'Salary Claim', key: 'salaryClaim', isActive: false, value: '' },
-    { label: 'Occupation', key: 'occupation', isActive: false, value: '' },
-    { label: 'Hobbies', key: 'hobbies', isActive: false, value: '' },
+    {
+      label: 'Date of Birth',
+      key: 'dateOfBirth',
+      isActive: false,
+      value: '',
+      isDateField: true,
+    },
+    {label: 'Nationality', key: 'nationality', isActive: false, value: ''},
+    {label: 'Marital Status', key: 'maritalStatus', isActive: false, value: ''},
+    {label: 'Website', key: 'website', isActive: false, value: ''},
+    {label: 'LinkedIn', key: 'linkedIn', isActive: false, value: ''},
+    {label: 'Facebook', key: 'facebook', isActive: false, value: ''},
+    {label: 'Twitter', key: 'twitter', isActive: false, value: ''},
+    {label: 'Religion', key: 'religion', isActive: false, value: ''},
+    {label: 'Passport', key: 'passport', isActive: false, value: ''},
+    {label: 'Gender', key: 'gender', isActive: false, value: ''},
+    {
+      label: 'Driving License',
+      key: 'drivingLicense',
+      isActive: false,
+      value: '',
+    },
+    {label: 'Place', key: 'place', isActive: false, value: ''},
+    {label: 'Salary Claim', key: 'salaryClaim', isActive: false, value: ''},
+    {label: 'Occupation', key: 'occupation', isActive: false, value: ''},
+    {label: 'Hobbies', key: 'hobbies', isActive: false, value: ''},
   ]);
 
   const navigation = useNavigation();
+
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', e => {
@@ -106,7 +124,10 @@ const PersonalDetails = () => {
       }
       return false;
     };
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
     return () => backHandler.remove();
   }, [activePage]);
 
@@ -115,7 +136,7 @@ const PersonalDetails = () => {
     if (selectedDate) {
       setDateOfBirth(selectedDate);
       const formattedDate = formatApiDate(selectedDate);
-      setFieldValues(prev => ({ ...prev, 'Date of Birth': formattedDate }));
+      setFieldValues(prev => ({...prev, 'Date of Birth': formattedDate}));
     }
   };
 
@@ -150,8 +171,12 @@ const PersonalDetails = () => {
       'Remove Profile Picture',
       'Are you sure you want to remove your profile picture?',
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Remove', style: 'destructive', onPress: () => setProfileImage(null) },
+        {text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => setProfileImage(null),
+        },
       ],
     );
   };
@@ -166,7 +191,7 @@ const PersonalDetails = () => {
       resumes = resumes ? JSON.parse(resumes) : [];
 
       const existingResumeIndex = resumes.findIndex(
-        resume => resume && resume.profile && resume.profile._id === resumeId
+        resume => resume && resume.profile && resume.profile._id === resumeId,
       );
 
       if (existingResumeIndex !== -1) {
@@ -174,7 +199,7 @@ const PersonalDetails = () => {
       } else {
         resumes.push(profileData);
       }
-console.log("sas",resumes);
+      console.log('sas', resumes);
 
       await AsyncStorage.setItem('resumes', JSON.stringify(resumes));
       await AsyncStorage.setItem('resumeId', resumeId);
@@ -202,7 +227,7 @@ console.log("sas",resumes);
       if (resumeId && resumes !== null) {
         const parsedResumes = JSON.parse(resumes);
         const existingResume = parsedResumes.find(
-          resume => resume && resume.profile && resume.profile._id === resumeId
+          resume => resume && resume.profile && resume.profile._id === resumeId,
         );
         if (existingResume) {
           const userResume = existingResume.profile.personalInfo;
@@ -215,9 +240,10 @@ console.log("sas",resumes);
           setProfileImage(userResume.profileImage || null);
 
           const updatedFields = fields.map(field => {
-            const value = userResume[field.key] || fieldValues[field.label] || '';
+            const value =
+              userResume[field.key] || fieldValues[field.label] || '';
             if (value) {
-              return { ...field, isActive: true, value };
+              return {...field, isActive: true, value};
             }
             return field;
           });
@@ -263,7 +289,7 @@ console.log("sas",resumes);
         setDateOfBirth(new Date());
       }
       setFieldValues(prev => {
-        const newValues = { ...prev };
+        const newValues = {...prev};
         delete newValues[updatedFields[index].label];
         return newValues;
       });
@@ -276,11 +302,14 @@ console.log("sas",resumes);
   };
 
   const generateUUID = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+      /[xy]/g,
+      function (c) {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      },
+    );
   };
 
   const handleSave = async () => {
@@ -345,58 +374,93 @@ console.log("sas",resumes);
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        translucent
+        backgroundColor={Color.primary}
+        barStyle="light-content"
+      />
       <View style={styles.container}>
+        <Header
+          title="Personal Information"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => navigation.navigate('Profile')}
+        />
         {activePage === 'form' && (
           <View>
-            <TabSwitcher
-              tabs={[
-                { key: 'PersonalDetails', label: 'Personal Details' },
-                { key: 'Help', label: 'Help' },
-              ]}
-              value={activeTab}
-              onTabChange={tabKey => setActiveTab(tabKey)}
-            />
-
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 150 }}>
+              contentContainerStyle={{paddingBottom: 150, paddingTop: 20}}>
               {activeTab === 'PersonalDetails' && (
                 <View>
+                  <View>
+                    <Text style={styles.label}>Photo (optional)</Text>
+                    <View style={styles.profileImgView}>
+                      <View>
+                        <Image
+                          source={
+                            profileImage
+                              ? {uri: profileImage.uri || profileImage}
+                              : Images.profileAccount
+                          }
+                          style={styles.userProfile}
+                        />
+                        {profileImage?(<TouchableOpacity
+                          style={styles.profileBtnChange}
+                          onPress={handleRemoveImage}>
+                          <Image source={Images.delete} style={styles.editIcon} />
+                        </TouchableOpacity>):<TouchableOpacity
+                          style={styles.profileBtnChange}
+                          onPress={handleImagePick}>
+                          <Image source={Images.edit} style={styles.editIcon} />
+                        </TouchableOpacity>}
+                      </View>
+                      {/* <View style={styles.profileImgBtnView}>
+                        
+                        <TouchableOpacity
+                          style={styles.profileBtnRemove}
+                          onPress={handleRemoveImage}>
+                          <LinearGradient
+                            colors={['#ff9800', '#ff7300', '#ff5722']}
+                            start={{x: 0, y: 0}}
+                            end={{x: 1, y: 0}}
+                            style={styles.gradientBtn}>
+                            <Text style={styles.profileBtnText}>Remove</Text>
+                          </LinearGradient>
+                        </TouchableOpacity>
+                      </View> */}
+                    </View>
+                  </View>
                   <CustomTextInput
                     label="Name"
-                    placeholder="Enter your name"
                     value={name}
                     onChangeText={setName}
                     errorMessage={errors.fullName}
                   />
                   <CustomTextInput
+                    label="Position"
+                    placeholder="(Optional)"
+                    value={position}
+                    onChangeText={setPosition}
+                    errorMessage={errors.position}
+                  />
+                  <CustomTextInput
                     label="Address"
-                    placeholder="Enter your address"
                     value={address}
                     onChangeText={setAddress}
                     errorMessage={errors.address}
                   />
                   <CustomTextInput
                     label="Email"
-                    placeholder="myresume@gmail.com"
                     value={email}
                     onChangeText={setEmail}
                     errorMessage={errors.email}
                   />
                   <CustomTextInput
                     label="Phone"
-                    placeholder="9703954483"
                     value={phone}
                     onChangeText={setPhone}
                     keyboardType="phone-pad"
                     errorMessage={errors.phone}
-                  />
-                  <CustomTextInput
-                    label="Position"
-                    placeholder="React Developer"
-                    value={position}
-                    onChangeText={setPosition}
-                    errorMessage={errors.position}
                   />
                   {fields
                     .filter(field => field.isActive)
@@ -444,43 +508,6 @@ console.log("sas",resumes);
                         />
                       ),
                     )}
-                  <View>
-                    <Text style={styles.label}>Photo (optional)</Text>
-                    <View style={styles.profileImgView}>
-                      <Image
-                        source={
-                          profileImage
-                            ? { uri: profileImage.uri || profileImage }
-                            : Images.profileAccount
-                        }
-                        style={styles.userProfile}
-                      />
-                      <View style={styles.profileImgBtnView}>
-                        <TouchableOpacity
-                          style={styles.profileBtnChange}
-                          onPress={handleImagePick}>
-                          <LinearGradient
-                            colors={['#33abff', '#4db6ff', '#1aa1ff']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={styles.gradientBtn}>
-                            <Text style={styles.profileBtnText}>Change</Text>
-                          </LinearGradient>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={styles.profileBtnRemove}
-                          onPress={handleRemoveImage}>
-                          <LinearGradient
-                            colors={['#ff9800', '#ff7300', '#ff5722']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={styles.gradientBtn}>
-                            <Text style={styles.profileBtnText}>Remove</Text>
-                          </LinearGradient>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
                   <ActionButtons
                     onAdd={handleModal}
                     onSave={handleSave}
@@ -495,7 +522,7 @@ console.log("sas",resumes);
         )}
 
         {activePage === 'modal' && (
-          <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+          <ScrollView contentContainerStyle={{paddingBottom: 100}}>
             <Text style={styles.headerText}>
               Click the switch button to Enable / Disable any profile fields
             </Text>

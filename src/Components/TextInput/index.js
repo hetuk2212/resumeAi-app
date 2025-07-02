@@ -1,5 +1,7 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import React from 'react';
+import { useTheme } from '../../Theme/ ThemeContext';
+import { moderateScale } from '../../../lib/responsive';
 
 const CustomTextInput = ({ 
   label, 
@@ -14,6 +16,8 @@ const CustomTextInput = ({
   numberOfLines = 4, 
   inputStyle = {}, 
 }) => {
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -39,25 +43,26 @@ const CustomTextInput = ({
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
   container: {
     marginVertical: 5,
   },
   label: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '500',
     marginBottom: 5,
-    color: '#333',
+    color: theme.black,
   },
   input: {
-    height: 45,
+    height: moderateScale(50),
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 16,
-    color:"#000000",
-    backgroundColor: '#fff',
+    color:theme.black,
+    backgroundColor: theme.resumeListCardBackground,
   },
   multilineInput: {
     height: 100,

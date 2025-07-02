@@ -65,13 +65,6 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Personal Details"
           component={PersonalDetails}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Education"

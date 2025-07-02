@@ -22,7 +22,8 @@ import Animated, {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomDrawer from '../../Components/CustomDrawer/Index';
 import Header from '../../Components/Header/Index';
-import { useTheme } from '../../Theme/ ThemeContext';
+import {useTheme} from '../../Theme/ ThemeContext';
+import Color from '../../Theme/Color';
 
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
@@ -268,7 +269,11 @@ const Home = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
-      <StatusBar barStyle="dark-content" backgroundColor={theme.white} />
+      <StatusBar
+        translucent
+        backgroundColor={Color.primary}
+        barStyle="light-content"
+      />{' '}
       <View style={styles.container}>
         <Header
           title="Resume"
@@ -277,13 +282,11 @@ const Home = () => {
         />
         {renderContent()}
       </View>
-
       {visibleDropdown && (
         <TouchableWithoutFeedback onPress={() => setVisibleDropdown(null)}>
           <View style={styles.overlay} />
         </TouchableWithoutFeedback>
       )}
-
       <CustomDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}

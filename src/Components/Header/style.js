@@ -4,14 +4,15 @@ import {moderateScale} from '../../../lib/responsive';
 const getStyles = theme =>
   StyleSheet.create({
     barIcon: {
-      width: moderateScale(30),
-      height: moderateScale(30),
+      width: moderateScale(25),
+      height: moderateScale(25),
       tintColor: theme.black,
     },
     headerView: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: moderateScale(20),
+      paddingBottom: moderateScale(10),
     },
     mainTitle: {
       fontSize: moderateScale(24),
