@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
     safeView: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.white,
       },
       container: {
         flex: 1,
@@ -20,6 +21,9 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#1a1a1a',
       },
+      inputContainer:{
+        marginTop:20
+      }
 })
 
-export default styles
+export default getStyles

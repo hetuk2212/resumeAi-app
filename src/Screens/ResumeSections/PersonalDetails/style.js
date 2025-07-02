@@ -95,14 +95,7 @@ const getStyles = theme =>
       alignItems: 'center',
       paddingBottom: 10,
       margin: 10,
-      // backgroundColor: '#fff',
-      borderBottomWidth: 1,
-      borderColor: 'gray',
-      shadowColor: '#000',
-      shadowOffset: {width: 0, height: 2},
-      shadowOpacity: 0.1,
-      shadowRadius: 3,
-      // elevation: 3,
+      backgroundColor: theme.black,
     },
     fieldLabel: {
       fontSize: 16,
@@ -135,8 +128,9 @@ const getStyles = theme =>
     editIcon: {
       width: moderateScale(22),
       height: moderateScale(22),
-      tintColor:theme.black
+      tintColor: theme.black,
     },
+   
   });
 
 export default getStyles;

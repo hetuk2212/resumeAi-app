@@ -6,16 +6,10 @@ const ActionButtons = ({ onAdd, onSave, addIcon, saveIcon, loading }) => {
   return (
     <View style={styles.confrimBtnView}>
       {onAdd && addIcon && (
-        <TouchableOpacity style={styles.profileBtnChange} onPress={onAdd} disabled={loading}>
-          <LinearGradient
-            colors={['#33abff', '#4db6ff', '#1aa1ff']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={[styles.gradientBtn, loading && styles.disabledBtn]}
-          >
+        <TouchableOpacity style={[styles.saveBtn, {backgroundColor:"#3E5879"}]} onPress={onAdd} disabled={loading}>
+          
             <Image source={addIcon} style={styles.btnIcon} />
             <Text style={styles.profileBtnText}>Add</Text>
-          </LinearGradient>
         </TouchableOpacity>
       )}
 

@@ -1,13 +1,15 @@
-import {View, Text, SafeAreaView} from 'react-native';
+import {View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles from '../style';
+import getStyles from './style';
 import CustomTextInput from '../../../../Components/TextInput';
 import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-import {updateEducation} from '../../../../../lib/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useTheme} from '../../../../Theme/ ThemeContext';
+import Header from '../../../../Components/Header/Index';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const UpdateEducation = () => {
   const route = useRoute();
@@ -26,6 +28,9 @@ const UpdateEducation = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -134,9 +139,9 @@ const UpdateEducation = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <View style={styles.createNew}>
-          <Text style={styles.title}>Update Education</Text>
-        </View>
+        <Header title="Update Education" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.goBack()
+        }}/>
         <View style={styles.inputContainer}>
           <CustomTextInput
             label="Course / Degree"

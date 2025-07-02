@@ -1,4 +1,4 @@
-import {View, Text, SafeAreaView, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CustomTextInput from '../../../../Components/TextInput';
 import ActionButtons from '../../../../Components/ActionButtons';
@@ -7,13 +7,15 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import styles from './style';
-import {updateExperience} from '../../../../../lib/api';
+import getStyles from './style';
 import dayjs from 'dayjs';
 import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../../../Theme/ ThemeContext';
+import Header from '../../../../Components/Header/Index';
 
 const UpdateExperience = () => {
   const route = useRoute();
@@ -31,9 +33,7 @@ const UpdateExperience = () => {
   const [resumeId, setResumeId] = useState(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [datePickerVisible, setDatePickerVisible] = useState({}); // { [formId_field]: true }
-  const [selectedDates, setSelectedDates] = useState({});
-
+  const [datePickerVisible, setDatePickerVisible] = useState({});
   const showDatePicker = field => {
     setDatePickerVisible({[field]: true});
   };
@@ -47,6 +47,9 @@ const UpdateExperience = () => {
   };
 
   const navigation = useNavigation();
+
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -149,9 +152,9 @@ const UpdateExperience = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <View style={styles.createNew}>
-          <Text style={styles.title}>Update Experience</Text>
-        </View>
+        <Header title="Update Experience" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.goBack()
+        }}/>
         <View style={styles.inputContainer}>
           <CustomTextInput
             label="Company Name"

@@ -1,10 +1,11 @@
 import {StyleSheet} from 'react-native';
 import Color from '../../../Theme/Color';
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
   safeView: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.white,
   },
   container: {
     flex: 1,
@@ -15,11 +16,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+    marginTop:20,
   },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1a1a1a',
+    color: theme.black
   },
   addButton: {
     flexDirection: 'row',
@@ -28,26 +30,24 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: Color.primary,
+    borderColor: theme.primary,
   },
   addIcon: {
     width: 20,
     height: 20,
     marginRight: 6,
-    tintColor: '#1F2937',
+    tintColor: theme.black,
     resizeMode: 'contain',
   },
   addText: {
-    color: '#1F2937',
+    color: theme.black,
     fontWeight: '600',
     fontSize: 14,
   },
   card: {
-    backgroundColor: '#fdfdfd',
+    backgroundColor:theme.resumeListCardBackground,
     padding: 16,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e2e2e2',
     marginBottom: 15,
   },
   cardHeader: {
@@ -61,22 +61,22 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: '600',
-    color: '#333',
+    color: theme.secondary,
   },
   labelText: {
     fontSize: 13,
-    color: '#555',
+    color: theme.smallText,
     marginBottom: 4,
   },
   course: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#222',
+    color: theme.black
   },
   university: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#444',
+    color: theme.secondary,
     marginBottom: 4,
   },
   text: {
@@ -92,12 +92,7 @@ const styles = StyleSheet.create({
     height: 20,
     resizeMode: 'contain',
   },
-  emptyText: {
-    textAlign: 'center',
-    marginTop: 50,
-    color: '#aaa',
-    fontSize: 14,
-  },
+  
   shimmerCard: {
     backgroundColor: '#ffffff',
     padding: 16,
@@ -140,15 +135,15 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.black,
     marginBottom: 8,
   },
   emptySubText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.smallText,
     textAlign: 'center',
     paddingHorizontal: 40,
   },
 });
 
-export default styles;
+export default getStyles;

@@ -1,13 +1,12 @@
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   FlatList,
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles from './style';
+import getStyles from './style';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
@@ -18,11 +17,13 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import {deleteSkill, getSkills} from '../../../../lib/api';
 import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../lib/asyncStorageUtils';
+import { useTheme } from '../../../Theme/ ThemeContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../../../Components/Header/Index';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -42,8 +43,11 @@ const Skills = () => {
   const [skills, setSkills] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-  console.log(skills);
+
   const navigation = useNavigation();
+
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', e => {
@@ -85,7 +89,7 @@ const Skills = () => {
       const existingResumes = await getResumesFromStorage();
       const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
-      if (resumeIndex !== 1) {
+      if (resumeIndex !== -1) {
         console.log('Resume found:', existingResumes[resumeIndex]);
 
         const skillsData = existingResumes[resumeIndex].profile.skills || [];
@@ -227,6 +231,9 @@ const Skills = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
+        <Header title="Skills" headerIcon={Images.leftArrowIcon} onPress={()=>{
+        navigation.navigate('Profile')
+      }}/>
         <View style={styles.createNew}>
           <Text style={styles.title}>Skills</Text>
           <TouchableOpacity

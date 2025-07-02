@@ -1,14 +1,12 @@
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   FlatList,
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Toast from 'react-native-toast-message';
-import {deleteExperience, getExperience} from '../../../../lib/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {Images} from '../../../Assets/Images';
@@ -18,9 +16,12 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import styles from './style';
+import getStyles from './style';
 import dayjs from 'dayjs';
 import { findResumeIndex, getResumesFromStorage } from '../../../../lib/asyncStorageUtils';
+import { useTheme } from '../../../Theme/ ThemeContext';
+import Header from '../../../Components/Header/Index';
+import { SafeAreaView } from 'react-native-safe-area-context';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -43,9 +44,9 @@ const Experience = () => {
 
   const navigation = useNavigation();
 
-  console.log(experience);
-  console.log(resumeId);
-  
+   const {theme} = useTheme();
+  const styles = getStyles(theme);
+
   
 
   useEffect(() => {
@@ -124,6 +125,8 @@ const Experience = () => {
   };
 
   const handleEdit = item => {
+    console.log("aa");
+    
     navigation.navigate('Update Experience', {experienceData: item});
   };
 
@@ -244,6 +247,9 @@ const Experience = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
+        <Header title="Experience" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.navigate('Profile')
+        }}/>
         <View style={styles.createNew}>
           <Text style={styles.title}>Experience</Text>
           <TouchableOpacity

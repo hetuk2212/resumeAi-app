@@ -69,13 +69,6 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Education"
           component={Education}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Choose Resume"
@@ -102,57 +95,22 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Add Education"
           component={AddEducation}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Update Education"
           component={UpdateEducation}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Experience"
           component={Experience}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Add Experience"
           component={AddExperience}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Update Experience"
           component={UpdateExperience}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Projects"
@@ -267,35 +225,14 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Skills"
           component={Skills}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Add Skills"
           component={AddSkills}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Update Skill"
           component={UpdateSkill}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Activities"

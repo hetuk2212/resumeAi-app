@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
     safeView: {
         flex: 1,
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.white,
       },
       container: {
         flex: 1,
@@ -14,11 +15,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 20,
-      },
-      title: {
-        fontSize: 22,
-        fontWeight: '700',
-        color: '#1a1a1a',
       },
       dateView:{
         flexDirection: 'row',
@@ -31,4 +27,4 @@ const styles = StyleSheet.create({
       }
 })
 
-export default styles
+export default getStyles

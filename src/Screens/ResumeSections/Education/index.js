@@ -1,15 +1,12 @@
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   FlatList,
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles from './style';
 import Toast from 'react-native-toast-message';
-import {deleteEducation, getEducation} from '../../../../lib/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {Images} from '../../../Assets/Images';
@@ -19,6 +16,10 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
+import Header from '../../../Components/Header/Index';
+import {useTheme} from '../../../Theme/ ThemeContext';
+import getStyles from './style';
+import { SafeAreaView } from 'react-native-safe-area-context';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -39,8 +40,8 @@ const Education = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  console.log('sas', education);
-  console.log('sas', resumeId);
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
 
   const navigation = useNavigation();
 
@@ -243,6 +244,9 @@ const Education = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
+        <Header title="Education" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.navigate('Profile')
+        }}/>
         <View style={styles.createNew}>
           <Text style={styles.title}>Education</Text>
           <TouchableOpacity

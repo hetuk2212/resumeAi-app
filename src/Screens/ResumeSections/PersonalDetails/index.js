@@ -2,13 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   Image,
   Alert,
   ScrollView,
   BackHandler,
-  ActivityIndicator,
   StatusBar,
 } from 'react-native';
 import getStyles from './style';
@@ -26,6 +24,8 @@ import Toast from 'react-native-toast-message';
 import Color from '../../../Theme/Color';
 import Header from '../../../Components/Header/Index';
 import {useTheme} from '../../../Theme/ ThemeContext';
+import FieldsToggleModal from '../../../Components/FieldsToggleModal/Index';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Helper function to format date for display
 const formatDisplayDate = dateString => {
@@ -74,6 +74,8 @@ const PersonalDetails = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [resumeId, setResumeId] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const [fields, setFields] = useState([
     {
       label: 'Date of Birth',
@@ -107,6 +109,10 @@ const PersonalDetails = () => {
 
   const {theme} = useTheme();
   const styles = getStyles(theme);
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', e => {
@@ -385,166 +391,136 @@ const PersonalDetails = () => {
           headerIcon={Images.leftArrowIcon}
           onPress={() => navigation.navigate('Profile')}
         />
-        {activePage === 'form' && (
-          <View>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{paddingBottom: 150, paddingTop: 20}}>
-              {activeTab === 'PersonalDetails' && (
-                <View>
-                  <View>
-                    <Text style={styles.label}>Photo (optional)</Text>
-                    <View style={styles.profileImgView}>
-                      <View>
-                        <Image
-                          source={
-                            profileImage
-                              ? {uri: profileImage.uri || profileImage}
-                              : Images.profileAccount
-                          }
-                          style={styles.userProfile}
-                        />
-                        {profileImage?(<TouchableOpacity
-                          style={styles.profileBtnChange}
-                          onPress={handleRemoveImage}>
-                          <Image source={Images.delete} style={styles.editIcon} />
-                        </TouchableOpacity>):<TouchableOpacity
-                          style={styles.profileBtnChange}
-                          onPress={handleImagePick}>
-                          <Image source={Images.edit} style={styles.editIcon} />
-                        </TouchableOpacity>}
-                      </View>
-                      {/* <View style={styles.profileImgBtnView}>
-                        
-                        <TouchableOpacity
-                          style={styles.profileBtnRemove}
-                          onPress={handleRemoveImage}>
-                          <LinearGradient
-                            colors={['#ff9800', '#ff7300', '#ff5722']}
-                            start={{x: 0, y: 0}}
-                            end={{x: 1, y: 0}}
-                            style={styles.gradientBtn}>
-                            <Text style={styles.profileBtnText}>Remove</Text>
-                          </LinearGradient>
-                        </TouchableOpacity>
-                      </View> */}
-                    </View>
-                  </View>
-                  <CustomTextInput
-                    label="Name"
-                    value={name}
-                    onChangeText={setName}
-                    errorMessage={errors.fullName}
-                  />
-                  <CustomTextInput
-                    label="Position"
-                    placeholder="(Optional)"
-                    value={position}
-                    onChangeText={setPosition}
-                    errorMessage={errors.position}
-                  />
-                  <CustomTextInput
-                    label="Address"
-                    value={address}
-                    onChangeText={setAddress}
-                    errorMessage={errors.address}
-                  />
-                  <CustomTextInput
-                    label="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    errorMessage={errors.email}
-                  />
-                  <CustomTextInput
-                    label="Phone"
-                    value={phone}
-                    onChangeText={setPhone}
-                    keyboardType="phone-pad"
-                    errorMessage={errors.phone}
-                  />
-                  {fields
-                    .filter(field => field.isActive)
-                    .map((field, index) =>
-                      field.isDateField ? (
-                        <View key={index}>
-                          <Text style={styles.label}>{field.label}</Text>
-                          <TouchableOpacity
-                            onPress={showDatepicker}
-                            activeOpacity={1}
-                            style={styles.dateInputContainer}>
-                            <CustomTextInput
-                              placeholder={`Select your ${field.label}`}
-                              value={
-                                fieldValues[field.label]
-                                  ? formatDisplayDate(fieldValues[field.label])
-                                  : ''
-                              }
-                              editable={false}
-                              pointerEvents="none"
-                            />
-                          </TouchableOpacity>
-                          {showDatePicker && (
-                            <DateTimePicker
-                              mode="date"
-                              display="default"
-                              value={dateOfBirth}
-                              onChange={handleDateChange}
-                              maximumDate={new Date()}
-                            />
-                          )}
-                        </View>
-                      ) : (
-                        <CustomTextInput
-                          key={index}
-                          label={field.label}
-                          placeholder={`Enter your ${field.label}`}
-                          value={fieldValues[field.label] || ''}
-                          onChangeText={text => {
-                            setFieldValues(prevState => ({
-                              ...prevState,
-                              [field.label]: text,
-                            }));
-                          }}
-                        />
-                      ),
-                    )}
-                  <ActionButtons
-                    onAdd={handleModal}
-                    onSave={handleSave}
-                    addIcon={Images.add}
-                    saveIcon={Images.check}
-                    loading={loading}
-                  />
-                </View>
-              )}
-            </ScrollView>
-          </View>
-        )}
 
-        {activePage === 'modal' && (
-          <ScrollView contentContainerStyle={{paddingBottom: 100}}>
-            <Text style={styles.headerText}>
-              Click the switch button to Enable / Disable any profile fields
-            </Text>
-            <View style={styles.fieldsContainer}>
-              <View style={styles.titleBox}>
-                <Text style={styles.title}>Add More Personal Info</Text>
-              </View>
-              {fields.map((field, index) => (
-                <View key={index} style={styles.fieldItem}>
-                  <Text style={styles.fieldLabel}>{field.label}</Text>
-                  <ToggleSwitch
-                    isOn={field.isActive}
-                    onColor="green"
-                    offColor="gray"
-                    size="medium"
-                    onToggle={() => handleToggle(index)}
-                  />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingBottom: 150, paddingTop: 20}}>
+          {activeTab === 'PersonalDetails' && (
+            <View>
+              <View>
+                <Text style={styles.label}>Photo (optional)</Text>
+                <View style={styles.profileImgView}>
+                  <View>
+                    <Image
+                      source={
+                        profileImage
+                          ? {uri: profileImage.uri || profileImage}
+                          : Images.profileAccount
+                      }
+                      style={styles.userProfile}
+                    />
+                    {profileImage ? (
+                      <TouchableOpacity
+                        style={styles.profileBtnChange}
+                        onPress={handleRemoveImage}>
+                        <Image source={Images.delete} style={styles.editIcon} />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        style={styles.profileBtnChange}
+                        onPress={handleImagePick}>
+                        <Image source={Images.edit} style={styles.editIcon} />
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
-              ))}
+              </View>
+              <CustomTextInput
+                label="Name"
+                value={name}
+                onChangeText={setName}
+                errorMessage={errors.fullName}
+              />
+              <CustomTextInput
+                label="Position"
+                placeholder="(Optional)"
+                value={position}
+                onChangeText={setPosition}
+                errorMessage={errors.position}
+              />
+              <CustomTextInput
+                label="Address"
+                value={address}
+                onChangeText={setAddress}
+                errorMessage={errors.address}
+              />
+              <CustomTextInput
+                label="Email"
+                value={email}
+                onChangeText={setEmail}
+                errorMessage={errors.email}
+              />
+              <CustomTextInput
+                label="Phone"
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+                errorMessage={errors.phone}
+              />
+              {fields
+                .filter(field => field.isActive)
+                .map((field, index) =>
+                  field.isDateField ? (
+                    <View key={index}>
+                      <Text style={styles.label}>{field.label}</Text>
+                      <TouchableOpacity
+                        onPress={showDatepicker}
+                        activeOpacity={1}
+                        style={styles.dateInputContainer}>
+                        <CustomTextInput
+                          placeholder={`Select your ${field.label}`}
+                          value={
+                            fieldValues[field.label]
+                              ? formatDisplayDate(fieldValues[field.label])
+                              : ''
+                          }
+                          editable={false}
+                          pointerEvents="none"
+                        />
+                      </TouchableOpacity>
+                      {showDatePicker && (
+                        <DateTimePicker
+                          mode="date"
+                          display="default"
+                          value={dateOfBirth}
+                          onChange={handleDateChange}
+                          maximumDate={new Date()}
+                        />
+                      )}
+                    </View>
+                  ) : (
+                    <CustomTextInput
+                      key={index}
+                      label={field.label}
+                      placeholder={`Enter your ${field.label}`}
+                      value={fieldValues[field.label] || ''}
+                      onChangeText={text => {
+                        setFieldValues(prevState => ({
+                          ...prevState,
+                          [field.label]: text,
+                        }));
+                      }}
+                    />
+                  ),
+                )}
+              <ActionButtons
+                onAdd={toggleModal}
+                onSave={handleSave}
+                addIcon={Images.add}
+                saveIcon={Images.check}
+                loading={loading}
+              />
             </View>
-          </ScrollView>
-        )}
+          )}
+        </ScrollView>
+
+        <FieldsToggleModal
+          visible={isModalVisible}
+          fields={fields}
+          onToggle={handleToggle}
+          onClose={toggleModal}
+          // styles={styles}
+        />
       </View>
     </SafeAreaView>
   );

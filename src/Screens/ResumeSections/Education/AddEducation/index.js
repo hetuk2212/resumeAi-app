@@ -1,21 +1,21 @@
 import {
   View,
   Text,
-  SafeAreaView,
   Image,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import styles from './style';
+import getStyles from './style';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import {addEducation} from '../../../../../lib/api';
-import TabSwitcher from '../../../../Components/TabSwitcher';
 import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
+import {useTheme} from '../../../../Theme/ ThemeContext';
+import Header from '../../../../Components/Header/Index';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AddEducation = () => {
   const [activeTab, setActiveTab] = useState('Education');
@@ -34,7 +34,9 @@ const AddEducation = () => {
   const [errors, setErrors] = useState({});
 
   const navigation = useNavigation();
-  console.log('ds', resumeId);
+
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -123,7 +125,7 @@ const AddEducation = () => {
         console.error('Resumes data is not an array:', existingResumes);
         existingResumes = [];
       }
-      
+
       const resumeIndex = existingResumes.findIndex(
         r => r.profile?._id === resumeId,
       );
@@ -192,14 +194,9 @@ const AddEducation = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <TabSwitcher
-          tabs={[
-            {key: 'Education', label: 'Education'},
-            {key: 'Example', label: 'Example'},
-          ]}
-          value={activeTab}
-          onTabChange={tabKey => setActiveTab(tabKey)}
-        />
+        <Header title="Add Education" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.goBack();
+        }}/>
 
         {activeTab === 'Education' && (
           <ScrollView
@@ -251,6 +248,7 @@ const AddEducation = () => {
                       handleInputChange(form.id, 'startYear', text)
                     }
                     errorMessage={errors[`${index}_startYear`]}
+                    keyboardType='numeric'
                   />
 
                   <CustomTextInput

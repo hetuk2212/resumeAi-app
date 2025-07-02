@@ -1,25 +1,25 @@
 import {
   View,
   Text,
-  SafeAreaView,
   Image,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import styles from './style';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import TabSwitcher from '../../../../Components/TabSwitcher';
 import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
-import {addSkills} from '../../../../../lib/api';
 import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../../../Theme/ ThemeContext';
+import getStyles from './style';
+import Header from '../../../../Components/Header/Index';
 
 const AddSkills = () => {
   const [activeTab, setActiveTab] = useState('Skills');
@@ -35,6 +35,9 @@ const AddSkills = () => {
   const [errors, setErrors] = useState({});
 
   const navigation = useNavigation();
+
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -175,15 +178,9 @@ const AddSkills = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <TabSwitcher
-          tabs={[
-            {key: 'Skills', label: 'Skills'},
-            {key: 'Example', label: 'Example'},
-          ]}
-          value={activeTab}
-          onTabChange={tabKey => setActiveTab(tabKey)}
-        />
-
+        <Header title="Add Skills" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.goBack()
+        }}/>
         {activeTab === 'Skills' && (
           <ScrollView
             contentContainerStyle={{paddingBottom: 100}}
