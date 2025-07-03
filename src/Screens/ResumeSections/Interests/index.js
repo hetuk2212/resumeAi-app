@@ -1,15 +1,13 @@
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   FlatList,
   Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles from './style';
+import getStyle from './style';
 import Toast from 'react-native-toast-message';
-import {deleteInterest, getInterests} from '../../../../lib/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {Images} from '../../../Assets/Images';
@@ -23,6 +21,9 @@ import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../lib/asyncStorageUtils';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../../../Components/Header/Index';
+import { useTheme } from '../../../Theme/ ThemeContext';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -44,6 +45,9 @@ const Interests = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
+  const {theme} = useTheme()
+  const styles = getStyle(theme)
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', e => {
@@ -199,6 +203,9 @@ const Interests = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
+        <Header title="Interests" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.navigate("Profile")
+        }}/>
         <View style={styles.createNew}>
           <Text style={styles.title}>Interests</Text>
           <TouchableOpacity

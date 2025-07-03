@@ -1,17 +1,19 @@
-import {View, Text, SafeAreaView} from 'react-native';
+import {View, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles from '../style';
+import getStyle from './style';
 import CustomTextInput from '../../../../Components/TextInput';
 import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {updateAchievement} from '../../../../../lib/api';
 import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
+import { useTheme } from '../../../../Theme/ ThemeContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../../../../Components/Header/Index';
 
 const UpdateAchievement = () => {
   const route = useRoute();
@@ -26,6 +28,9 @@ const UpdateAchievement = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
+  const {theme} = useTheme()
+  const styles = getStyle(theme)
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -120,9 +125,9 @@ const UpdateAchievement = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <View style={styles.createNew}>
-          <Text style={styles.title}>Update Achievement</Text>
-        </View>
+        <Header title="Update Achievement" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.goBack();
+        }}/>
         <View style={styles.inputContainer}>
           <CustomTextInput
             label="Achievement"

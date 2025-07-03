@@ -131,68 +131,26 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Interests"
           component={Interests}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Add Interests"
           component={AddInterests}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Update Interest"
           component={UpdateInterest}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Achievements"
           component={Achievements}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Add Achievements"
           component={AddAchievements}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Update Achievement"
           component={UpdateAchievement}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Skills"
@@ -209,68 +167,26 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Activities"
           component={Activites}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Add Activities"
           component={AddActivities}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Update Activity"
           component={UpdateActivity}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Languages"
           component={Languages}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Add Languages"
           component={AddLanguages}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Update Language"
           component={UpdateLanguage}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Cover Latter"

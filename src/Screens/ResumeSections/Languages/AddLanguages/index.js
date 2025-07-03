@@ -1,26 +1,25 @@
 import {
   View,
   Text,
-  SafeAreaView,
   Image,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import styles from './style';
+import getStyle from './style';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import TabSwitcher from '../../../../Components/TabSwitcher';
 import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
-import {addLanguages} from '../../../../../lib/api';
 import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
-import Languages from '..';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../../../../Components/Header/Index';
+import { useTheme } from '../../../../Theme/ ThemeContext';
 
 const AddLanguages = () => {
   const [activeTab, setActiveTab] = useState('Languages');
@@ -32,6 +31,9 @@ const AddLanguages = () => {
   const [errors, setErrors] = useState({});
 
   const navigation = useNavigation();
+
+  const {theme} = useTheme()
+  const styles = getStyle(theme)
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -155,15 +157,9 @@ const AddLanguages = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <TabSwitcher
-          tabs={[
-            {key: 'Languages', label: 'Languages'},
-            {key: 'Example', label: 'Example'},
-          ]}
-          value={activeTab}
-          onTabChange={tabKey => setActiveTab(tabKey)}
-        />
-
+        <Header title="Add Languages" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.goBack();
+        }}/>
         {activeTab === 'Languages' && (
           <ScrollView
             contentContainerStyle={{paddingBottom: 100}}

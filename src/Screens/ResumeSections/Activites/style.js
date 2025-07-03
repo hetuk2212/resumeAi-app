@@ -1,10 +1,11 @@
 import {StyleSheet} from 'react-native';
 import Color from '../../../Theme/Color';
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
   safeView: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.white,
   },
   container: {
     flex: 1,
@@ -19,36 +20,33 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1a1a1a',
+    color: theme.black,
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1F293710',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#1F2937',
+    borderColor: theme.primary,
   },
   addIcon: {
     width: 20,
     height: 20,
     marginRight: 6,
-    tintColor: '#1F2937',
+    tintColor: theme.black,
     resizeMode: 'contain',
   },
   addText: {
-    color: '#1F2937',
+    color: theme.black,
     fontWeight: '600',
     fontSize: 14,
   },
   card: {
-    backgroundColor: '#fdfdfd',
+    backgroundColor: theme.resumeListCardBackground,
     padding: 16,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e2e2e2',
     marginBottom: 15,
   },
   cardHeader: {
@@ -72,7 +70,7 @@ const styles = StyleSheet.create({
   course: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#222',
+    color: theme.black,
   },
   university: {
     fontSize: 14,
@@ -92,12 +90,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     resizeMode: 'contain',
-  },
-  emptyText: {
-    textAlign: 'center',
-    marginTop: 50,
-    color: '#aaa',
-    fontSize: 14,
   },
   shimmerCard: {
     backgroundColor: '#ffffff',
@@ -141,15 +133,15 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.black,
     marginBottom: 8,
   },
   emptySubText: {
     fontSize: 14,
-    color: '#666',
+    color: theme.smallText,
     textAlign: 'center',
     paddingHorizontal: 40,
   },
 });
 
-export default styles;
+export default getStyles;

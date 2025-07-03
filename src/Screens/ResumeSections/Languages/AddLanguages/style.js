@@ -1,17 +1,17 @@
 import {StyleSheet} from 'react-native';
-import Color from '../../../../Theme/Color';
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
   safeView: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.white,
   },
   container: {
     padding: 15,
   },
   formBox: {
     marginTop: 25,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.resumeListCardBackground,
     borderRadius: 10,
     overflow: 'hidden',
   },
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Color.primary,
+    backgroundColor: theme.primary,
   },
   title: {
     fontSize: 18,
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
+    color:theme.black
   },
   ratingRow: {
     flexDirection: 'row',
@@ -66,4 +67,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default styles;
+export default getStyles;

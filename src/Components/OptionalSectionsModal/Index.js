@@ -4,6 +4,7 @@ import Header from '../Header/Index';
 import {Images} from '../../Assets/Images';
 import {useTheme} from '../../Theme/ ThemeContext';
 import {moderateScale} from '../../../lib/responsive';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const OptionalSectionsModal = ({
   optionalSections,
@@ -18,26 +19,27 @@ const OptionalSectionsModal = ({
   const {theme} = useTheme();
   const styles = getStyles(theme);
   return (
-    <View style={styles.optionsContainer}>
-      <Header
-        title="Customize Sections"
-        headerIcon={Images.leftArrowIcon}
-        onPress={onCancel}
-      />
-      <View style={styles.optionSection}>
-        {Object.entries(optionalSections).map(([key, value]) => (
-          <View key={key} style={styles.optionalSectionRow}>
-            <Text style={styles.sectionTitle}>
-              {key.charAt(0).toUpperCase() + key.slice(1)}
-            </Text>
-            <Switch
-              value={value}
-              onValueChange={() => toggleOptionalSection(key)}
-            />
-          </View>
-        ))}
-      </View>
-      {/* <Text style={styles.modalTitle}>Add New Section</Text>
+    <SafeAreaView>
+      <View style={styles.optionsContainer}>
+        <Header
+          title="Customize Sections"
+          headerIcon={Images.leftArrowIcon}
+          onPress={onCancel}
+        />
+        <View style={styles.optionSection}>
+          {Object.entries(optionalSections).map(([key, value]) => (
+            <View key={key} style={styles.optionalSectionRow}>
+              <Text style={styles.sectionTitle}>
+                {key.charAt(0).toUpperCase() + key.slice(1)}
+              </Text>
+              <Switch
+                value={value}
+                onValueChange={() => toggleOptionalSection(key)}
+              />
+            </View>
+          ))}
+        </View>
+        {/* <Text style={styles.modalTitle}>Add New Section</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter section title"
@@ -46,19 +48,20 @@ const OptionalSectionsModal = ({
       />
       <Button title="Add Section" onPress={addNewSection} />
       <Button title="Cancel" color="red" onPress={onCancel} /> */}
-      {moreSections
-        .filter(section => section.isUserAdded)
-        .map(section => (
-          <View key={section.id} style={styles.deleteSectionRow}>
-            <Text style={styles.sectionTitle}>{section.name}</Text>
-            <Button
-              title="Delete"
-              color="red"
-              onPress={() => deleteSection(section.id)}
-            />
-          </View>
-        ))}
-    </View>
+        {moreSections
+          .filter(section => section.isUserAdded)
+          .map(section => (
+            <View key={section.id} style={styles.deleteSectionRow}>
+              <Text style={styles.sectionTitle}>{section.name}</Text>
+              <Button
+                title="Delete"
+                color="red"
+                onPress={() => deleteSection(section.id)}
+              />
+            </View>
+          ))}
+      </View>
+    </SafeAreaView>
   );
 };
 

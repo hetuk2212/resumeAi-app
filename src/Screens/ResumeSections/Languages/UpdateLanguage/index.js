@@ -1,17 +1,19 @@
-import {View, Text, SafeAreaView, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles from './style';
+import getStyle from './style';
 import CustomTextInput from '../../../../Components/TextInput';
 import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {updateLanguage} from '../../../../../lib/api';
 import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Header from '../../../../Components/Header/Index';
+import { useTheme } from '../../../../Theme/ ThemeContext';
 
 const UpdateLanguage = () => {
   const route = useRoute();
@@ -27,6 +29,9 @@ const UpdateLanguage = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
+  const {theme} = useTheme()
+  const styles = getStyle(theme)
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -119,9 +124,13 @@ const UpdateLanguage = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <View style={styles.createNew}>
-          <Text style={styles.title}>Update Language</Text>
-        </View>
+        <Header
+          title="Update Language"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         <View style={styles.inputContainer}>
           <CustomTextInput
             label="Language"
