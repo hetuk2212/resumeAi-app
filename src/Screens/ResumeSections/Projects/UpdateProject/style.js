@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
     safeView: {
         flex: 1,
         backgroundColor: '#ffffff',
@@ -22,4 +23,4 @@ const styles = StyleSheet.create({
       },
 })
 
-export default styles
+export default getStyles

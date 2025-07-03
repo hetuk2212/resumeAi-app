@@ -2,16 +2,14 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
-  SafeAreaView,
   ScrollView,
   Keyboard,
   ActivityIndicator,
 } from 'react-native';
-import styles from './style';
+import getStyles from './style';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import TabSwitcher from '../../../Components/TabSwitcher';
 import {Images} from '../../../Assets/Images';
 import CustomTextInput from '../../../Components/TextInput';
 import ActionButtons from '../../../Components/ActionButtons';
@@ -19,6 +17,9 @@ import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../lib/asyncStorageUtils';
+import { useTheme } from '../../../Theme/ ThemeContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../../../Components/Header/Index';
 
 const Objective = () => {
   const [activeTab, setActiveTab] = useState('Objective');
@@ -30,6 +31,9 @@ const Objective = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const navigation = useNavigation();
+
+  const {theme} = useTheme();
+  const styles = getStyles(theme)
 
   useEffect(() => {
     const fetchResumeData = async () => {
@@ -149,14 +153,9 @@ const Objective = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <TabSwitcher
-          tabs={[
-            {key: 'Objective', label: 'Objective'},
-            {key: 'Example', label: 'Example'},
-          ]}
-          value={activeTab}
-          onTabChange={setActiveTab}
-        />
+        <Header title="Objective" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.navigate("Profile");
+        }}/>
 
         {activeTab === 'Objective' ? (
           <ScrollView
@@ -164,9 +163,6 @@ const Objective = () => {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}>
             <View style={styles.formBox}>
-              <View style={styles.titleView}>
-                <Text style={styles.title}>Objective</Text>
-              </View>
               <View style={styles.formDetails}>
                 <CustomTextInput
                   label="Objective"

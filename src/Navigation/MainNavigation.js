@@ -115,46 +115,18 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Projects"
           component={Projects}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Add Projects"
           component={AddProjects}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Objective"
           component={Objective}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Update Projects"
           component={UpdateProjects}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="Interests"

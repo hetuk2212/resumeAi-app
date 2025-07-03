@@ -1,17 +1,18 @@
 import {StyleSheet} from 'react-native';
-import Color from '../../../Theme/Color';
+import { moderateScale } from '../../../../lib/responsive';
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
   safeView: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.white,
   },
   container: {
     padding: 15,
   },
   formBox: {
     marginTop: 25,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.resumeListCardBackground,
     borderRadius: 10,
     overflow: 'hidden',
   },
@@ -25,16 +26,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Color.primary,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#ffffff',
+    backgroundColor: theme.primary,
   },
   formDetails: {
     padding: 10,
   },
+  charCounter:{
+    color: theme.smallText,
+    fontSize: moderateScale(14),
+    fontWeight: '500',
+  }
 });
 
-export default styles;
+export default getStyles;

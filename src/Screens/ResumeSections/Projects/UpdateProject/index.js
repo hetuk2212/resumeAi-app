@@ -1,15 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
+import { View} from 'react-native';
 import Toast from 'react-native-toast-message';
-
-import {updateProject} from '../../../../../lib/api';
 import {findResumeIndex, getResumesFromStorage,} from '../../../../../lib/asyncStorageUtils';
 import {Images} from '../../../../Assets/Images';
 import ActionButtons from '../../../../Components/ActionButtons';
 import CustomTextInput from '../../../../Components/TextInput';
-import styles from '../style';
+import getStyle from '../style';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../../../../Components/Header/Index';
+import { useTheme } from '../../../../Theme/ ThemeContext';
 
 const UpdateProject = () => {
   const route = useRoute();
@@ -25,6 +26,9 @@ const UpdateProject = () => {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
+  const {theme} = useTheme()
+  const styles = getStyle(theme)
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -117,9 +121,9 @@ const UpdateProject = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <View style={styles.createNew}>
-          <Text style={styles.title}>Update Project</Text>
-        </View>
+        <Header title="Update Project" headerIcon={Images.leftArrowIcon} onPress={()=>{
+          navigation.goBack()
+        }}/>
         <View style={styles.inputContainer}>
           <CustomTextInput
   label = 'Project Name'
