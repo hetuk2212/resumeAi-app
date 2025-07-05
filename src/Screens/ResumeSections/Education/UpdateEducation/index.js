@@ -1,4 +1,4 @@
-import {View} from 'react-native';
+import {StatusBar, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import getStyles from './style';
 import CustomTextInput from '../../../../Components/TextInput';
@@ -9,7 +9,7 @@ import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useTheme} from '../../../../Theme/ ThemeContext';
 import Header from '../../../../Components/Header/Index';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const UpdateEducation = () => {
   const route = useRoute();
@@ -138,10 +138,19 @@ const UpdateEducation = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Update Education" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack()
-        }}/>
+        <Header
+          title="Update Education"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         <View style={styles.inputContainer}>
           <CustomTextInput
             label="Course / Degree"

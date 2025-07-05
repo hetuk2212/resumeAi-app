@@ -24,7 +24,7 @@ import Header from '../../Components/Header/Index';
 import {useTheme} from '../../Theme/ ThemeContext';
 import getStyles from './style';
 import OptionalSectionsModal from '../../Components/OptionalSectionsModal/Index';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const sectionImages = {
   projects: Images.SectionProjects,
@@ -221,9 +221,9 @@ const Profile = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <StatusBar
-        translucent
-        backgroundColor={Color.primary}
-        barStyle="light-content"
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
       />
       {isLoading ? (
         <ActivityIndicator size="large" color="blue" style={styles.loader} />

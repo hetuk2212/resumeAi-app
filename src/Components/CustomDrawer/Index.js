@@ -36,9 +36,9 @@ const CustomDrawer = ({isOpen, onClose, navigation}) => {
 
   return (
     <>
-      <StatusBar translucent={false} backgroundColor="transparent" />
-
+   
       <Animated.View style={[styles.drawer, drawerStyle]}>
+        <SafeAreaView edges={['top', 'right', 'bottom']} style={{flex: 1}}>
         <View style={styles.drawerContent}>
           <SafeAreaView
             edges={['right', 'bottom']}
@@ -69,6 +69,7 @@ const CustomDrawer = ({isOpen, onClose, navigation}) => {
             </View>
           </SafeAreaView>
         </View>
+        </SafeAreaView>
       </Animated.View>
 
       {isOpen && (

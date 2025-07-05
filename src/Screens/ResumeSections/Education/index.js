@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Toast from 'react-native-toast-message';
@@ -19,7 +20,7 @@ import Animated, {
 import Header from '../../../Components/Header/Index';
 import {useTheme} from '../../../Theme/ ThemeContext';
 import getStyles from './style';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -243,10 +244,19 @@ const Education = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Education" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.navigate('Profile')
-        }}/>
+        <Header
+          title="Education"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.navigate('Profile');
+          }}
+        />
         <View style={styles.createNew}>
           <Text style={styles.title}>Education</Text>
           <TouchableOpacity

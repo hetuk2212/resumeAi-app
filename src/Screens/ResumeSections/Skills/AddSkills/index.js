@@ -217,7 +217,7 @@ const AddSkills = () => {
                           onPress={() =>
                             handleInputChange(form.id, 'rating', level)
                           }>
-                          <Text style={styles.ratingText}>{level}</Text>
+                          <Text style={[styles.ratingText,{color: form.rating === level && '#ffffff'}]}>{level}</Text>
                         </TouchableOpacity>
                       ))}
                     </View>

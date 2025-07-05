@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Image} from 'react-native';
+import {StatusBar} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, {
   useSharedValue,
@@ -8,8 +8,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import {Images} from '../../Assets/Images';
 import styles from './style';
-import {useTheme} from '../../Theme/ ThemeContext';
 import SpInAppUpdates, {IAUUpdateKind} from 'sp-react-native-in-app-updates';
+import { useTheme } from '../../Theme/ ThemeContext';
 
 const Splash = ({navigation}) => {
   const {theme} = useTheme();
@@ -21,22 +21,19 @@ const Splash = ({navigation}) => {
     opacity.value = withTiming(1, {duration: 1500});
     scale.value = withTiming(1, {duration: 1500});
 
-    const inAppUpdates = new SpInAppUpdates(false); // false = not debug mode
-
+    const inAppUpdates = new SpInAppUpdates(false);
     inAppUpdates.checkNeedsUpdate().then(result => {
       if (result.shouldUpdate) {
         inAppUpdates.startUpdate({
-          updateType: IAUUpdateKind.IMMEDIATE, // or FLEXIBLE
+          updateType: IAUUpdateKind.IMMEDIATE,
         });
       } else {
-        // No update needed, go to Home
         setTimeout(() => {
           navigation.replace('Home');
         }, 2000);
       }
     }).catch(error => {
       console.log('Update check error:', error);
-      // Continue to app anyway
       setTimeout(() => {
         navigation.replace('Home');
       }, 2000);
@@ -49,13 +46,23 @@ const Splash = ({navigation}) => {
   }));
 
   return (
-    <LinearGradient colors={[theme.white, theme.white]} style={styles.container}>
-      <Animated.Image
-        source={Images.MainLogo}
-        style={[styles.logo, animatedStyle]}
-        resizeMode="contain"
+    <>
+      <StatusBar
+        backgroundColor={theme.white}  // Set to white
+        barStyle="dark-content"         // Dark text/icons for visibility
+        translucent={false}             // Content won't go under status bar
       />
-    </LinearGradient>
+      <LinearGradient 
+        colors={[theme.white, theme.white]} 
+        style={styles.container}
+      >
+        <Animated.Image
+          source={Images.logoIcon}
+          style={[styles.logo, animatedStyle]}
+          resizeMode="contain"
+        />
+      </LinearGradient>
+    </>
   );
 };
 

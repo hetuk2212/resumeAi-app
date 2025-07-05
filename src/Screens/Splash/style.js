@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { moderateScale } from "../../../lib/responsive";
 
 const styles = StyleSheet.create({
     container: {
@@ -7,8 +8,9 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     logo: {
-      width: 400,
-      height: 400,
+      width: moderateScale(200),
+      height: moderateScale(200),
+      borderRadius: 10
     },
     
   });

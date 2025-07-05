@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import Color from '../../../Theme/Color';
+import { moderateScale } from '../../../../lib/responsive';
 
 const getStyles = theme =>
   StyleSheet.create({
@@ -72,6 +73,7 @@ const getStyles = theme =>
       fontSize: 16,
       fontWeight: '600',
       color: theme.black,
+      width: moderateScale(245)
     },
     university: {
       fontSize: 14,
@@ -135,7 +137,7 @@ const getStyles = theme =>
       height: 150,
       resizeMode: 'contain',
       marginBottom: 20,
-      tintColor: Color.white,
+      tintColor: theme.black,
     },
     emptyText: {
       fontSize: 18,

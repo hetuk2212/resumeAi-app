@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import getStyles from './style';
 import {useNavigation} from '@react-navigation/native';
@@ -15,7 +9,7 @@ import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
 import {useTheme} from '../../../../Theme/ ThemeContext';
 import Header from '../../../../Components/Header/Index';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const AddEducation = () => {
   const [activeTab, setActiveTab] = useState('Education');
@@ -194,9 +188,13 @@ const AddEducation = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.container}>
-        <Header title="Add Education" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack();
-        }}/>
+        <Header
+          title="Add Education"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
 
         {activeTab === 'Education' && (
           <ScrollView
@@ -248,7 +246,7 @@ const AddEducation = () => {
                       handleInputChange(form.id, 'startYear', text)
                     }
                     errorMessage={errors[`${index}_startYear`]}
-                    keyboardType='numeric'
+                    keyboardType="numeric"
                   />
 
                   <CustomTextInput
@@ -258,6 +256,7 @@ const AddEducation = () => {
                       handleInputChange(form.id, 'endYear', text)
                     }
                     errorMessage={errors[`${index}_endYear`]}
+                    keyboardType="numeric"
                   />
                 </View>
               </View>

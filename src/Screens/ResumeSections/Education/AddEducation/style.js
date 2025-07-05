@@ -15,12 +15,11 @@ const getStyles = theme =>
     backgroundColor: theme.resumeListCardBackground,
     borderRadius: 10,
     overflow: 'hidden',
-    padding:4
   },
   educationIcon: {
     width: 25,
     height: 25,
-    tintColor:theme.black
+    tintColor: '#ffffff',
   },
 
   titleView: {
@@ -28,12 +27,12 @@ const getStyles = theme =>
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Color.primary,
+    backgroundColor: theme.primary,
   },
   title: {
     fontSize: 18,
     fontWeight: '500',
-    color: theme.black,
+    color: '#ffffff',
   },
   formDetails: {
     padding: 10,

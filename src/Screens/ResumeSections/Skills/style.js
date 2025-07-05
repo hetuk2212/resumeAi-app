@@ -92,11 +92,9 @@ const getStyles = theme =>
     resizeMode: 'contain',
   },
   shimmerCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.resumeListCardBackground,
     padding: 16,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e2e2e2',
     marginBottom: 15,
   },
   shimmerHeaderTitle: {

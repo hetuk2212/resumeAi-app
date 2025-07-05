@@ -149,7 +149,7 @@ const UpdateSkill = () => {
                     form.rating === level && styles.ratingCircleActive,
                   ]}
                   onPress={() => handleInputChange('rating', level)}>
-                  <Text style={styles.ratingText}>{level}</Text>
+                  <Text style={[styles.ratingText,{color: form.rating === level && '#ffffff'}]}>{level}</Text>
                 </TouchableOpacity>
               ))}
             </View>

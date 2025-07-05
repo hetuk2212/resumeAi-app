@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import getStyles from './style';
@@ -230,6 +231,11 @@ const Skills = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+              backgroundColor={theme.white}
+              barStyle={theme.statusBarStyle}
+              translucent={false}
+            />
       <View style={styles.container}>
         <Header title="Skills" headerIcon={Images.leftArrowIcon} onPress={()=>{
         navigation.navigate('Profile')

@@ -63,7 +63,7 @@ const Home = () => {
     setLoading(true);
     setRefreshing(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       const resumesData = await AsyncStorage.getItem('resumes');
       if (resumesData) {
@@ -268,12 +268,12 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeView}>
+    <SafeAreaView style={styles.safeView} edges={['top', 'right', 'left']}>
       <StatusBar
-        translucent
-        backgroundColor={Color.primary}
-        barStyle="light-content"
-      />{' '}
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
         <Header
           title="Resume"

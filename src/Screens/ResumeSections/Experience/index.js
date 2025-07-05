@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Toast from 'react-native-toast-message';
@@ -18,10 +19,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import getStyles from './style';
 import dayjs from 'dayjs';
-import { findResumeIndex, getResumesFromStorage } from '../../../../lib/asyncStorageUtils';
-import { useTheme } from '../../../Theme/ ThemeContext';
+import {
+  findResumeIndex,
+  getResumesFromStorage,
+} from '../../../../lib/asyncStorageUtils';
+import {useTheme} from '../../../Theme/ ThemeContext';
 import Header from '../../../Components/Header/Index';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -44,10 +48,8 @@ const Experience = () => {
 
   const navigation = useNavigation();
 
-   const {theme} = useTheme();
+  const {theme} = useTheme();
   const styles = getStyles(theme);
-
-  
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', e => {
@@ -100,7 +102,7 @@ const Experience = () => {
         r => r.profile?._id === resumeId,
       );
 
-        console.log('as', existingResumes);
+      console.log('as', existingResumes);
       console.log('as', resumeIndex);
 
       if (resumeIndex !== -1) {
@@ -125,8 +127,8 @@ const Experience = () => {
   };
 
   const handleEdit = item => {
-    console.log("aa");
-    
+    console.log('aa');
+
     navigation.navigate('Update Experience', {experienceData: item});
   };
 
@@ -136,10 +138,11 @@ const Experience = () => {
       const resumeIndex = findResumeIndex(existingResumes, resumeId);
 
       if (resumeIndex !== -1) {
-
         existingResumes[resumeIndex].profile.experience = existingResumes[
           resumeIndex
-        ].profile.experience.filter(experience => experience._id !== experienceId);
+        ].profile.experience.filter(
+          experience => experience._id !== experienceId,
+        );
 
         await AsyncStorage.setItem('resumes', JSON.stringify(existingResumes));
         setExperience(existingResumes[resumeIndex].profile.experience);
@@ -246,10 +249,19 @@ const Experience = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Experience" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.navigate('Profile')
-        }}/>
+        <Header
+          title="Experience"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.navigate('Profile');
+          }}
+        />
         <View style={styles.createNew}>
           <Text style={styles.title}>Experience</Text>
           <TouchableOpacity

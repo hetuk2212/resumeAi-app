@@ -25,7 +25,7 @@ import Color from '../../../Theme/Color';
 import Header from '../../../Components/Header/Index';
 import {useTheme} from '../../../Theme/ ThemeContext';
 import FieldsToggleModal from '../../../Components/FieldsToggleModal/Index';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 // Helper function to format date for display
 const formatDisplayDate = dateString => {
@@ -381,9 +381,9 @@ const PersonalDetails = () => {
   return (
     <SafeAreaView style={styles.safeView}>
       <StatusBar
-        translucent
-        backgroundColor={Color.primary}
-        barStyle="light-content"
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
       />
       <View style={styles.container}>
         <Header
@@ -468,7 +468,6 @@ const PersonalDetails = () => {
                         activeOpacity={1}
                         style={styles.dateInputContainer}>
                         <CustomTextInput
-                          placeholder={`Select your ${field.label}`}
                           value={
                             fieldValues[field.label]
                               ? formatDisplayDate(fieldValues[field.label])
@@ -492,7 +491,6 @@ const PersonalDetails = () => {
                     <CustomTextInput
                       key={index}
                       label={field.label}
-                      placeholder={`Enter your ${field.label}`}
                       value={fieldValues[field.label] || ''}
                       onChangeText={text => {
                         setFieldValues(prevState => ({

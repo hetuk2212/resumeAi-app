@@ -4,6 +4,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import getStyles from './style';
@@ -15,8 +16,8 @@ import ActionButtons from '../../../../Components/ActionButtons';
 import {Images} from '../../../../Assets/Images';
 import CustomTextInput from '../../../../Components/TextInput';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useTheme } from '../../../../Theme/ ThemeContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {useTheme} from '../../../../Theme/ ThemeContext';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../../Components/Header/Index';
 const AddExperience = () => {
   const [activeTab, setActiveTab] = useState('Experience');
@@ -34,9 +35,8 @@ const AddExperience = () => {
   const [loading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [datePickerVisible, setDatePickerVisible] = useState({});
-const {theme} = useTheme();
+  const {theme} = useTheme();
   const styles = getStyles(theme);
-  
 
   const showDatePicker = (formId, field) => {
     setDatePickerVisible({[`${formId}_${field}`]: true});
@@ -213,10 +213,19 @@ const {theme} = useTheme();
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Add Experience" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack();
-        }}/>
+        <Header
+          title="Add Experience"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
 
         {activeTab === 'Experience' && (
           <ScrollView

@@ -62,7 +62,7 @@ const getStyles = theme =>
     borderColor: '#4caf50',
   },
   ratingText: {
-    color: '#fff',
+    color: theme.black,
     fontWeight: 'bold',
   },
 });

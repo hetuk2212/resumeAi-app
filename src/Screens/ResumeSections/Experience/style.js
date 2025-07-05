@@ -94,11 +94,9 @@ const getStyles = theme =>
   },
   
   shimmerCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.resumeListCardBackground,
     padding: 16,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e2e2e2',
     marginBottom: 15,
   },
   shimmerHeaderTitle: {
@@ -130,7 +128,7 @@ const getStyles = theme =>
     height: 150,
     resizeMode: 'contain',
     marginBottom: 20,
-    tintColor: Color.primary,
+    tintColor: theme.black,
   },
   emptyText: {
     fontSize: 18,
