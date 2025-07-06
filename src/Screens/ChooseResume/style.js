@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
 
-const styles = StyleSheet.create({
+const getStyles = theme =>
+  StyleSheet.create({
     safeView: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
+        backgroundColor: theme.white,
       },
       container: {
         flex: 1,
@@ -40,25 +41,19 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'space-between',
         gap: 10,
+        marginTop: 10
       },
       resumeBtn: {
         width: '48%',
-        backgroundColor: '#ffffff',
         borderRadius: 10,
-        padding: 10,
         marginBottom: 15,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3, // For Android
+        overflow:"hidden"
       },
       resumeBtnImg: {
         width: '100%',
         height: 180,
-        borderRadius: 8,
-        // marginBottom: 10,
+        borderRadius: 10,
       },
       resumeBtnText: {
         fontSize: 16,
@@ -69,4 +64,4 @@ const styles = StyleSheet.create({
       
 })
 
-export default styles
+export default getStyles

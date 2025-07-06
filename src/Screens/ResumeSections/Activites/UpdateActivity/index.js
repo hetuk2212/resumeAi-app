@@ -1,4 +1,4 @@
-import {View, Text, SafeAreaView} from 'react-native';
+import {View, Text, SafeAreaView, StatusBar} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import getStyle from './style';
 import CustomTextInput from '../../../../Components/TextInput';
@@ -11,7 +11,7 @@ import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
-import { useTheme } from '../../../../Theme/ ThemeContext';
+import {useTheme} from '../../../../Theme/ ThemeContext';
 import Header from '../../../../Components/Header/Index';
 
 const UpdateActivity = () => {
@@ -29,8 +29,8 @@ const UpdateActivity = () => {
 
   const navigation = useNavigation();
 
-  const {theme} = useTheme()
-  const styles = getStyle(theme)
+  const {theme} = useTheme();
+  const styles = getStyle(theme);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -121,10 +121,19 @@ const UpdateActivity = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Update Activity" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack();
-        }}/>
+        <Header
+          title="Update Activity"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         <View style={styles.inputContainer}>
           <CustomTextInput
             label="Activity"

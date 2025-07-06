@@ -4,6 +4,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import getStyle from './style';
@@ -18,9 +19,10 @@ import {
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
 import Activites from '..';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../../Components/Header/Index';
-import { useTheme } from '../../../../Theme/ ThemeContext';
+import {useTheme} from '../../../../Theme/ ThemeContext';
+import InputText from '../../../../Components/InputDesc/Index';
 
 const AddActivities = () => {
   const [activeTab, setActiveTab] = useState('Activites');
@@ -37,8 +39,8 @@ const AddActivities = () => {
 
   const navigation = useNavigation();
 
-  const {theme} = useTheme()
-  const styles = getStyle(theme)
+  const {theme} = useTheme();
+  const styles = getStyle(theme);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -148,10 +150,19 @@ const AddActivities = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Add Activites" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack();
-        }}/>
+        <Header
+          title="Add Activites"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         {activeTab === 'Activites' && (
           <ScrollView
             contentContainerStyle={{paddingBottom: 100}}
@@ -169,13 +180,16 @@ const AddActivities = () => {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.formDetails}>
-                  <CustomTextInput
-                    value={form.activity}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'activity', text)
-                    }
-                    errorMessage={errors[`${index}_activity`]}
-                  />
+                  <View>
+                    <CustomTextInput
+                      value={form.activity}
+                      onChangeText={text =>
+                        handleInputChange(form.id, 'activity', text)
+                      }
+                      errorMessage={errors[`${index}_activity`]}
+                    />
+                    <InputText InputText="Example: Participated in community clean-up programs." />
+                  </View>
                 </View>
               </View>
             ))}

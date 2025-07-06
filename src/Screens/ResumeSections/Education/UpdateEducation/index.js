@@ -90,8 +90,8 @@ const UpdateEducation = () => {
             course: form.course,
             university: form.university,
             grade: form.grade,
-            startYear: Number(form.startYear),
-            endYear: Number(form.endYear),
+            startYear: form.startYear,
+            endYear: form.endYear,
           };
 
           await AsyncStorage.setItem(
@@ -172,14 +172,12 @@ const UpdateEducation = () => {
           />
           <CustomTextInput
             label="Start Year"
-            keyboardType="numeric"
             value={form.startYear}
             onChangeText={text => handleInputChange('startYear', text)}
             errorMessage={errors.startYear}
           />
           <CustomTextInput
             label="End Year"
-            keyboardType="numeric"
             value={form.endYear}
             onChangeText={text => handleInputChange('endYear', text)}
             errorMessage={errors.endYear}

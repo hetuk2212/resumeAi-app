@@ -5,6 +5,7 @@ import {
   ScrollView,
   Keyboard,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import getStyles from './style';
 import {useNavigation} from '@react-navigation/native';
@@ -17,9 +18,10 @@ import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../lib/asyncStorageUtils';
-import { useTheme } from '../../../Theme/ ThemeContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {useTheme} from '../../../Theme/ ThemeContext';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../Components/Header/Index';
+import InputText from '../../../Components/InputDesc/Index';
 
 const Objective = () => {
   const [activeTab, setActiveTab] = useState('Objective');
@@ -33,7 +35,7 @@ const Objective = () => {
   const navigation = useNavigation();
 
   const {theme} = useTheme();
-  const styles = getStyles(theme)
+  const styles = getStyles(theme);
 
   useEffect(() => {
     const fetchResumeData = async () => {
@@ -152,55 +154,54 @@ const Objective = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Objective" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.navigate("Profile");
-        }}/>
+        <Header
+          title="Objective"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.navigate('Profile');
+          }}
+        />
 
-        {activeTab === 'Objective' ? (
-          <ScrollView
-            contentContainerStyle={styles.scrollContainer}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}>
-            <View style={styles.formBox}>
-              <View style={styles.formDetails}>
-                <CustomTextInput
-                  label="Objective"
-                  placeholder="Describe your career goals and what you bring to the table"
-                  value={formData.objective}
-                  onChangeText={text => handleInputChange('objective', text)}
-                  errorMessage={errors.objective}
-                  multiline
-                  numberOfLines={6}
-                  textAlignVertical="top"
-                  maxLength={500}
-                />
-                <Text style={styles.charCounter}>
-                  {formData.objective.length}/500 characters
-                </Text>
-              </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}>
+          <InputText InputText="In this section, it's important to be clear and concise, highlighting your career goals and how they align with the company and position you're applying for." />
+
+          <View style={styles.formBox}>
+            <View style={styles.formDetails}>
+              <CustomTextInput
+                label="Objective"
+                placeholder="Describe your career goals and what you bring to the table"
+                value={formData.objective}
+                onChangeText={text => handleInputChange('objective', text)}
+                errorMessage={errors.objective}
+                multiline
+                numberOfLines={6}
+                textAlignVertical="top"
+                maxLength={500}
+              />
+              <Text style={styles.charCounter}>
+                {formData.objective.length}/500 characters
+              </Text>
+              <InputText InputText="Looking for a position as an Administrative Assistant to apply my oraganization and communication skills, contributing to the operational efficiency and administrative suppport of the team." />
             </View>
-
-            <ActionButtons
-              onSave={handleSave}
-              saveIcon={Images.check}
-              hideAdd
-              loading={isSubmitting}
-              saveLabel="Save Objective"
-            />
-          </ScrollView>
-        ) : (
-          <View style={styles.exampleContainer}>
-            <Text style={styles.exampleTitle}>Good Objective Example:</Text>
-            <Text style={styles.exampleText}>
-              "Detail-oriented software engineer with 5+ years of experience in
-              mobile app development seeking to leverage my expertise in React
-              Native and problem-solving skills at XYZ Company. Passionate about
-              creating efficient, user-friendly applications and collaborating
-              with cross-functional teams to deliver high-quality products."
-            </Text>
           </View>
-        )}
+
+          <ActionButtons
+            onSave={handleSave}
+            saveIcon={Images.check}
+            hideAdd
+            loading={isSubmitting}
+            saveLabel="Save Objective"
+          />
+        </ScrollView>
       </View>
     </SafeAreaView>
   );

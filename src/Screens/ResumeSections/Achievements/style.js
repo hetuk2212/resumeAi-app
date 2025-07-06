@@ -128,7 +128,7 @@ const getStyles = theme =>
     height: 150,
     resizeMode: 'contain',
     marginBottom: 20,
-    tintColor: Color.primary,
+    tintColor: theme.black,
   },
   emptyText: {
     fontSize: 18,

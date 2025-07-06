@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, StatusBar} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import getStyle from './style';
 import CustomTextInput from '../../../../Components/TextInput';
@@ -13,7 +13,7 @@ import {
 } from '../../../../../lib/asyncStorageUtils';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../../Components/Header/Index';
-import { useTheme } from '../../../../Theme/ ThemeContext';
+import {useTheme} from '../../../../Theme/ ThemeContext';
 
 const UpdateLanguage = () => {
   const route = useRoute();
@@ -30,8 +30,8 @@ const UpdateLanguage = () => {
 
   const navigation = useNavigation();
 
-  const {theme} = useTheme()
-  const styles = getStyle(theme)
+  const {theme} = useTheme();
+  const styles = getStyle(theme);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -123,6 +123,11 @@ const UpdateLanguage = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
         <Header
           title="Update Language"

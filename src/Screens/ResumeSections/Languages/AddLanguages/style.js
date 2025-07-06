@@ -18,6 +18,7 @@ const getStyles = theme =>
   educationIcon: {
     width: 25,
     height: 25,
+    tintColor: '#ffffff'
   },
 
   titleView: {

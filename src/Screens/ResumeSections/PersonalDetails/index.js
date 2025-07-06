@@ -16,44 +16,11 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {useNavigation} from '@react-navigation/native';
 import ActionButtons from '../../../Components/ActionButtons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-toast-message';
 import Header from '../../../Components/Header/Index';
 import {useTheme} from '../../../Theme/ ThemeContext';
-import FieldsToggleModal from '../../../Components/FieldsToggleModal/Index';
 import {SafeAreaView} from 'react-native-safe-area-context';
-
-// Helper function to format date for display
-const formatDisplayDate = dateString => {
-  if (!dateString) return '';
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return dateString;
-    const day = date.getDate();
-    const month = date.toLocaleString('default', {month: 'long'});
-    const year = date.getFullYear();
-    return `${day}, ${month}, ${year}`;
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    return dateString;
-  }
-};
-
-// Helper function to format date for API (yyyy-mm-dd)
-const formatApiDate = date => {
-  if (!date) return '';
-  try {
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return '';
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  } catch (error) {
-    console.error('Error formatting API date:', error);
-    return '';
-  }
-};
+import InputText from '../../../Components/InputDesc/Index';
 
 const PersonalDetails = () => {
   const [activeTab, setActiveTab] = useState('PersonalDetails');
@@ -62,53 +29,18 @@ const PersonalDetails = () => {
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [nationality, setNationality] = useState('');
+  const [personalWebsite, setPersonalWebsite] = useState('');
   const [position, setPosition] = useState('');
   const [profileImage, setProfileImage] = useState(null);
-  const [fieldValues, setFieldValues] = useState({});
   const [loading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [resumeId, setResumeId] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const [fields, setFields] = useState([
-    {
-      label: 'Date of Birth',
-      key: 'dateOfBirth',
-      isActive: false,
-      value: '',
-      isDateField: true,
-    },
-    {label: 'Nationality', key: 'nationality', isActive: false, value: ''},
-    {label: 'Marital Status', key: 'maritalStatus', isActive: false, value: ''},
-    {label: 'Website', key: 'website', isActive: false, value: ''},
-    {label: 'LinkedIn', key: 'linkedIn', isActive: false, value: ''},
-    {label: 'Facebook', key: 'facebook', isActive: false, value: ''},
-    {label: 'Twitter', key: 'twitter', isActive: false, value: ''},
-    {label: 'Religion', key: 'religion', isActive: false, value: ''},
-    {label: 'Passport', key: 'passport', isActive: false, value: ''},
-    {label: 'Gender', key: 'gender', isActive: false, value: ''},
-    {
-      label: 'Driving License',
-      key: 'drivingLicense',
-      isActive: false,
-      value: '',
-    },
-    {label: 'Place', key: 'place', isActive: false, value: ''},
-    {label: 'Salary Claim', key: 'salaryClaim', isActive: false, value: ''},
-    {label: 'Occupation', key: 'occupation', isActive: false, value: ''},
-    {label: 'Hobbies', key: 'hobbies', isActive: false, value: ''},
-  ]);
 
   const navigation = useNavigation();
 
   const {theme} = useTheme();
   const styles = getStyles(theme);
-
-  const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
-  };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', e => {
@@ -133,18 +65,9 @@ const PersonalDetails = () => {
     return () => backHandler.remove();
   }, [activePage]);
 
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setDateOfBirth(selectedDate);
-      const formattedDate = formatApiDate(selectedDate);
-      setFieldValues(prev => ({...prev, 'Date of Birth': formattedDate}));
-    }
-  };
+  
 
-  const showDatepicker = () => {
-    setShowDatePicker(true);
-  };
+  
 
   const handleImagePick = () => {
     ImagePicker.openPicker({
@@ -183,9 +106,6 @@ const PersonalDetails = () => {
     );
   };
 
-  const handleModal = () => {
-    setActivePage('modal');
-  };
 
   const saveDataToStorage = async (resumeId, profileData) => {
     try {
@@ -239,36 +159,9 @@ const PersonalDetails = () => {
           setEmail(userResume.email || '');
           setPhone(userResume.phone || '');
           setPosition(userResume.position || '');
+          setNationality(userResume.nationality || '');
+          setPersonalWebsite(userResume.personalWebsite || '');
           setProfileImage(userResume.profileImage || null);
-
-          const updatedFields = fields.map(field => {
-            const value =
-              userResume[field.key] || fieldValues[field.label] || '';
-            if (value) {
-              return {...field, isActive: true, value};
-            }
-            return field;
-          });
-
-          setFields(updatedFields);
-
-          setFieldValues({
-            'Date of Birth': userResume.dateOfBirth || '',
-            Nationality: userResume.nationality || '',
-            Gender: userResume.gender || '',
-            'Marital Status': userResume.maritalStatus || '',
-            Website: userResume.website || '',
-            LinkedIn: userResume.linkedIn || '',
-            Facebook: userResume.facebook || '',
-            Twitter: userResume.twitter || '',
-            Religion: userResume.religion || '',
-            Passport: userResume.passport || '',
-            'Driving License': userResume.drivingLicense || '',
-            'Salary Claim': userResume.salary || '',
-            Place: userResume.place || '',
-            Occupation: userResume.occupation || '',
-            Hobbies: userResume.hobbies || '',
-          });
         }
       }
     } catch (error) {
@@ -278,30 +171,7 @@ const PersonalDetails = () => {
 
   useEffect(() => {
     getDataFromStorage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleToggle = index => {
-    const updatedFields = [...fields];
-    updatedFields[index].isActive = !updatedFields[index].isActive;
-
-    if (!updatedFields[index].isActive) {
-      updatedFields[index].value = '';
-      if (updatedFields[index].isDateField) {
-        setDateOfBirth(new Date());
-      }
-      setFieldValues(prev => {
-        const newValues = {...prev};
-        delete newValues[updatedFields[index].label];
-        return newValues;
-      });
-    }
-
-    setFields(updatedFields);
-    setTimeout(() => {
-      setActivePage('form');
-    }, 500);
-  };
 
   const generateUUID = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
@@ -316,11 +186,6 @@ const PersonalDetails = () => {
 
   const handleSave = async () => {
     setIsLoading(true);
-    setErrors({});
-
-    const formattedDateOfBirth = fieldValues['Date of Birth']
-      ? formatDisplayDate(fieldValues['Date of Birth'])
-      : null;
 
     const id = resumeId || generateUUID();
     setResumeId(id);
@@ -333,22 +198,9 @@ const PersonalDetails = () => {
           email: email,
           phone: phone,
           position: position,
-          dateOfBirth: formattedDateOfBirth,
-          nationality: fieldValues['Nationality'] || null,
-          gender: fieldValues['Gender'] || null,
-          maritalStatus: fieldValues['Marital Status'] || null,
+          nationality: nationality,
+          personalWebsite: personalWebsite,
           profileImage: profileImage || null,
-          website: fieldValues['Website'] || null,
-          linkedIn: fieldValues['LinkedIn'] || null,
-          facebook: fieldValues['Facebook'] || null,
-          twitter: fieldValues['Twitter'] || null,
-          religion: fieldValues['Religion'] || null,
-          passport: fieldValues['Passport'] || null,
-          drivingLicense: fieldValues['Driving License'] || null,
-          salary: fieldValues['Salary Claim'] || null,
-          place: fieldValues['Place'] || null,
-          occupation: fieldValues['Occupation'] || null,
-          hobbies: fieldValues['Hobbies'] || null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -425,83 +277,51 @@ const PersonalDetails = () => {
                 label="Name"
                 value={name}
                 onChangeText={setName}
-                errorMessage={errors.fullName}
               />
               <View>
                 <CustomTextInput
-                label="Title"
-                placeholder="(Optional)"
-                value={position}
-                onChangeText={setPosition}
-                errorMessage={errors.position}
-              />
-              <Text style={styles.descText}>Appears next to your name. You can write your current profession or the position you are applying for. Example: Salesperson, Project Manager.</Text>
+                  label="Title"
+                  placeholder="(optional)"
+                  value={position}
+                  onChangeText={setPosition}
+                />
+                <InputText InputText="Appears next to your name. You can write your current profession or the position you are applying for. Example: Salesperson, Project Manager." />
               </View>
-              <CustomTextInput
-                label="Address"
-                value={address}
-                onChangeText={setAddress}
-                errorMessage={errors.address}
-              />
               <CustomTextInput
                 label="Email"
                 value={email}
                 onChangeText={setEmail}
-                errorMessage={errors.email}
               />
+              <View>
+                <CustomTextInput
+                  label="Address"
+                  value={address}
+                  onChangeText={setAddress}
+                />
+                <InputText InputText="Example: New York - NY" />
+              </View>
               <CustomTextInput
                 label="Phone"
                 value={phone}
                 onChangeText={setPhone}
                 keyboardType="phone-pad"
-                errorMessage={errors.phone}
               />
-              {fields
-                .filter(field => field.isActive)
-                .map((field, index) =>
-                  field.isDateField ? (
-                    <View key={index}>
-                      <Text style={styles.label}>{field.label}</Text>
-                      <TouchableOpacity
-                        onPress={showDatepicker}
-                        activeOpacity={1}
-                        style={styles.dateInputContainer}>
-                        <CustomTextInput
-                          value={
-                            fieldValues[field.label]
-                              ? formatDisplayDate(fieldValues[field.label])
-                              : ''
-                          }
-                          editable={false}
-                          pointerEvents="none"
-                        />
-                      </TouchableOpacity>
-                      {showDatePicker && (
-                        <DateTimePicker
-                          mode="date"
-                          display="default"
-                          value={dateOfBirth}
-                          onChange={handleDateChange}
-                          maximumDate={new Date()}
-                        />
-                      )}
-                    </View>
-                  ) : (
-                    <CustomTextInput
-                      key={index}
-                      label={field.label}
-                      value={fieldValues[field.label] || ''}
-                      onChangeText={text => {
-                        setFieldValues(prevState => ({
-                          ...prevState,
-                          [field.label]: text,
-                        }));
-                      }}
-                    />
-                  ),
-                )}
+              <View>
+                <CustomTextInput
+                  label="Nationality"
+                  placeholder="(optional)"
+                  value={nationality}
+                  onChangeText={setNationality}
+                />
+                <InputText InputText="Examples: American, British" />
+              </View>
+              <CustomTextInput
+                label="Personal website"
+                placeholder="(optional)"
+                value={personalWebsite}
+                onChangeText={setPersonalWebsite}
+              />
               <ActionButtons
-                onAdd={toggleModal}
                 onSave={handleSave}
                 addIcon={Images.add}
                 saveIcon={Images.check}
@@ -510,14 +330,6 @@ const PersonalDetails = () => {
             </View>
           )}
         </ScrollView>
-
-        <FieldsToggleModal
-          visible={isModalVisible}
-          fields={fields}
-          onToggle={handleToggle}
-          onClose={toggleModal}
-          // styles={styles}
-        />
       </View>
     </SafeAreaView>
   );

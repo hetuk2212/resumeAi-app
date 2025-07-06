@@ -4,6 +4,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import getStyle from './style';
@@ -18,8 +19,8 @@ import {
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
 import Header from '../../../../Components/Header/Index';
-import { useTheme } from '../../../../Theme/ ThemeContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {useTheme} from '../../../../Theme/ ThemeContext';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const AddProjects = () => {
   const [activeTab, setActiveTab] = useState('Projects');
@@ -32,8 +33,8 @@ const AddProjects = () => {
 
   const navigation = useNavigation();
 
-  const {theme} = useTheme()
-  const styles = getStyle(theme)
+  const {theme} = useTheme();
+  const styles = getStyle(theme);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -158,10 +159,19 @@ const AddProjects = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Add Projects" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack();
-        }}/>
+        <Header
+          title="Add Projects"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         {activeTab === 'Projects' && (
           <ScrollView
             contentContainerStyle={{paddingBottom: 100}}

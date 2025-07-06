@@ -47,39 +47,13 @@ const StackNavigation = () => {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Onboarding" component={Onboarding} />
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen
-          name="Choose Profile"
-          component={ChooseProfile}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary
-            },
-            headerTintColor: '#FFFFFF',
-          }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={Profile}
-        />
-        <Stack.Screen
-          name="Personal Details"
-          component={PersonalDetails}
-        />
-        <Stack.Screen
-          name="Education"
-          component={Education}
-        />
+        <Stack.Screen name="Choose Profile" component={ChooseProfile} />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="Personal Details" component={PersonalDetails} />
+        <Stack.Screen name="Education" component={Education} />
         <Stack.Screen
           name="Choose Resume"
           component={ChooseResume}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
         <Stack.Screen
           name="MainResume"
@@ -92,102 +66,30 @@ const StackNavigation = () => {
             headerTintColor: '#FFFFFF',
           }}
         />
-        <Stack.Screen
-          name="Add Education"
-          component={AddEducation}
-        />
-        <Stack.Screen
-          name="Update Education"
-          component={UpdateEducation}
-        />
-        <Stack.Screen
-          name="Experience"
-          component={Experience}
-        />
-        <Stack.Screen
-          name="Add Experience"
-          component={AddExperience}
-        />
-        <Stack.Screen
-          name="Update Experience"
-          component={UpdateExperience}
-        />
-        <Stack.Screen
-          name="Projects"
-          component={Projects}
-        />
-        <Stack.Screen
-          name="Add Projects"
-          component={AddProjects}
-        />
-        <Stack.Screen
-          name="Objective"
-          component={Objective}
-        />
-        <Stack.Screen
-          name="Update Projects"
-          component={UpdateProjects}
-        />
-        <Stack.Screen
-          name="Interests"
-          component={Interests}
-        />
-        <Stack.Screen
-          name="Add Interests"
-          component={AddInterests}
-        />
-        <Stack.Screen
-          name="Update Interest"
-          component={UpdateInterest}
-        />
-        <Stack.Screen
-          name="Achievements"
-          component={Achievements}
-        />
-        <Stack.Screen
-          name="Add Achievements"
-          component={AddAchievements}
-        />
-        <Stack.Screen
-          name="Update Achievement"
-          component={UpdateAchievement}
-        />
-        <Stack.Screen
-          name="Skills"
-          component={Skills}
-        />
-        <Stack.Screen
-          name="Add Skills"
-          component={AddSkills}
-        />
-        <Stack.Screen
-          name="Update Skill"
-          component={UpdateSkill}
-        />
-        <Stack.Screen
-          name="Activities"
-          component={Activites}
-        />
-        <Stack.Screen
-          name="Add Activities"
-          component={AddActivities}
-        />
-        <Stack.Screen
-          name="Update Activity"
-          component={UpdateActivity}
-        />
-        <Stack.Screen
-          name="Languages"
-          component={Languages}
-        />
-        <Stack.Screen
-          name="Add Languages"
-          component={AddLanguages}
-        />
-        <Stack.Screen
-          name="Update Language"
-          component={UpdateLanguage}
-        />
+        <Stack.Screen name="Add Education" component={AddEducation} />
+        <Stack.Screen name="Update Education" component={UpdateEducation} />
+        <Stack.Screen name="Experience" component={Experience} />
+        <Stack.Screen name="Add Experience" component={AddExperience} />
+        <Stack.Screen name="Update Experience" component={UpdateExperience} />
+        <Stack.Screen name="Projects" component={Projects} />
+        <Stack.Screen name="Add Projects" component={AddProjects} />
+        <Stack.Screen name="Objective" component={Objective} />
+        <Stack.Screen name="Update Projects" component={UpdateProjects} />
+        <Stack.Screen name="Interests" component={Interests} />
+        <Stack.Screen name="Add Interests" component={AddInterests} />
+        <Stack.Screen name="Update Interest" component={UpdateInterest} />
+        <Stack.Screen name="Achievements" component={Achievements} />
+        <Stack.Screen name="Add Achievements" component={AddAchievements} />
+        <Stack.Screen name="Update Achievement" component={UpdateAchievement} />
+        <Stack.Screen name="Skills" component={Skills} />
+        <Stack.Screen name="Add Skills" component={AddSkills} />
+        <Stack.Screen name="Update Skill" component={UpdateSkill} />
+        <Stack.Screen name="Activities" component={Activites} />
+        <Stack.Screen name="Add Activities" component={AddActivities} />
+        <Stack.Screen name="Update Activity" component={UpdateActivity} />
+        <Stack.Screen name="Languages" component={Languages} />
+        <Stack.Screen name="Add Languages" component={AddLanguages} />
+        <Stack.Screen name="Update Language" component={UpdateLanguage} />
         <Stack.Screen
           name="Cover Latter"
           component={CoverLatter}
@@ -202,13 +104,6 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Resume Preview"
           component={ResumePreview}
-          options={{
-            headerShown: true,
-            headerStyle: {
-              backgroundColor: Color.primary,
-            },
-            headerTintColor: '#FFFFFF',
-          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

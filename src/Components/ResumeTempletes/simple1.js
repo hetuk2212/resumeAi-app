@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,8 +12,7 @@ import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS from 'react-native-fs';
 import Pdf from 'react-native-pdf';
 import Toast from 'react-native-toast-message';
-
-
+import {useTheme} from '../../Theme/ ThemeContext';
 
 const Simple1 = ({data}) => {
   const [pdfPath, setPdfPath] = useState(null);
@@ -21,6 +20,8 @@ const Simple1 = ({data}) => {
   const [downloading, setDownloading] = useState(false);
   const fullName = data.personalInfo.fullName;
   const [firstName, lastName] = fullName.split(' ');
+
+  const {theme} = useTheme();
 
   useEffect(() => {
     generatePDF();
@@ -264,32 +265,32 @@ const Simple1 = ({data}) => {
     }
     
    ${
-      data.coverLetter ? (
-        <div class="container cover-letter-section">
-          <div class="section-title">Cover Letter</div>
-          <div class="cover-letter">
-            <div class="cover-header">
-              $
-              {data.coverLetter?.date
-                ? `<div>${data.coverLetter.date}</div>`
-                : ''}
-              $
-              {data.coverLetter?.recipient
-                ? `<div>${data.coverLetter.recipient}</div>`
-                : ''}
-            </div>
-            <div>${data.coverLetter?.content} </div>
-            <div class="cover-footer">
-              Sincerely,
-              <br />
-              <strong>${data.personalInfo.fullName}</strong>
-            </div>
-          </div>
-        </div>
-      ) : (
-        ' '
-      )
-    }
+     data.coverLetter ? (
+       <div class="container cover-letter-section">
+         <div class="section-title">Cover Letter</div>
+         <div class="cover-letter">
+           <div class="cover-header">
+             $
+             {data.coverLetter?.date
+               ? `<div>${data.coverLetter.date}</div>`
+               : ''}
+             $
+             {data.coverLetter?.recipient
+               ? `<div>${data.coverLetter.recipient}</div>`
+               : ''}
+           </div>
+           <div>${data.coverLetter?.content} </div>
+           <div class="cover-footer">
+             Sincerely,
+             <br />
+             <strong>${data.personalInfo.fullName}</strong>
+           </div>
+         </div>
+       </div>
+     ) : (
+       ' '
+     )
+   }
     
     </body></html>`;
 
@@ -358,7 +359,10 @@ const Simple1 = ({data}) => {
         destinationPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
       }
 
-      const dirPath = destinationPath.substring(0, destinationPath.lastIndexOf('/'));
+      const dirPath = destinationPath.substring(
+        0,
+        destinationPath.lastIndexOf('/'),
+      );
       await RNFS.mkdir(dirPath);
 
       if (await RNFS.exists(destinationPath)) {
@@ -395,11 +399,19 @@ const Simple1 = ({data}) => {
     <View
       style={{
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        padding: 5,
       }}>
-      <Text style={{ fontSize: 20, marginBottom: 20 }}>Preview Resume</Text>
+      <Text
+        style={{
+          fontSize: 18,
+          marginBottom: 20,
+          color: theme.black,
+          textAlign: 'center',
+        }}>
+        View Your Resume
+      </Text>
 
       {loading ? (
         <ActivityIndicator size="large" color="blue" />
@@ -407,18 +419,19 @@ const Simple1 = ({data}) => {
         <View
           style={{
             width: '100%',
-            height: 500,
+            // height: '50%',
+            height: 600,
             borderWidth: 1,
             borderColor: '#ddd',
           }}>
           <Pdf
-            source={{ uri: pdfPath, cache: true }}
-            style={{ flex: 1 }}
+            source={{uri: pdfPath, cache: true}}
+            style={{flex: 1}}
             onError={error => console.log(error)}
           />
         </View>
       ) : (
-        <Text style={{ color: 'red' }}>Failed to generate PDF</Text>
+        <Text style={{color: 'red'}}>Failed to generate PDF</Text>
       )}
 
       <TouchableOpacity
@@ -433,7 +446,9 @@ const Simple1 = ({data}) => {
         {downloading ? (
           <ActivityIndicator color="white" />
         ) : (
-          <Text style={{ color: 'white', fontSize: 16 }}>Download Resume</Text>
+          <Text style={{color: 'white', fontSize: 16, textAlign: 'center'}}>
+            Download Resume
+          </Text>
         )}
       </TouchableOpacity>
 

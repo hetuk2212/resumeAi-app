@@ -40,7 +40,7 @@ const Profile = () => {
   const [moreSections, setMoreSections] = useState([]);
   const [optionalSections, setOptionalSections] = useState({
     projects: true,
-    'Cover Latter': true,
+    // 'Cover Latter': true,
     interests: false,
     achievements: false,
     activities: false,
@@ -57,14 +57,15 @@ const Profile = () => {
 
   const baseSections = [
     {id: 1, name: 'Personal Details', image: Images.SectionProfile},
+    {id: 2, name: 'Objective', image: Images.SectionObjective},
+
     {
-      id: 2,
+      id: 3,
       name: !resumeId ? 'Add Education' : 'Education',
       image: Images.SectionEducation,
     },
-    {id: 3, name: 'Experience', image: Images.SectionExperience},
-    {id: 4, name: 'Skills', image: Images.SectionSkills},
-    {id: 5, name: 'Objective', image: Images.SectionObjective},
+    {id: 4, name: 'Experience', image: Images.SectionExperience},
+    {id: 5, name: 'Skills', image: Images.SectionSkills},
   ];
 
   // Combine base sections with active optional sections

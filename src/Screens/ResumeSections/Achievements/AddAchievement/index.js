@@ -4,6 +4,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import getStyle from './style';
@@ -17,9 +18,10 @@ import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../../Components/Header/Index';
-import { useTheme } from '../../../../Theme/ ThemeContext';
+import {useTheme} from '../../../../Theme/ ThemeContext';
+import InputText from '../../../../Components/InputDesc/Index';
 
 const AddAchievements = () => {
   const [activeTab, setActiveTab] = useState('Achievements');
@@ -36,8 +38,8 @@ const AddAchievements = () => {
 
   const navigation = useNavigation();
 
-  const {theme} = useTheme()
-  const styles = getStyle(theme)
+  const {theme} = useTheme();
+  const styles = getStyle(theme);
 
   useEffect(() => {
     const getResumeId = async () => {
@@ -149,10 +151,19 @@ const AddAchievements = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Add Achievements" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack();
-        }}/>
+        <Header
+          title="Add Achievements"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         {activeTab === 'Achievements' && (
           <ScrollView
             contentContainerStyle={{paddingBottom: 100}}
@@ -170,13 +181,16 @@ const AddAchievements = () => {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.formDetails}>
-                  <CustomTextInput
+                  <View>
+                    <CustomTextInput
                     value={form.achievement}
                     onChangeText={text =>
                       handleInputChange(form.id, 'achievement', text)
                     }
                     errorMessage={errors[`${index}_achievement`]}
                   />
+                  <InputText InputText="Example: Secured 1st rank in college/university."/>
+                  </View>
                 </View>
               </View>
             ))}

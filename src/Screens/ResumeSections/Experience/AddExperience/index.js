@@ -19,6 +19,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {useTheme} from '../../../../Theme/ ThemeContext';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../../Components/Header/Index';
+import InputText from '../../../../Components/InputDesc/Index';
 const AddExperience = () => {
   const [activeTab, setActiveTab] = useState('Experience');
   const [experienceForms, setExperienceForms] = useState([
@@ -243,6 +244,17 @@ const AddExperience = () => {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.formDetails}>
+                  <View>
+                    <CustomTextInput
+                      label="Job Title"
+                      value={form.position}
+                      onChangeText={text =>
+                        handleInputChange(form.id, 'position', text)
+                      }
+                      errorMessage={errors[`${index}_position`]}
+                    />
+                    <InputText InputText="Examples: Salesperson, Software Developer, Project Manager." />
+                  </View>
                   <CustomTextInput
                     label="Company Name"
                     value={form.company}
@@ -251,24 +263,17 @@ const AddExperience = () => {
                     }
                     errorMessage={errors[`${index}_company`]}
                   />
-                  <CustomTextInput
-                    label="Location"
+                  <View>
+                    <CustomTextInput
+                    label="Workplace Location"
                     value={form.location}
                     onChangeText={text =>
                       handleInputChange(form.id, 'location', text)
                     }
                     errorMessage={errors[`${index}_location`]}
                   />
-
-                  <CustomTextInput
-                    label="Job Title"
-                    value={form.position}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'position', text)
-                    }
-                    errorMessage={errors[`${index}_position`]}
-                  />
-
+                  <Text>Examples: New York - NY, Online.</Text>
+                  </View>
                   <View style={styles.dateView}>
                     <View style={styles.dateBox}>
                       <TouchableOpacity
@@ -327,14 +332,17 @@ const AddExperience = () => {
                     </View>
                   </View>
 
-                  <CustomTextInput
-                    label="Details"
+                  <View>
+                    <CustomTextInput
+                    label="Description"
                     value={form.details}
                     onChangeText={text =>
                       handleInputChange(form.id, 'details', text)
                     }
                     errorMessage={errors[`${index}_details`]}
                   />
+                  <Text>Example: Managed a team of 10 people; Ensured quality and safety of provided services, Budgeting.</Text>
+                  </View>
                 </View>
               </View>
             ))}

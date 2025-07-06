@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import getStyle from './style';
@@ -22,7 +23,7 @@ import {
   getResumesFromStorage,
 } from '../../../../lib/asyncStorageUtils';
 import {useTheme} from '../../../Theme/ ThemeContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../Components/Header/Index';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
@@ -210,10 +211,19 @@ const Projects = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Projects" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.navigate("Profile")
-        }}/>
+        <Header
+          title="Projects"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.navigate('Profile');
+          }}
+        />
         <View style={styles.createNew}>
           <Text style={styles.title}>Projects</Text>
           <TouchableOpacity

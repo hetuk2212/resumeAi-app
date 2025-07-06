@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import getStyle from './style';
@@ -21,9 +22,9 @@ import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../lib/asyncStorageUtils';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../Components/Header/Index';
-import { useTheme } from '../../../Theme/ ThemeContext';
+import {useTheme} from '../../../Theme/ ThemeContext';
 const ShimmerEffect = ({style}) => {
   const opacity = useSharedValue(0.3);
 
@@ -46,8 +47,8 @@ const Languages = () => {
 
   const navigation = useNavigation();
 
-  const {theme} = useTheme()
-  const styles = getStyle(theme)
+  const {theme} = useTheme();
+  const styles = getStyle(theme);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', e => {
@@ -225,10 +226,19 @@ const Languages = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Languages" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.navigate("Profile")
-        }}/>
+        <Header
+          title="Languages"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.navigate('Profile');
+          }}
+        />
         <View style={styles.createNew}>
           <Text style={styles.title}>Languages</Text>
           <TouchableOpacity

@@ -4,6 +4,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -16,10 +17,11 @@ import {
   findResumeIndex,
   getResumesFromStorage,
 } from '../../../../../lib/asyncStorageUtils';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../../../../Theme/ ThemeContext';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTheme} from '../../../../Theme/ ThemeContext';
 import getStyles from './style';
 import Header from '../../../../Components/Header/Index';
+import InputText from '../../../../Components/InputDesc/Index';
 
 const AddSkills = () => {
   const [activeTab, setActiveTab] = useState('Skills');
@@ -117,7 +119,6 @@ const AddSkills = () => {
       return;
     }
 
-
     try {
       const existingResumes = await getResumesFromStorage();
       const resumeIndex = findResumeIndex(existingResumes, resumeId);
@@ -177,10 +178,19 @@ const AddSkills = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Add Skills" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack()
-        }}/>
+        <Header
+          title="Add Skills"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         {activeTab === 'Skills' && (
           <ScrollView
             contentContainerStyle={{paddingBottom: 100}}
@@ -197,13 +207,16 @@ const AddSkills = () => {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.formDetails}>
-                  <CustomTextInput
-                    value={form.skill}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'skill', text)
-                    }
-                    errorMessage={errors[`${index}_skill`]}
-                  />
+                  <View>
+                    <CustomTextInput
+                      value={form.skill}
+                      onChangeText={text =>
+                        handleInputChange(form.id, 'skill', text)
+                      }
+                      errorMessage={errors[`${index}_skill`]}
+                    />
+                    <InputText InputText="Examples: Leadership, Team work." />
+                  </View>
                   <View style={styles.ratingContainer}>
                     <Text style={styles.ratingLabel}>Rating:</Text>
                     <View style={styles.ratingRow}>
@@ -217,7 +230,13 @@ const AddSkills = () => {
                           onPress={() =>
                             handleInputChange(form.id, 'rating', level)
                           }>
-                          <Text style={[styles.ratingText,{color: form.rating === level && '#ffffff'}]}>{level}</Text>
+                          <Text
+                            style={[
+                              styles.ratingText,
+                              {color: form.rating === level && '#ffffff'},
+                            ]}>
+                            {level}
+                          </Text>
                         </TouchableOpacity>
                       ))}
                     </View>

@@ -1,4 +1,11 @@
-import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  StatusBar,
+} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import getStyle from './style';
 import {useNavigation} from '@react-navigation/native';
@@ -14,6 +21,7 @@ import {
 import {useTheme} from '../../../../Theme/ ThemeContext';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../../Components/Header/Index';
+import InputText from '../../../../Components/InputDesc/Index';
 
 const AddInterests = () => {
   const [activeTab, setActiveTab] = useState('Interests');
@@ -142,10 +150,19 @@ const AddInterests = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Add Interst" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack()
-        }}/>
+        <Header
+          title="Add Interst"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         {activeTab === 'Interests' && (
           <ScrollView
             contentContainerStyle={{paddingBottom: 100}}
@@ -162,13 +179,16 @@ const AddInterests = () => {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.formDetails}>
-                  <CustomTextInput
+                  <View>
+                    <CustomTextInput
                     value={form.interest}
                     onChangeText={text =>
                       handleInputChange(form.id, 'interest', text)
                     }
                     errorMessage={errors[`${index}_interest`]}
                   />
+                  <InputText InputText="Examples: Reading Books, Traveling, Blogging."/>
+                  </View>
                 </View>
               </View>
             ))}

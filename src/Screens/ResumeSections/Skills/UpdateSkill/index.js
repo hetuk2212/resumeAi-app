@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, StatusBar} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CustomTextInput from '../../../../Components/TextInput';
 import ActionButtons from '../../../../Components/ActionButtons';
@@ -10,9 +10,9 @@ import {
   getResumesFromStorage,
   findResumeIndex,
 } from '../../../../../lib/asyncStorageUtils';
-import { useTheme } from '../../../../Theme/ ThemeContext';
+import {useTheme} from '../../../../Theme/ ThemeContext';
 import getStyles from './style';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Header from '../../../../Components/Header/Index';
 
 const UpdateSkill = () => {
@@ -127,10 +127,19 @@ const UpdateSkill = () => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        <Header title="Update Skill" headerIcon={Images.leftArrowIcon} onPress={()=>{
-          navigation.goBack()
-        }} />
+        <Header
+          title="Update Skill"
+          headerIcon={Images.leftArrowIcon}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         <View style={styles.inputContainer}>
           <CustomTextInput
             label="Skill"
@@ -149,7 +158,13 @@ const UpdateSkill = () => {
                     form.rating === level && styles.ratingCircleActive,
                   ]}
                   onPress={() => handleInputChange('rating', level)}>
-                  <Text style={[styles.ratingText,{color: form.rating === level && '#ffffff'}]}>{level}</Text>
+                  <Text
+                    style={[
+                      styles.ratingText,
+                      {color: form.rating === level && '#ffffff'},
+                    ]}>
+                    {level}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>

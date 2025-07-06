@@ -1,29 +1,34 @@
-import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, Image } from 'react-native';
-import styles from './style';
-import { Images } from '../../Assets/Images';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  StatusBar,
+} from 'react-native';
+import getStyles from './style';
+import {Images} from '../../Assets/Images';
+import {useTheme} from '../../Theme/ ThemeContext';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Header from '../../Components/Header/Index';
+import InputText from '../../Components/InputDesc/Index';
 
-const tabs = ['Simple', 'Professional', 'Premium'];
+const dummyResumes = [
+  {id: 1, name: 'Simple 1', image: Images.simple1},
+  {id: 2, name: 'Simple 2', image: Images.simple1},
+  {id: 3, name: 'Professional 1', image: Images.simple1},
+  {id: 4, name: 'Professional 2', image: Images.simple1},
+  {id: 5, name: 'Premium 1', image: Images.simple1},
+];
 
-const dummyResumes = {
-  Simple: [
-    { id: 1, name: 'Simple 1', image: Images.simple1 },
-    { id: 2, name: 'Simple 2', image: Images.simple1 },
-  ],
-  Professional: [
-    { id: 3, name: 'Professional 1', image: Images.simple1 },
-    { id: 4, name: 'Professional 2', image: Images.simple1 },
-  ],
-  Premium: [
-    { id: 5, name: 'Premium 1', image: Images.simple1 },
-  ],
-};
+const ChooseResume = ({navigation, route}) => {
+  const {resumeData} = route.params;
 
-const ChooseResume = ({ navigation, route }) => {
-  const { resumeData } = route.params;
-  const [activeTab, setActiveTab] = useState('Simple');
+  const {theme} = useTheme();
+  const styles = getStyles(theme);
 
-  const handleResumePress = (resume) => {
+  const handleResumePress = resume => {
     navigation.navigate('Resume Preview', {
       templateId: resume.id,
       resumeData,
@@ -32,46 +37,35 @@ const ChooseResume = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.safeView}>
+      <StatusBar
+        backgroundColor={theme.white}
+        barStyle={theme.statusBarStyle}
+        translucent={false}
+      />
       <View style={styles.container}>
-        {/* Tabs */}
-        <View style={styles.tabContainer}>
-          {tabs.map(tab => (
-            <TouchableOpacity
-              key={tab}
-              onPress={() => setActiveTab(tab)}
-              style={[
-                styles.tabButton,
-                activeTab === tab && styles.tabButtonActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab && styles.tabTextActive,
-                ]}
-              >
-                {tab}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <Header 
+          title="Choose Template" 
+          headerIcon={Images.leftArrowIcon} 
+          onPress={() => {
+            navigation.navigate("Profile")
+          }}
+        />
 
-        {/* Resume Cards */}
+        {/* Resume Cards - All in one list */}
         <ScrollView>
+          <InputText InputText="Select one of the templates below to preview it with your information. Only the information you've entered will be displayed. For instance, if you haven't included a photo, your resume will be generated without one."/>
           <View style={styles.resumeView}>
-            {dummyResumes[activeTab].map(resume => (
+            {dummyResumes.map(resume => (
               <TouchableOpacity
                 key={resume.id}
                 style={styles.resumeBtn}
-                onPress={() => handleResumePress(resume)}
-              >
+                onPress={() => handleResumePress(resume)}>
                 <View style={styles.resumePreviewBox} />
                 <Image
                   source={resume.image}
                   style={styles.resumeBtnImg}
-                  resizeMode="contain"
                 />
-                <Text style={styles.resumeBtnText}>{resume.name}</Text>
+                {/* <Text style={styles.resumeBtnText}>{resume.name}</Text> */}
               </TouchableOpacity>
             ))}
           </View>

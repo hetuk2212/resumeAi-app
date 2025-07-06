@@ -10,6 +10,7 @@ import CustomTextInput from '../../../../Components/TextInput';
 import {useTheme} from '../../../../Theme/ ThemeContext';
 import Header from '../../../../Components/Header/Index';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import InputText from '../../../../Components/InputDesc/Index';
 
 const AddEducation = () => {
   const [activeTab, setActiveTab] = useState('Education');
@@ -129,8 +130,8 @@ const AddEducation = () => {
           course: form.course,
           university: form.school,
           grade: form.grade,
-          startYear: form.startYear ? parseInt(form.startYear, 10) : null,
-          endYear: form.endYear ? parseInt(form.endYear, 10) : null,
+          startYear: form.startYear,
+          endYear: form.endYear,
           isOngoing: false,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -212,14 +213,17 @@ const AddEducation = () => {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.formDetails}>
-                  <CustomTextInput
-                    label="Course / Degree"
-                    value={form.course}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'course', text)
-                    }
-                    errorMessage={errors[`${index}_course`]}
-                  />
+                  <View>
+                    <CustomTextInput
+                      label="Course / Degree"
+                      value={form.course}
+                      onChangeText={text =>
+                        handleInputChange(form.id, 'course', text)
+                      }
+                      errorMessage={errors[`${index}_course`]}
+                    />
+                    <InputText InputText="Examples: Bechelor of low, Pedagogy Degeree, IT Technician, Doctorate in Education." />
+                  </View>
 
                   <CustomTextInput
                     label="School / University"
@@ -239,25 +243,29 @@ const AddEducation = () => {
                     errorMessage={errors[`${index}_grade`]}
                   />
 
-                  <CustomTextInput
-                    label="Start Year"
-                    value={form.startYear}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'startYear', text)
-                    }
-                    errorMessage={errors[`${index}_startYear`]}
-                    keyboardType="numeric"
-                  />
+                  <View>
+                    <CustomTextInput
+                      label="Start Year"
+                      value={form.startYear}
+                      onChangeText={text =>
+                        handleInputChange(form.id, 'startYear', text)
+                      }
+                      errorMessage={errors[`${index}_startYear`]}
+                    />
+                    <InputText InputText="Example: Jan 2015" />
+                  </View>
 
-                  <CustomTextInput
-                    label="End Year"
-                    value={form.endYear}
-                    onChangeText={text =>
-                      handleInputChange(form.id, 'endYear', text)
-                    }
-                    errorMessage={errors[`${index}_endYear`]}
-                    keyboardType="numeric"
-                  />
+                  <View>
+                    <CustomTextInput
+                      label="End Year"
+                      value={form.endYear}
+                      onChangeText={text =>
+                        handleInputChange(form.id, 'endYear', text)
+                      }
+                      errorMessage={errors[`${index}_endYear`]}
+                    />
+                    <InputText InputText="Example: Jan 2020" />
+                  </View>
                 </View>
               </View>
             ))}
