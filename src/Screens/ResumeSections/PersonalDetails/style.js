@@ -130,7 +130,7 @@ const getStyles = theme =>
       height: moderateScale(22),
       tintColor: theme.black,
     },
-   
+  
   });
 
 export default getStyles;

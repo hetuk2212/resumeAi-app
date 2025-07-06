@@ -12,16 +12,12 @@ import {
 import getStyles from './style';
 import CustomTextInput from '../../../Components/TextInput';
 import {Images} from '../../../Assets/Images';
-import LinearGradient from 'react-native-linear-gradient';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useNavigation} from '@react-navigation/native';
-import ToggleSwitch from 'toggle-switch-react-native';
-import TabSwitcher from '../../../Components/TabSwitcher';
 import ActionButtons from '../../../Components/ActionButtons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-toast-message';
-import Color from '../../../Theme/Color';
 import Header from '../../../Components/Header/Index';
 import {useTheme} from '../../../Theme/ ThemeContext';
 import FieldsToggleModal from '../../../Components/FieldsToggleModal/Index';
@@ -431,13 +427,16 @@ const PersonalDetails = () => {
                 onChangeText={setName}
                 errorMessage={errors.fullName}
               />
-              <CustomTextInput
-                label="Position"
+              <View>
+                <CustomTextInput
+                label="Title"
                 placeholder="(Optional)"
                 value={position}
                 onChangeText={setPosition}
                 errorMessage={errors.position}
               />
+              <Text style={styles.descText}>Appears next to your name. You can write your current profession or the position you are applying for. Example: Salesperson, Project Manager.</Text>
+              </View>
               <CustomTextInput
                 label="Address"
                 value={address}
